@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_191919">
+
+    <include layout="@layout/common_toolbar"/>
+    <com.xishitong.supermember.widget.FigureIndicatorView
+            android:id="@+id/figure_indicator_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="21dp"/>
+    <com.zhpan.bannerview.BannerViewPager
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="380dp"
+            android:layout_below="@+id/figure_indicator_view"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp">
+
+    </com.zhpan.bannerview.BannerViewPager>
+    <Button
+            android:id="@+id/btn_submit_voucher"
+            android:layout_centerHorizontal="true"
+            android:layout_width="205dp"
+            android:layout_height="44dp"
+            android:background="@drawable/btn_login_bg"
+            android:text="重新上传凭证"
+            android:textSize="17sp"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/white"
+            android:layout_marginBottom="95.5dp"/>
+</RelativeLayout>

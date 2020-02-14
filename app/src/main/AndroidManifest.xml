@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.xishitong.supermember">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <application
+            android:name=".base.App"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true"
+            tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".view.activity.CheckVoucherActivity">
+        </activity>
+        <activity android:name=".view.activity.CommonWebActivity">
+        </activity>
+        <activity
+                android:name=".view.activity.MainActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".view.activity.LoginActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.ProcessingOrderActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.DetailOfMembershipActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.ModifyAddressActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.MyAddressActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.ApplyInvoiceActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".view.activity.LoginVerificationCodeActivity"
+                android:screenOrientation="portrait">
+        </activity> <!-- 屏幕适配 -->
+        <meta-data
+                android:name="design_width_in_dp"
+                android:value="375"/>
+        <meta-data
+                android:name="design_height_in_dp"
+                android:value="667"/> <!-- 适配华为（huawei）刘海屏 -->
+        <meta-data
+                android:name="android.notch_support"
+                android:value="true"/> <!-- 适配小米（xiaomi）刘海屏 -->
+        <meta-data
+                android:name="notch.config"
+                android:value="portrait|landscape"/>
+    </application>
+
+</manifest>

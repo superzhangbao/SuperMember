@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="invoice_title">
+        <item>个人</item>
+        <item>企业</item>
+    </string-array>
+</resources>
