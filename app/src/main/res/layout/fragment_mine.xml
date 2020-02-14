@@ -79,9 +79,10 @@
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="11.5dp">
                     <TextView
+                            android:id="@+id/tv_phone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="NO.13834567343"
+                            android:text=""
                             android:textColor="@color/color_111111"
                             android:textSize="12sp"
                             android:layout_marginStart="17dp"

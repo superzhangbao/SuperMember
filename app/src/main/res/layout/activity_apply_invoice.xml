@@ -39,21 +39,15 @@
                             android:textColor="@color/color_999999"
                             android:layout_marginStart="15.5dp"/>
 
-                    <!--<TextView-->
-                            <!--android:id="@+id/tv_order_number"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:text="518273746543"-->
-                            <!--android:textSize="15sp"-->
-                            <!--android:textColor="@color/color_333333"/>-->
-                    <EditText
-                            android:id="@+id/et_order_number"
-                            android:layout_width="match_parent"
+                    <TextView
+                            android:id="@+id/tv_order_number"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text=""
                             android:layout_centerVertical="true"
-                            android:hint="请输入订单编号"
                             android:layout_marginStart="114.5dp"
-                            android:background="@null"/>
+                            android:textSize="15sp"
+                            android:textColor="@color/color_333333"/>
                 </RelativeLayout>
                 <View android:layout_width="match_parent"
                       android:layout_height="1dp"
@@ -377,57 +371,106 @@
                             android:layout_marginStart="114.5dp"
                             android:background="@null"/>
                 </RelativeLayout>
-
-                <LinearLayout
+                <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="90dp"
-                        android:background="@color/white"
-                        android:orientation="vertical"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="10dp">
-                    <RelativeLayout
+                    <LinearLayout
+                            android:id="@+id/ll_receive_addr"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="22dp">
-                        <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="90dp"
+                            android:background="@color/white"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+                        <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="22dp">
+                            <LinearLayout android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:gravity="center_vertical"
+                                          android:layout_marginStart="15.5dp">
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="收件地址"
+                                        android:textColor="@color/color_999999"
+                                        android:textSize="15sp"/>
+                                <!--<TextView-->
+                                        <!--android:layout_width="wrap_content"-->
+                                        <!--android:layout_height="wrap_content"-->
+                                        <!--android:text="*"-->
+                                        <!--android:textColor="#ff0000"-->
+                                        <!--android:textSize="20sp"/>-->
+                            </LinearLayout>
+
+                            <TextView
+                                    android:id="@+id/tv_receice_name"
+                                    android:layout_centerVertical="true"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=""
+                                    android:textColor="@color/color_333333"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="114.5dp"/>
+
+                        </RelativeLayout>
+
+                        <TextView
+                                android:id="@+id/tv_receice_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:textColor="@color/color_333333"
+                                android:textSize="12sp"
+                                android:layout_marginStart="114.5dp"
+                                android:layout_marginEnd="15dp"
+                                android:layout_marginTop="7dp"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                            android:id="@+id/ll_add_addr"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:gravity="center_vertical"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:background="@color/white">
+                        <RelativeLayout android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
-                                      android:gravity="center_vertical"
-                                      android:layout_marginStart="15.5dp">
+                                      android:gravity="center_vertical">
                             <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="收件地址"
                                     android:textColor="@color/color_999999"
-                                    android:textSize="15sp"/>
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="15.5dp"/>
+                            <!--<TextView-->
+                                    <!--android:layout_width="wrap_content"-->
+                                    <!--android:layout_height="wrap_content"-->
+                                    <!--android:text="*"-->
+                                    <!--android:textColor="#ff0000"-->
+                                    <!--android:textSize="20sp"/>-->
                             <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="*"
-                                    android:textColor="#ff0000"
-                                    android:textSize="20sp"/>
-                        </LinearLayout>
+                                    android:text="去添加"
+                                    android:textSize="15sp"
+                                    android:textColor="@color/color_333333"
+                                    android:layout_marginStart="114.5dp"/>
 
-                        <TextView
-                                android:id="@+id/tv_receice_name"
-                                android:layout_centerVertical="true"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="楚子安(15056009999)"
-                                android:textColor="@color/color_333333"
-                                android:textSize="15sp"
-                                android:layout_marginStart="114.5dp"/>
+                            <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@mipmap/go"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginEnd="15dp"/>
 
-                    </RelativeLayout>
-
-                    <TextView
-                            android:id="@+id/tv_receice_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="浙江省杭州市拱墅区香园路109号"
-                            android:textColor="@color/color_333333"
-                            android:textSize="15sp"
-                            android:layout_marginStart="114.5dp"/>
-
-                </LinearLayout>
+                        </RelativeLayout>
+                    </LinearLayout>
+                </FrameLayout>
+                
+                
 
                 <Button
                         android:id="@+id/btn_submit"

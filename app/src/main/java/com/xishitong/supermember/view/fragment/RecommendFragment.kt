@@ -57,7 +57,7 @@ class RecommendFragment : BaseFragment(), ViewPager.OnPageChangeListener {
             list2.add(CommonBean.DataBean.ListBean("","","$it"))
         }
         data.add(list)
-        LogUtil.e(TAG,list.toString())
+//        LogUtil.e(TAG,list.toString())
         data.add(list1)
         data.add(list2)
         mHomeViewPager!!.setIndicatorVisibility(View.VISIBLE)

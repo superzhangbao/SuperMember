@@ -47,7 +47,7 @@ class ProcessingOrderActivity : BaseActivity(), View.OnClickListener, OnRefreshL
             .init()
         rl_toobar.setBackgroundColor(Color.WHITE)
         fl_back.visibility = View.VISIBLE
-        tv_title.text = getString(R.string.receiving_address)
+        tv_title.text = getString(R.string.processing_order)
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
         fl_back.setOnClickListener(this)
     }

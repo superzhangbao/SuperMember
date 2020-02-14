@@ -1,5 +1,6 @@
 package com.xishitong.supermember
 
+import com.xishitong.supermember.util.UtilsBigDecimal
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,8 +13,6 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        for (a in 0 until 10) {
-            println(a)
-        }
+        println(10033/100.0)
     }
 }

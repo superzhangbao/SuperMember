@@ -18,7 +18,10 @@ import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.PHONE_NUMBER
+import com.xishitong.supermember.base.RULE
+import com.xishitong.supermember.base.VIP_AGREEMENT
 import com.xishitong.supermember.bean.VertifyCodeBean
+import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
@@ -31,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import org.greenrobot.eventbus.EventBus
 
 /**
  *  author : zhangbao
@@ -103,7 +107,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             it.setSpan(UnderlineSpan(), 15, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    ToastUtils.showToast("啦啦啦啦")
+                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT,"禧世通超级会员协议", null))
+                    val intent = Intent(this@LoginActivity, CommonWebActivity::class.java)
+                    startActivity(intent)
                 }
             }, 15, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(

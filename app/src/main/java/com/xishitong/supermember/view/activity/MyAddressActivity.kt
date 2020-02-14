@@ -108,7 +108,6 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
             intent.putExtra("detailed",listData!![position].detailed)
             intent.putExtra("id","${listData!![position].id}")
             intent.putExtra(ADD_OR_MODIFY,1)
-
             startActivity(intent)
         }
     }

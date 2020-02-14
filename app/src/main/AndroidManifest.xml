@@ -20,6 +20,10 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".view.activity.RechargeDetailActivity">
+        </activity>
+        <activity android:name=".view.activity.SearchActivity">
+        </activity>
         <activity android:name=".view.activity.CheckVoucherActivity">
         </activity>
         <activity android:name=".view.activity.CommonWebActivity">

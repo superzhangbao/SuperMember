@@ -1,19 +1,29 @@
 package com.xishitong.supermember.view.fragment
 
+import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.support.v4.content.ContextCompat.getSystemService
+import android.view.Gravity
 import android.view.View
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.APPLY_FOR_MEMBERSHIP
 import com.xishitong.supermember.base.BaseFragment
+import com.xishitong.supermember.base.PAY_MEMBERSHIP
+import com.xishitong.supermember.base.RULE
 import com.xishitong.supermember.bean.UserInfoBean
 import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.util.DialogUtils
 import com.xishitong.supermember.util.ToastUtils
+import com.xishitong.supermember.util.UtilsBigDecimal
 import com.xishitong.supermember.view.activity.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -49,19 +59,26 @@ class MineFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun initData() {
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         //请求个人信息
         val hashMap = HashMap<String, String>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         NetClient.getInstance()
             .create(IApiService::class.java)
-            .getUserInfo(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
+            .getBalanceInfo(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(FragmentEvent.DESTROY))
             .subscribe(object : BaseObserver<UserInfoBean>() {
+                @SuppressLint("SetTextI18n")
                 override fun onSuccess(t: UserInfoBean?) {
                     t?.data?.let {
-                        tv_integral.text = "${it.money / 100}"
+                        tv_integral.text = "${it.money/100.0}"
+                        tv_phone.text = "No.${ConfigPreferences.instance.getPhone()}"
                         ConfigPreferences.instance.setIsMember(it.isMember)
                         if (it.isMember) {
                             tv_vip_recharge.text = resources.getString(R.string.pay_membership)
@@ -80,27 +97,34 @@ class MineFragment : BaseFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tv_rule -> {
-                ToastUtils.showToast("规则说明")
+                EventBus.getDefault().postSticky(WebEvent(RULE, "规则说明", null))
+                val intent = Intent(activity, CommonWebActivity::class.java)
+                startActivity(intent)
             }
             R.id.tv_vip_recharge -> {
                 if (!ConfigPreferences.instance.getLoginState()) {
-                    startActivity(Intent(activity,LoginActivity::class.java))
+                    startActivity(Intent(activity, LoginActivity::class.java))
                     return
                 }
                 if (ConfigPreferences.instance.getISMember()) {
                     //会费缴纳
-                    ToastUtils.showToast("会费缴纳")
+                    EventBus.getDefault().postSticky(
+                        WebEvent(
+                            PAY_MEMBERSHIP, "会费缴纳",
+                            ConfigPreferences.instance.getToken()
+                        )
+                    )
                 } else {
                     //申请入会
                     EventBus.getDefault().postSticky(
                         WebEvent(
-                            APPLY_FOR_MEMBERSHIP,
+                            APPLY_FOR_MEMBERSHIP, "申请入会",
                             ConfigPreferences.instance.getToken()
                         )
                     )
-                    val intent = Intent(activity, CommonWebActivity::class.java)
-                    startActivity(intent)
                 }
+                val intent = Intent(activity, CommonWebActivity::class.java)
+                startActivity(intent)
             }
             R.id.processing_order -> {
                 //处理中订单
@@ -117,10 +141,10 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             }
             R.id.apply_invoice -> {
                 //申请开票
-                startActivity(Intent(activity, ApplyInvoiceActivity::class.java))
+                startActivity(Intent(activity, RechargeDetailActivity::class.java))
             }
             R.id.details_of_membership -> {
-                //会员明细
+                //会费明细
                 startActivity(Intent(activity, DetailOfMembershipActivity::class.java))
             }
             R.id.my_address -> {

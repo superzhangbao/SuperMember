@@ -23,10 +23,10 @@ class FlashSaleAdapter(data: MutableList<SaleBean.DataBean.ListBean>?) :
             setText(R.id.tv_original_amount,"¥${data[adapterPosition].originalAmount}")
             setText(R.id.tv_market_amount,"¥${data[adapterPosition].marketAmount}")
 
-//            val imageView = getView(R.id.iv_goods_img) as ImageView
-//            Glide.with(mContext)
-//                .load(data[adapterPosition].headImgList[0])
-//                .into(imageView)
+            val imageView = getView(R.id.iv_goods_img) as ImageView
+            Glide.with(mContext)
+                .load(data[adapterPosition].headImgList[0])
+                .into(imageView)
         }
     }
 }

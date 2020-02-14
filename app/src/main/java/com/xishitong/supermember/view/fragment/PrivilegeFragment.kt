@@ -18,12 +18,14 @@ import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.DetailOfMembershipAdapter
 import com.xishitong.supermember.adapter.FlashSaleAdapter
+import com.xishitong.supermember.base.APPLY_FOR_MEMBERSHIP
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseFragment
 import com.xishitong.supermember.bean.BannerBean
 import com.xishitong.supermember.bean.BannerDataBean
 import com.xishitong.supermember.bean.CommonBean
 import com.xishitong.supermember.bean.SaleBean
+import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
@@ -32,6 +34,8 @@ import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.activity.CheckVoucherActivity
+import com.xishitong.supermember.view.activity.CommonWebActivity
+import com.xishitong.supermember.view.activity.SearchActivity
 import com.xishitong.supermember.widget.OvalIndicatorView
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.TransformerStyle
@@ -42,6 +46,7 @@ import kotlinx.android.synthetic.main.fragment_privilege.*
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import org.greenrobot.eventbus.EventBus
 
 
 /**
@@ -51,8 +56,9 @@ import okhttp3.RequestBody
  */
 class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPageChangeListener,
     BaseQuickAdapter.OnItemClickListener {
-    private var mBannerViewPager: BannerViewPager<BannerBean.DataBean, NetViewHolder>? = null
 
+    private var mBannerViewPager: BannerViewPager<BannerBean.DataBean, NetViewHolder>? = null
+    private var bannerData: List<BannerBean.DataBean> = ArrayList()
     private val fragments: ArrayList<Fragment> = ArrayList()
     override fun setContentView(): Int {
         return R.layout.fragment_privilege
@@ -74,8 +80,85 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
         view_pager.adapter = DetailOfMembershipAdapter(activity?.supportFragmentManager, fragments)
         view_pager.addOnPageChangeListener(this)
+    }
+
+    override fun initData() {
         initAdBanner()
         initFlashSale()
+    }
+
+    /**
+     * 初始化广告banner
+     */
+    private fun initAdBanner() {
+        val hashMapOf = hashMapOf(Pair("status", "1"))
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .getBanner(RequestBody.Companion.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMapOf)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(FragmentEvent.DESTROY))
+            .subscribe(object : BaseObserver<BannerBean>(), BannerViewPager.OnPageClickListener {
+                override fun onSuccess(t: BannerBean?) {
+                    t?.data?.let { data ->
+                        bannerData = data
+                        mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
+                            .setIndicatorView(OvalIndicatorView(App.getInstance()))
+                            .setIndicatorColor(Color.GRAY, Color.WHITE)
+                            .setInterval(3000)
+                            .setCanLoop(true)
+                            .setAutoPlay(true)
+                            .setPageTransformerStyle(TransformerStyle.DEPTH)
+                            .setIndicatorGap(UiUtils.dip2px(App.getInstance(), 3.0f))
+                            .setIndicatorHeight(UiUtils.dip2px(App.getInstance(), 4.0f))
+                            .setIndicatorWidth(
+                                UiUtils.dip2px(App.getInstance(), 3.0f),
+                                UiUtils.dip2px(App.getInstance(), 10.0f)
+                            )
+                            .setRoundCorner(UiUtils.dip2px(App.getInstance(), 7.0f))
+                            .setScrollDuration(1000)
+                            .setOnPageClickListener(this)
+                            .setHolderCreator { NetViewHolder() }
+                            .create(data)
+                    }
+                }
+
+                override fun onError(msg: String?) {
+                    ToastUtils.showToast(msg)
+                }
+
+                override fun onPageClick(position: Int) {
+                    //banner点击事件处理
+                    val enName = bannerData[position].enName
+                    val pName = bannerData[position].parentName
+                    if (enName == "creditCard") {
+                        EventBus.getDefault().postSticky(
+                            WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696", "信用卡", null)
+                        )
+                        val intent = Intent(activity, CommonWebActivity::class.java)
+                        startActivity(intent)
+                        return
+                    }
+                    if (enName == "temai") {
+                        //跳转到特卖tab
+                        return
+                    }
+                    if (enName == "chezhubang") {
+                        EventBus.getDefault().postSticky(
+                            WebEvent("https://st.czb365.com/v3_prod/?pft=92656476", "车租帮", null)
+                        )
+                        val intent = Intent(activity, CommonWebActivity::class.java)
+                        startActivity(intent)
+                        return
+                    }
+                    val url = "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
+                    EventBus.getDefault().postSticky(
+                        WebEvent(url, "车租帮", null)
+                    )
+                    val intent = Intent(activity, CommonWebActivity::class.java)
+                    startActivity(intent)
+                }
+            })
     }
 
     /**
@@ -91,9 +174,9 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
-        hashMap["productName"] = "特卖"
-        hashMap["startTime"] = ""
-        hashMap["endTime"] = ""
+        hashMap["productName"] = ""
+        hashMap["startTime"] = "2020-02-14 14:00:00"
+        hashMap["endTime"] = "2020-02-14 17:59:59"
         hashMap["status"] = "1"
         hashMap["page"] = "1"
         hashMap["limit"] = "6"
@@ -105,15 +188,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
             .subscribe(object : BaseObserver<SaleBean>() {
                 override fun onSuccess(t: SaleBean?) {
-                    val list = ArrayList<SaleBean.DataBean.ListBean>()
-                    list.add(SaleBean.DataBean.ListBean(10, "", 300, 310, "", "", "", 1, null, listOf()))
-                    list.add(SaleBean.DataBean.ListBean(20, "", 300, 320, "", "", "", 1, null, listOf()))
-                    list.add(SaleBean.DataBean.ListBean(30, "", 300, 330, "", "", "", 1, null, listOf()))
-                    list.add(SaleBean.DataBean.ListBean(40, "", 300, 340, "", "", "", 1, null, listOf()))
-                    list.add(SaleBean.DataBean.ListBean(50, "", 300, 350, "", "", "", 1, null, listOf()))
-                    list.add(SaleBean.DataBean.ListBean(60, "", 300, 360, "", "", "", 1, null, listOf()))
                     t?.data?.let {
-                        it.list = list
                         flashSaleAdapter.setNewData(it.list)
                     }
                 }
@@ -124,54 +199,10 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             })
     }
 
-    /**
-     * 初始化广告banner
-     */
-    private fun initAdBanner() {
-        val hashMapOf = hashMapOf(Pair("status", "1"))
-        NetClient.getInstance()
-            .create(IApiService::class.java)
-            .getBanner(RequestBody.Companion.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMapOf)))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .compose(bindUntilEvent(FragmentEvent.DESTROY))
-            .subscribe(object : BaseObserver<BannerBean>() {
-                override fun onSuccess(t: BannerBean?) {
-                    mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
-                        .setIndicatorView(OvalIndicatorView(App.getInstance()))
-                        .setIndicatorColor(Color.GRAY, Color.WHITE)
-                        .setInterval(3000)
-                        .setCanLoop(true)
-                        .setAutoPlay(true)
-                        .setPageTransformerStyle(TransformerStyle.DEPTH)
-                        .setIndicatorGap(UiUtils.dip2px(App.getInstance(), 3.0f))
-                        .setIndicatorHeight(UiUtils.dip2px(App.getInstance(), 4.0f))
-                        .setIndicatorWidth(
-                            UiUtils.dip2px(App.getInstance(), 3.0f),
-                            UiUtils.dip2px(App.getInstance(), 10.0f)
-                        )
-                        .setRoundCorner(UiUtils.dip2px(App.getInstance(), 7.0f))
-                        .setScrollDuration(1000)
-                        .setOnPageClickListener {
-                            startActivity(Intent(activity,CheckVoucherActivity::class.java))
-                        }
-                        .setHolderCreator { NetViewHolder() }
-                        .create(t?.data)
-                }
-
-                override fun onError(msg: String?) {
-                    ToastUtils.showToast(msg)
-                }
-            })
-    }
-
-    override fun initData() {
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.search -> {
-                ToastUtils.showToast("搜索")
+                startActivity(Intent(activity,SearchActivity::class.java))
             }
             R.id.tab1 -> {
                 tv_tab1.background = resources.getDrawable(R.drawable.btn_login_bg)
@@ -231,10 +262,32 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-
+        //限时秒杀跳转逻辑
+        /**
+         * export function handle2Recharge(pname, enName) {
+        if (enName === 'creditCard') {
+        // window.open('http://web.yunjuhe.vip/credit/list/v1.0/500696', '_blank')  UI说这样跳出去不好
+        window.location.href = 'http://web.yunjuhe.vip/credit/list/v1.0/500696';
+        return;
+        }
+        if (enName === 'temai') {
+        uni.switchTab({
+        url: '/pages/temai/temai'
+        });
+        return;
+        }
+        if (enName === 'chezhubang') {
+        window.location.href = 'https://st.czb365.com/v3_prod/?pft=92656476';
+        return;
+        }
+        uni.navigateTo({
+        url: '/pages/recharge/recharge2?pname=' + pname + '&enName=' + enName
+        });
+        }
+         */
+        val data = adapter?.data as MutableList<SaleBean.DataBean.ListBean>?
+//        if (data[position])
     }
-
-
 }
 
 class NetViewHolder : ViewHolder<BannerBean.DataBean> {

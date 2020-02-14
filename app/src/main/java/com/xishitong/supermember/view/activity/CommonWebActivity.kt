@@ -44,7 +44,12 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
     fun onWebEvent(webEvent: WebEvent) {
-        val url = "${webEvent.url}?token=${webEvent.token}"
+        tv_title.text = webEvent.title
+        val url = if (webEvent.token == null) {
+            webEvent.url
+        } else {
+            "${webEvent.url}${webEvent.token}"
+        }
         initAgentWeb(url)
     }
 
@@ -62,6 +67,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
             .createAgentWeb()
             .ready()
             .go(url)
+
     }
 
     override fun onClick(v: View?) {
@@ -73,7 +79,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (mAgentWeb!!.handleKeyEvent(keyCode, event)) {
+        return if (mAgentWeb?.handleKeyEvent(keyCode, event)!!) {
             true
         } else super.onKeyDown(keyCode, event)
     }
@@ -84,7 +90,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun onResume() {
-        mAgentWeb!!.webLifeCycle.onResume()
+        mAgentWeb?.webLifeCycle?.onResume()
         super.onResume()
     }
 }

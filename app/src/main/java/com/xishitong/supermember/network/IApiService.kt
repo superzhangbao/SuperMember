@@ -31,10 +31,10 @@ interface IApiService {
     @Headers("Content-Type: application/json;charset=UTF-8")
     fun getSale(@Body body: RequestBody): Observable<SaleBean>
 
-    //个人信息
+    //查询余额
     @POST("market/getBalance")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun getUserInfo(@Body body: RequestBody): Observable<UserInfoBean>
+    fun getBalanceInfo(@Body body: RequestBody): Observable<UserInfoBean>
 
     //订单列表
     @POST("market/orderList")
@@ -98,4 +98,9 @@ interface IApiService {
     @POST("market/address/edit")
     @Headers("Content-Type: application/json;charset=UTF-8")
     fun editAddress(@Body body: RequestBody): Observable<BaseModel>
+
+    //查询入会信息
+    @POST("/market/user/info")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    fun getUserInfo(@Body body: RequestBody):Observable<UserBean>
 }
