@@ -3,7 +3,7 @@ package com.xishitong.supermember.view.activity
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.KeyEvent
 import android.view.MenuItem
 import com.gyf.immersionbar.ImmersionBar

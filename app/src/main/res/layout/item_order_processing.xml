@@ -2,7 +2,7 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="254dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
         android:layout_marginTop="10dp"
@@ -52,7 +52,7 @@
     <!--第二部分，内容区域-->
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="106.5dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp">
 
@@ -66,7 +66,7 @@
         <LinearLayout
                 android:layout_toEndOf="@+id/iv_goods_img"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14.5dp"
@@ -74,7 +74,7 @@
 
             <TextView
                     android:id="@+id/tv_goods_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="185dp"
                     android:layout_height="wrap_content"
                     android:text="会费缴纳"
                     android:textSize="15sp"
@@ -107,44 +107,70 @@
                     android:text="获赠积分：5002.23"
                     android:textSize="12sp"
                     android:textColor="@color/color_999999"/>
+            <TextView
+                    android:id="@+id/tv_mid_msg4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="获赠积分：5002.23"
+                    android:textSize="12sp"
+                    android:textColor="@color/color_999999"
+                    android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:orientation="vertical"
                 android:layout_marginTop="15dp">
 
-            <TextView
-                    android:id="@+id/tv_one_amount_left"
+            <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1000."
-                    android:textSize="17sp"
-                    android:textColor="@color/color_222222"/>
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/tv_one_amount_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1000."
+                        android:textSize="17sp"
+                        android:textColor="@color/color_222222"/>
+
+                <TextView
+                        android:id="@+id/tv_one_amount_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00"
+                        android:textSize="13sp"
+                        android:textColor="@color/color_222222"/>
+
+            </LinearLayout>
 
             <TextView
-                    android:id="@+id/tv_one_amount_right"
+                    android:id="@+id/tv_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00"
-                    android:textSize="13sp"
-                    android:textColor="@color/color_222222"/>
+                    android:text="x1"
+                    android:textSize="12sp"
+                    android:textColor="@color/color_999999"
+                    android:layout_marginTop="6dp"
+                    android:layout_gravity="end"/>
         </LinearLayout>
 
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/color_EBECF0"
-                android:layout_alignParentBottom="true"/>
     </RelativeLayout>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/color_EBECF0"/>
     <!--第三部分-->
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="15dp">
+            android:layout_marginTop="6dp">
 
         <TextView
                 android:id="@+id/tv_all_goods_count"
@@ -177,25 +203,27 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="end">
 
         <TextView
-                android:id="@+id/tv_apply_invoice"
+                android:id="@+id/tv_fail_reason"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="申请发票"
+                android:text="失败原因"
                 android:textSize="13sp"
-                android:textColor="@color/color_6BB467"
-                android:background="@drawable/text_selector"
+                android:textColor="@color/color_FF2020"
+                android:background="@drawable/text2_selector"
                 android:paddingTop="6.5dp"
                 android:paddingBottom="6.5dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginStart="15dp"
-                android:clickable="true"/>
-
+                android:clickable="true"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"/>
         <TextView
+                android:id="@+id/tv_voucher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上传凭证"
@@ -207,6 +235,57 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginStart="15dp"
-                android:clickable="true"/>
+                android:clickable="true"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"/>
+        <TextView
+                android:id="@+id/tv_courier_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="快递单号"
+                android:textSize="13sp"
+                android:textColor="@color/color_6BB467"
+                android:background="@drawable/text_selector"
+                android:paddingTop="6.5dp"
+                android:paddingBottom="6.5dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginStart="15dp"
+                android:clickable="true"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"/>
+        <TextView
+                android:id="@+id/tv_receice_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="收货地址"
+                android:textSize="13sp"
+                android:textColor="@color/color_6BB467"
+                android:background="@drawable/text_selector"
+                android:paddingTop="6.5dp"
+                android:paddingBottom="6.5dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginStart="15dp"
+                android:clickable="true"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/tv_order_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="订单二维码"
+                android:textSize="13sp"
+                android:textColor="@color/color_6BB467"
+                android:background="@drawable/text_selector"
+                android:paddingTop="6.5dp"
+                android:paddingBottom="6.5dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginStart="15dp"
+                android:clickable="true"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"/>
     </LinearLayout>
 </LinearLayout>

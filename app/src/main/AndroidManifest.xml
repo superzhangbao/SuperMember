@@ -44,7 +44,7 @@
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.ProcessingOrderActivity"
+                android:name=".view.activity.OrderActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity

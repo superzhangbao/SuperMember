@@ -9,6 +9,8 @@ import com.just.agentweb.AgentWebConfig
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseFragment
 import com.xishitong.supermember.base.SPECIAL_SALE
+import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.web.FragmentKeyDown
 import kotlinx.android.synthetic.main.fragment_specialsale.*
 
 
@@ -17,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_specialsale.*
  *  date : 2020-02-07 17:59
  *  description :特卖fragment
  */
-class SpecialsaleFragment:BaseFragment(),FragmentKeyDown {
+class SpecialsaleFragment:BaseFragment(), FragmentKeyDown {
 
     private var mAgentWeb:AgentWeb? = null
     override fun setContentView(): Int {
@@ -32,7 +34,7 @@ class SpecialsaleFragment:BaseFragment(),FragmentKeyDown {
             .setMainFrameErrorView(R.layout.webview_error,R.id.tv_reload)
             .createAgentWeb()
             .ready()
-            .go(SPECIAL_SALE)
+            .go(SPECIAL_SALE+"${ConfigPreferences.instance.getToken()}&inType=app")
     }
 
     override fun initData() {

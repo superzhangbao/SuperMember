@@ -53,4 +53,5 @@
     <string name="recharge">优惠充值</string>
     <string name="shopping">购物优惠</string>
     <string name="ticket">生活卡券</string>
+    <string name="check_voucher">查看凭证</string>
 </resources>

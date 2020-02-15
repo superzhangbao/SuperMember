@@ -2,8 +2,8 @@ package com.xishitong.supermember.view.activity
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
+import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.LinearLayout
 import com.gyf.immersionbar.ImmersionBar
@@ -26,7 +26,7 @@ import java.lang.reflect.Field
 class DetailOfMembershipActivity : BaseActivity(), TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>,
     View.OnClickListener {
 
-    private val fragments: ArrayList<Fragment> = ArrayList()
+    private val fragments: ArrayList<androidx.fragment.app.Fragment> = ArrayList()
     override fun setContentView(): Int {
             return R.layout.activity_detail_of_membership
     }

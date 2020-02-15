@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +63,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         detailAllAdapter = DetailAllAdapter(listData)
         detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         detailAllAdapter!!.isFirstOnly(false)

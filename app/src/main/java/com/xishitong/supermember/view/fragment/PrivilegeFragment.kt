@@ -3,10 +3,10 @@ package com.xishitong.supermember.view.fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -165,7 +165,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
      * 初始化秒杀数据
      */
     private fun initFlashSale() {
-        recycler_view.layoutManager = GridLayoutManager(App.getInstance(), 3)
+        recycler_view.layoutManager =
+            androidx.recyclerview.widget.GridLayoutManager(App.getInstance(), 3)
         val flashSaleAdapter = FlashSaleAdapter(null)
         flashSaleAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         flashSaleAdapter.isFirstOnly(false)

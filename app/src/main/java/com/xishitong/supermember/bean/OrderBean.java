@@ -11,102 +11,88 @@ import java.util.List;
  */
 public class OrderBean extends BaseModel {
 
+
     /**
-     * data : {"list":[{"account":"18367827072","addTime":"2019-12-04 10:58:22","addressDetailed":null,"addressGegion":null,"addressName":null,"addressPhone":null,"amount":9980,"bankAccount":"杭州禧越网络科技有限公司","bankCard":"76780188000156712","bankName":"中国光大银行杭州朝晖支行","billId":"169756033","completeTime":null,"courierNumber":null,"deductAmount":0,"id":260,"imgUrl":"http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76.,","orderType":1,"originalAmount":9980,"payType":"bank","processStatus":"yy","productId":"101","productImg":"https://www.seniornet.cn/images/lofter/quanyika.png","productName":"会费缴纳","productValue":10000,"reason":null,"saleRemark":null,"status":3,"updateTime":"2019-12-17 15:27:53","urlList":["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76."],"userPhone":"18367827072"}],"totalCount":179}
+     * data : {"list":[{"account":"15056006309","addTime":"2020-02-15 02:26:15","addressDetailed":null,"addressGegion":null,"addressName":null,"addressPhone":null,"amount":33300,"bankAccount":"杭州禧越网络科技有限公司","bankCard":"372776674215","bankName":"中国银行杭州望湖支行","billId":"970969546","buyNum":1,"completeTime":null,"courierNumber":null,"deductAmount":0,"id":712,"imgUrl":"http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4.","name":"张宝","orderType":1,"originalAmount":33300,"payOrderId":null,"payType":"bank","processStatus":"cw","productId":"100","productImg":"https://www.seniornet.cn/images/card_icon.png","productName":"会费缴纳-自定义金额","productValue":33366,"reason":null,"saleRemark":null,"status":3,"updateTime":"2020-02-15 02:27:41","urlList":["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4."],"userPhone":"15056006309"}],"totalCount":1}
      */
 
     public DataBean data;
 
     public static class DataBean {
-        public DataBean(int totalCount, List<ListBean> list) {
-            this.totalCount = totalCount;
-            this.list = list;
-        }
-
         /**
-         * list : [{"account":"18367827072","addTime":"2019-12-04 10:58:22","addressDetailed":null,"addressGegion":null,"addressName":null,"addressPhone":null,"amount":9980,"bankAccount":"杭州禧越网络科技有限公司","bankCard":"76780188000156712","bankName":"中国光大银行杭州朝晖支行","billId":"169756033","completeTime":null,"courierNumber":null,"deductAmount":0,"id":260,"imgUrl":"http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76.,","orderType":1,"originalAmount":9980,"payType":"bank","processStatus":"yy","productId":"101","productImg":"https://www.seniornet.cn/images/lofter/quanyika.png","productName":"会费缴纳","productValue":10000,"reason":null,"saleRemark":null,"status":3,"updateTime":"2019-12-17 15:27:53","urlList":["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76."],"userPhone":"18367827072"}]
-         * totalCount : 179
+         * list : [{"account":"15056006309","addTime":"2020-02-15 02:26:15","addressDetailed":null,"addressGegion":null,"addressName":null,"addressPhone":null,"amount":33300,"bankAccount":"杭州禧越网络科技有限公司","bankCard":"372776674215","bankName":"中国银行杭州望湖支行","billId":"970969546","buyNum":1,"completeTime":null,"courierNumber":null,"deductAmount":0,"id":712,"imgUrl":"http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4.","name":"张宝","orderType":1,"originalAmount":33300,"payOrderId":null,"payType":"bank","processStatus":"cw","productId":"100","productImg":"https://www.seniornet.cn/images/card_icon.png","productName":"会费缴纳-自定义金额","productValue":33366,"reason":null,"saleRemark":null,"status":3,"updateTime":"2020-02-15 02:27:41","urlList":["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4."],"userPhone":"15056006309"}]
+         * totalCount : 1
          */
 
         public int totalCount;
         public List<ListBean> list;
 
         public static class ListBean {
-            public ListBean(String account, String addTime, int amount, String billId, int deductAmount, int orderType, int originalAmount, String productImg, String productName, int productValue, Object saleRemark, int status, String userPhone) {
-                this.account = account;
-                this.addTime = addTime;
-                this.amount = amount;
-                this.billId = billId;
-                this.deductAmount = deductAmount;
-                this.orderType = orderType;
-                this.originalAmount = originalAmount;
-                this.productImg = productImg;
-                this.productName = productName;
-                this.productValue = productValue;
-                this.saleRemark = saleRemark;
-                this.status = status;
-                this.userPhone = userPhone;
-            }
-
             /**
-             * account : 18367827072
-             * addTime : 2019-12-04 10:58:22
+             * account : 15056006309
+             * addTime : 2020-02-15 02:26:15
              * addressDetailed : null
              * addressGegion : null
              * addressName : null
              * addressPhone : null
-             * amount : 9980
+             * amount : 33300
              * bankAccount : 杭州禧越网络科技有限公司
-             * bankCard : 76780188000156712
-             * bankName : 中国光大银行杭州朝晖支行
-             * billId : 169756033
+             * bankCard : 372776674215
+             * bankName : 中国银行杭州望湖支行
+             * billId : 970969546
+             * buyNum : 1
              * completeTime : null
              * courierNumber : null
              * deductAmount : 0
-             * id : 260
-             * imgUrl : http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76.,
+             * id : 712
+             * imgUrl : http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4.
+             * name : 张宝
              * orderType : 1
-             * originalAmount : 9980
+             * originalAmount : 33300
+             * payOrderId : null
              * payType : bank
-             * processStatus : yy
-             * productId : 101
-             * productImg : https://www.seniornet.cn/images/lofter/quanyika.png
-             * productName : 会费缴纳
-             * productValue : 10000
+             * processStatus : cw
+             * productId : 100
+             * productImg : https://www.seniornet.cn/images/card_icon.png
+             * productName : 会费缴纳-自定义金额
+             * productValue : 33366
              * reason : null
              * saleRemark : null
              * status : 3
-             * updateTime : 2019-12-17 15:27:53
-             * urlList : ["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/sj/f19e275c-0917-4d69-9e72-802e8f879e76."]
-             * userPhone : 18367827072
+             * updateTime : 2020-02-15 02:27:41
+             * urlList : ["http://zhaogongbao.oss-cn-hangzhou.aliyuncs.com/market/xstvip/6066d4ca-da4f-453a-bde0-f701171280e4."]
+             * userPhone : 15056006309
              */
 
             public String account;
             public String addTime;
-            public Object addressDetailed;
-            public Object addressGegion;
-            public Object addressName;
-            public Object addressPhone;
+            public String addressDetailed;
+            public String addressGegion;
+            public String addressName;
+            public String addressPhone;
             public int amount;
             public String bankAccount;
             public String bankCard;
             public String bankName;
             public String billId;
-            public Object completeTime;
-            public Object courierNumber;
+            public int buyNum;
+            public String completeTime;
+            public String courierNumber;
             public int deductAmount;
             public int id;
             public String imgUrl;
+            public String name;
             public int orderType;
             public int originalAmount;
+            public String payOrderId;
             public String payType;
             public String processStatus;
             public String productId;
             public String productImg;
             public String productName;
             public int productValue;
-            public Object reason;
-            public Object saleRemark;
+            public String reason;
+            public String saleRemark;
             public int status;
             public String updateTime;
             public String userPhone;

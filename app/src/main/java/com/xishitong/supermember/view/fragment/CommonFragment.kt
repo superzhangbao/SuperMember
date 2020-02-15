@@ -1,6 +1,6 @@
 package com.xishitong.supermember.view.fragment
 
-import android.support.v7.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.xishitong.supermember.R
@@ -22,7 +22,7 @@ class CommonFragment: BaseFragment(), BaseQuickAdapter.OnItemClickListener {
     }
 
     override fun initView(view: View) {
-        recycler_view.layoutManager = GridLayoutManager(activity, 5)
+        recycler_view.layoutManager = androidx.recyclerview.widget.GridLayoutManager(activity, 5)
         commonAdapter = CommonAdapter(null)
         commonAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         commonAdapter!!.isFirstOnly(false)

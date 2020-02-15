@@ -1,7 +1,7 @@
 package com.xishitong.supermember.view.fragment
 
 import android.content.Intent
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -53,7 +53,7 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         detailAllAdapter = DetailAllAdapter(listData)
         detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         detailAllAdapter!!.isFirstOnly(false)

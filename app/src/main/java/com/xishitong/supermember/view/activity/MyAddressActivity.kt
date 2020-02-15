@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -72,7 +72,7 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         myAddressAdapter = MyAddressAdapter(listData)
         myAddressAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         myAddressAdapter!!.isFirstOnly(false)

@@ -3,6 +3,7 @@ package com.xishitong.supermember.network
 import com.xishitong.supermember.base.BaseModel
 import com.xishitong.supermember.bean.*
 import io.reactivex.Observable
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -39,40 +40,22 @@ interface IApiService {
     //订单列表
     @POST("market/orderList")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun getOrderList(
-        @Field("token") token: String,
-        @Field("status") status: String,
-        @Field("queryPhone") queryPhone: String,
-        @Field("payType") payType: String,
-        @Field("billId") billId: String,
-        @Field("productId") productId: String,
-        @Field("orderType") orderType: Int,
-        @Field("page") page: Int,
-        @Field("limit") limit: Int
-    ): Observable<OrderBean>
+    fun getOrderList(@Body body: RequestBody): Observable<OrderBean>
 
     //提交凭证
     @POST("market/uploadVoucher")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun uploadVoucher(
-        @Field("token") token: String,
-        @Field("id") id: String,
-        @Field("url") url: String
-    ): Observable<BaseModel>
+    fun uploadVoucher(@Body body: RequestBody): Observable<BaseModel>
 
     //查看凭证
     @POST("manager/checkVoucher")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun checkVoucher(@Field("token") token: String, @Field("id") id: String): Observable<CheckVoucherBean>
+    fun checkVoucher(@Body body: RequestBody): Observable<CheckVoucherBean>
 
     //编辑凭证
     @POST("market/editVoucher")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun editVoucher(
-        @Field("token") token: String,
-        @Field("id") id: String,
-        @Field("url") url: String
-    ): Observable<BaseModel>
+    fun editVoucher(@Body body: RequestBody): Observable<BaseModel>
 
     //申请发票
     @POST("invoice/add")
@@ -102,5 +85,10 @@ interface IApiService {
     //查询入会信息
     @POST("/market/user/info")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun getUserInfo(@Body body: RequestBody):Observable<UserBean>
+    fun getUserInfo(@Body body: RequestBody): Observable<UserBean>
+
+    @Multipart
+    @POST("/image/upload")
+    fun uploadImg(@PartMap map:HashMap<String,RequestBody>,
+                  @Part path: MultipartBody.Part):Observable<UploadImgBean>
 }

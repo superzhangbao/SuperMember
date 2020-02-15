@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.SearchAdapter
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import java.util.concurrent.TimeUnit
 
 
-class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener {
+class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, View.OnClickListener {
     var tags = arrayOf(
         "吃货", "逗比", "创业者", "上班这点事儿",
         "影视天堂", "大学生活", "单身狗", "运动和健身",
@@ -26,11 +27,16 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener {
         "美食", "教育", "学生党", "汪星人"
     ).toList()
 
+
     override fun setContentView(): Int {
         return R.layout.activity_search
     }
 
     override fun init(savedInstanceState: Bundle?) {
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .init()
+        tv_close.setOnClickListener(this)
         val layoutManager = FlexboxLayoutManager(this)
         layoutManager.flexDirection = FlexDirection.ROW
         layoutManager.justifyContent = JustifyContent.FLEX_START
@@ -59,5 +65,13 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener {
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         ToastUtils.showToast(tags[position])
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.tv_close -> {
+                finish()
+            }
+        }
     }
 }

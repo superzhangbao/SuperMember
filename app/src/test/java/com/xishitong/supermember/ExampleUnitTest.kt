@@ -13,6 +13,5 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        println(10033/100.0)
     }
 }

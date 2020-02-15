@@ -1,6 +1,9 @@
 package com.xishitong.supermember.view.activity
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.pm.ConfigurationInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +11,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.listener.OnResultCallbackListener
+import com.luck.picture.lib.style.PictureParameterStyle
+import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseActivity
+import com.xishitong.supermember.base.BaseModel
+import com.xishitong.supermember.bean.CheckVoucherBean
+import com.xishitong.supermember.bean.UploadImgBean
+import com.xishitong.supermember.network.BaseObserver
+import com.xishitong.supermember.network.IApiService
+import com.xishitong.supermember.network.NetClient
+import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.util.GlideEngine
+import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.fragment.NetViewHolder
@@ -20,14 +40,24 @@ import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.TransformerStyle
 import com.zhpan.bannerview.holder.ViewHolder
 import com.zhpan.bannerview.utils.BannerUtils
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_check_voucher.*
 import kotlinx.android.synthetic.main.common_toolbar.*
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 /**
  * 查看凭证
  */
 class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
+
     private var mBannerViewPager: BannerViewPager<String, VoucherViewHolder>? = null
+    private var id = ""
+    private var type = 0
     override fun setContentView(): Int {
         return R.layout.activity_check_voucher
     }
@@ -44,39 +74,139 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
             .init()
         rl_toobar.setBackgroundColor(Color.WHITE)
         fl_back.visibility = View.VISIBLE
-        tv_title.text = getString(R.string.receiving_address)
+        tv_title.text = getString(R.string.check_voucher)
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
         fl_back.setOnClickListener(this)
 
         btn_submit_voucher.setOnClickListener(this)
+        id = intent.getStringExtra("id")
+        type = intent.getIntExtra("type", 0)
+        if (type == 1) {
+            btn_submit_voucher.visibility = View.GONE
+        }
     }
 
     private fun initBannerView() {
         mBannerViewPager = findViewById(R.id.banner)
-        val list = ArrayList<String>()
-        list.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1581624790013&di=0b27d1413429a18ff0bf09ade272d787&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F08%2F72%2F01300000165476121273722687045.jpg")
-        list.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1581624790013&di=281dc9966c32691ef582810285754371&imgtype=0&src=http%3A%2F%2Fe.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2Fd62a6059252dd42a1c362a29033b5bb5c9eab870.jpg")
-        list.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1581624790013&di=d0f093b586c414932fb9c9c848c89c67&imgtype=0&src=http%3A%2F%2Ffile02.16sucai.com%2Fd%2Ffile%2F2014%2F0617%2Fbe2f5973a60156df0c6aeb2aace791c6.jpg")
+        val hashMap = HashMap<String, String>()
+        hashMap["token"] = ConfigPreferences.instance.getToken()
+        hashMap["id"] = intent.getStringExtra("id")
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .checkVoucher(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(object : BaseObserver<CheckVoucherBean>() {
+                override fun onSuccess(t: CheckVoucherBean?) {
+                    t?.data?.img?.let { dataBean ->
+                        val split = dataBean.split(",")
+                        mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
+                            .setIndicatorView(figure_indicator_view)
+                            .setIndicatorColor(Color.GRAY, Color.WHITE)
+                            .setCanLoop(true)
+                            .setAutoPlay(false)
+                            .setPageTransformerStyle(TransformerStyle.DEPTH)
+                            .setScrollDuration(1000)
+                            .setHolderCreator { VoucherViewHolder() }
+                            .create(split)
+                    }
+                }
 
-        mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
-            .setIndicatorView(figure_indicator_view)
-            .setIndicatorColor(Color.GRAY, Color.WHITE)
-            .setCanLoop(true)
-            .setAutoPlay(false)
-            .setPageTransformerStyle(TransformerStyle.DEPTH)
-            .setScrollDuration(1000)
-            .setOnPageClickListener { ToastUtils.showToast("点击了$it") }
-            .setHolderCreator { VoucherViewHolder() }
-            .create(list)
+                override fun onError(msg: String?) {
+                    ToastUtils.showToast(msg)
+                }
+            })
+
+
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.fl_back->{
+        when (v?.id) {
+            R.id.fl_back -> {
                 finish()
             }
-            R.id.btn_submit_voucher->{
-                ToastUtils.showToast("传")
+            R.id.btn_submit_voucher -> {
+                //选择图片
+                PictureSelector.create(this)
+                    .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+//                    .theme()//主题样式(不设置为默认样式) 也可参考demo values/styles下 例如：R.style.picture.white.style
+//                    .setPictureStyle(PictureParameterStyle())// 动态自定义相册主题  注意：此方法最好不要与.theme();同时存在， 二选一
+//                    .setPictureCropStyle()// 动态自定义裁剪主题
+//                    .setPictureWindowAnimationStyle()// 自定义相册启动退出动画
+                    .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项   参考Demo MainActivity中代码
+                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
+                    .isWeChatStyle(true)// 是否开启微信图片选择风格，此开关开启了才可使用微信主题！！！
+                    .maxSelectNum(5)// 最大图片选择数量 int
+                    .imageSpanCount(4)// 每行显示个数 int
+                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
+                    .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
+                    .previewImage(true)// 是否可预览图片 true or false
+                    .isCamera(true)// 是否显示拍照按钮 true or false
+                    .compress(true)// 是否压缩 true or false
+                    .isGif(false)// 是否显示gif图片 true or false
+                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
+                    .circleDimmedLayer(false)// 是否圆形裁剪 true or false
+                    .openClickSound(false)// 是否开启点击声音 true or false
+                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
+                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
+                    .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
+                    .isDragFrame(true)// 是否可拖动裁剪框(固定)
+                    .forResult { result ->
+                        //                        result?.forEachIndexed { index, localMedia ->
+                        LogUtil.e(TAG, "localMedia:${result[0].compressPath}")
+                        //上传oss
+                        val map = HashMap<String, RequestBody>()
+                        val path =
+                            RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
+                        map["path"] = path
+                        val file = File(result[0].compressPath)
+                        val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
+                        val formData = MultipartBody.Part.createFormData("file", file.name, body)
+
+                        NetClient.getInstance()
+                            .create(IApiService::class.java)
+                            .uploadImg(map, formData)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                            .subscribe(object : BaseObserver<UploadImgBean>() {
+                                override fun onSuccess(t: UploadImgBean?) {
+                                    t?.data?.let {
+                                        val hashMap = HashMap<String, String>()
+                                        hashMap["token"] = ConfigPreferences.instance.getToken()
+                                        hashMap["id"] = id
+                                        hashMap["url"] = t.data.webUrl
+                                        NetClient.getInstance()
+                                            .create(IApiService::class.java)
+                                            .editVoucher(
+                                                RequestBody.create(
+                                                    "application/json".toMediaTypeOrNull(),
+                                                    Gson().toJson(hashMap)
+                                                )
+                                            )
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                                            .subscribe(object : BaseObserver<BaseModel>() {
+                                                override fun onSuccess(t: BaseModel?) {
+                                                    ToastUtils.showToast("上传成功")
+                                                    finish()
+                                                }
+
+                                                override fun onError(msg: String?) {
+                                                    ToastUtils.showToast(msg)
+                                                }
+                                            })
+                                    }
+                                }
+
+                                override fun onError(msg: String?) {
+                                    ToastUtils.showToast(msg)
+                                }
+                            })
+//                        }
+                    }
             }
         }
     }

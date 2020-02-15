@@ -1,12 +1,7 @@
 package com.xishitong.supermember.view.fragment
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat.getSystemService
-import android.view.Gravity
 import android.view.View
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -21,9 +16,7 @@ import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
-import com.xishitong.supermember.util.DialogUtils
 import com.xishitong.supermember.util.ToastUtils
-import com.xishitong.supermember.util.UtilsBigDecimal
 import com.xishitong.supermember.view.activity.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -128,16 +121,27 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             }
             R.id.processing_order -> {
                 //处理中订单
-                startActivity(Intent(activity, ProcessingOrderActivity::class.java))
+                val intent = Intent(activity, OrderActivity::class.java)
+                intent.putExtra("type","100")
+                startActivity(intent)
             }
             R.id.completed_order -> {
                 //已完成订单
+                val intent = Intent(activity, OrderActivity::class.java)
+                intent.putExtra("type","200")
+                startActivity(intent)
             }
             R.id.fail_order -> {
                 //失败订单
+                val intent = Intent(activity, OrderActivity::class.java)
+                intent.putExtra("type","300")
+                startActivity(intent)
             }
             R.id.all_order -> {
                 //全部订单
+                val intent = Intent(activity, OrderActivity::class.java)
+                intent.putExtra("type","0")
+                startActivity(intent)
             }
             R.id.apply_invoice -> {
                 //申请开票

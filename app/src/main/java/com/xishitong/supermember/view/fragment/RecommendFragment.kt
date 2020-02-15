@@ -1,9 +1,9 @@
 package com.xishitong.supermember.view.fragment
 
 import android.content.Context
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
  * date : 2020-02-11 16:42
  * description :精品推荐fragment
  */
-class RecommendFragment : BaseFragment(), ViewPager.OnPageChangeListener {
+class RecommendFragment : BaseFragment(), androidx.viewpager.widget.ViewPager.OnPageChangeListener {
 
     private var mHomeViewPager: BannerViewPager<MutableList<CommonBean.DataBean.ListBean>, HomeViewHolder>? = null
     override fun setContentView(): Int {
@@ -86,10 +86,10 @@ class RecommendFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 }
 
 class HomeViewHolder: ViewHolder<MutableList<CommonBean.DataBean.ListBean>>, BaseQuickAdapter.OnItemClickListener {
-    private var recyclerView: RecyclerView? = null
+    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
     private var commonAdapter:CommonAdapter? = null
     override fun onBind(context: Context?, data: MutableList<CommonBean.DataBean.ListBean>?, position: Int, size: Int) {
-        recyclerView!!.layoutManager = GridLayoutManager(context, 5)
+        recyclerView!!.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 5)
         commonAdapter = CommonAdapter(data)
         commonAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         commonAdapter!!.isFirstOnly(false)
