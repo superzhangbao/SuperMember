@@ -3,6 +3,7 @@ package com.xishitong.supermember.view.fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.SystemClock
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +15,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.DetailOfMembershipAdapter
@@ -30,11 +32,13 @@ import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.util.DateUtil
 import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.activity.CheckVoucherActivity
 import com.xishitong.supermember.view.activity.CommonWebActivity
+import com.xishitong.supermember.view.activity.MainActivity
 import com.xishitong.supermember.view.activity.SearchActivity
 import com.xishitong.supermember.widget.OvalIndicatorView
 import com.zhpan.bannerview.BannerViewPager
@@ -47,6 +51,7 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
+import java.net.URLEncoder
 
 
 /**
@@ -60,6 +65,9 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     private var mBannerViewPager: BannerViewPager<BannerBean.DataBean, NetViewHolder>? = null
     private var bannerData: List<BannerBean.DataBean> = ArrayList()
     private val fragments: ArrayList<Fragment> = ArrayList()
+    private var startTimeList = listOf("00:00:00", "10:00:00", "14:00:00", "18:00:00", "20:00:00", "22:00:00")
+    private var endTimeList = listOf("09:59:59", "13:59:59", "17:59:59", "19:59:59", "21:59:59", "23:59:59")
+
     override fun setContentView(): Int {
         return R.layout.fragment_privilege
     }
@@ -141,6 +149,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     }
                     if (enName == "temai") {
                         //跳转到特卖tab
+                        (activity as MainActivity).selectNavigationItem()
                         return
                     }
                     if (enName == "chezhubang") {
@@ -151,7 +160,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                         startActivity(intent)
                         return
                     }
-                    val url = "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
+                    val url =
+                        "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
                     EventBus.getDefault().postSticky(
                         WebEvent(url, "车租帮", null)
                     )
@@ -165,19 +175,54 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
      * 初始化秒杀数据
      */
     private fun initFlashSale() {
-        recycler_view.layoutManager =
-            androidx.recyclerview.widget.GridLayoutManager(App.getInstance(), 3)
+        recycler_view.layoutManager = GridLayoutManager(App.getInstance(), 3)
         val flashSaleAdapter = FlashSaleAdapter(null)
         flashSaleAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         flashSaleAdapter.isFirstOnly(false)
         flashSaleAdapter.onItemClickListener = this
         flashSaleAdapter.bindToRecyclerView(recycler_view)
 
+        //计算参数
+        val nowTime = DateUtil.getYearTime(System.currentTimeMillis())
+        val split1 = nowTime.split(" ")
+        val split = split1[1].split(":")
+
+        var starTime = ""
+        var endTime = ""
+        try {
+            when (split[0].toInt()) {
+                in 0..10 -> {
+                    starTime = "${split1[0]} " + startTimeList[0]
+                    endTime = "${split1[0]} " + endTimeList[0]
+                }
+                in 10..14 -> {
+                    starTime = "${split1[0]} " + startTimeList[1]
+                    endTime = "${split1[0]} " + endTimeList[1]
+
+                }
+                in 14..18 -> {
+                    starTime = "${split1[0]} " + startTimeList[2]
+                    endTime = "${split1[0]} " + endTimeList[2]
+                }
+                in 18..20 -> {
+                    starTime = "${split1[0]} " + startTimeList[3]
+                    endTime = "${split1[0]} " + endTimeList[3]
+                }
+                in 20..22 -> {
+                    starTime = "${split1[0]} " + startTimeList[4]
+                    endTime = "${split1[0]} " + endTimeList[4]
+                }
+            }
+        } catch (e: Exception) {
+        }
+
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["productName"] = ""
-        hashMap["startTime"] = "2020-02-14 14:00:00"
-        hashMap["endTime"] = "2020-02-14 17:59:59"
+        hashMap["startTime"] = starTime
+        hashMap["endTime"] = endTime
+        LogUtil.e(TAG,starTime)
+        LogUtil.e(TAG,endTime)
         hashMap["status"] = "1"
         hashMap["page"] = "1"
         hashMap["limit"] = "6"
@@ -203,7 +248,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.search -> {
-                startActivity(Intent(activity,SearchActivity::class.java))
+                startActivity(Intent(activity, SearchActivity::class.java))
             }
             R.id.tab1 -> {
                 tv_tab1.background = resources.getDrawable(R.drawable.btn_login_bg)
@@ -263,31 +308,12 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        //限时秒杀跳转逻辑
-        /**
-         * export function handle2Recharge(pname, enName) {
-        if (enName === 'creditCard') {
-        // window.open('http://web.yunjuhe.vip/credit/list/v1.0/500696', '_blank')  UI说这样跳出去不好
-        window.location.href = 'http://web.yunjuhe.vip/credit/list/v1.0/500696';
-        return;
-        }
-        if (enName === 'temai') {
-        uni.switchTab({
-        url: '/pages/temai/temai'
-        });
-        return;
-        }
-        if (enName === 'chezhubang') {
-        window.location.href = 'https://st.czb365.com/v3_prod/?pft=92656476';
-        return;
-        }
-        uni.navigateTo({
-        url: '/pages/recharge/recharge2?pname=' + pname + '&enName=' + enName
-        });
-        }
-         */
         val data = adapter?.data as MutableList<SaleBean.DataBean.ListBean>?
-//        if (data[position])
+        val encode = URLEncoder.encode(Gson().toJson(data?.get(position)))
+        val url = "http://www.seniornet.cn/js/sjh5test/pages/temaidetail/temaidetail?good=$encode"
+        EventBus.getDefault().postSticky(WebEvent(url, "限时秒杀", null))
+        val intent = Intent(activity, CommonWebActivity::class.java)
+        startActivity(intent)
     }
 }
 

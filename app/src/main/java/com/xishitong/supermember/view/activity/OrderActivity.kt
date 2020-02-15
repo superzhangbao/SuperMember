@@ -1,9 +1,13 @@
 package com.xishitong.supermember.view.activity
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +31,7 @@ import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.util.DialogUtils
 import com.xishitong.supermember.util.GlideEngine
 import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,9 +48,12 @@ import java.io.File
  */
 class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemChildClickListener {
+
     private var type = "0"
     private var orderAdapter: OrderAdapter? = null
     private var listData: MutableList<OrderBean.DataBean.ListBean> = mutableListOf()
+//    private var courierNumberDialog:DialogUtils? = null
+
     override fun setContentView(): Int {
         return R.layout.activity_processing_order
     }
@@ -142,44 +150,43 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        val listBean = listData[position]
         when (view?.id) {
             R.id.tv_fail_reason -> {//失败原因
                 ToastUtils.showToast("失败原因")
-
             }
             R.id.tv_voucher -> {//凭证
                 when ((view as TextView).text) {
                     "上传凭证" -> {
                         //直接上传凭证
-                        uploadVoucher("${listData[position].id}")
+                        uploadVoucher("${listBean.id}")
                     }
                     "查看/修改凭证", "查看凭证" -> {
-                        val urlList = listData[position].urlList
+                        val urlList = listBean.urlList
                         if (urlList == null || urlList.size == 0) {
                             ToastUtils.showToast("无凭证")
                         } else {
-                            val type = if (listData[position].processStatus == "cw") {
+                            val type = if (listBean.processStatus == "cw") {
                                 0
                             } else {
                                 1
                             }
                             val intent = Intent(this, CheckVoucherActivity::class.java)
-                            intent.putExtra("id", "${listData[position].id}")
+                            intent.putExtra("id", "${listBean.id}")
                             intent.putExtra("type", type)
                             startActivity(intent)
-
                         }
                     }
                 }
             }
             R.id.tv_courier_number -> {//快递单号
-                ToastUtils.showToast("快递单号")
+                showCourierNumberDialog(listBean.courierNumber)
             }
             R.id.tv_receice_address -> {//收货地址
-                ToastUtils.showToast("收货地址")
+                showReceiveAddrDialog(listBean.addressName,listBean.addressPhone,listBean.addressGegion+listBean.addressDetailed)
             }
             R.id.tv_order_qrcode -> {//订单二维码
-                ToastUtils.showToast("订单二维码")
+                showQrCodeDialog(listBean.billId)
             }
         }
     }
@@ -207,58 +214,55 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
             .isDragFrame(true)// 是否可拖动裁剪框(固定)
             .forResult { result ->
-                val compressPath = result[0].compressPath
-                val file = File(compressPath)
+                //上传oss
+                val map = HashMap<String, RequestBody>()
+                val path =
+                    RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
+                map["path"] = path
+                val file = File(result[0].compressPath)
+                val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
+                val formData = MultipartBody.Part.createFormData("file", file.name, body)
 
-//                //上传oss
-//                val map = HashMap<String, RequestBody>()
-//                val path =
-//                    RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
-//                map["path"] = path
-//                val file = File(result[0].compressPath)
-//                val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
-//                val formData = MultipartBody.Part.createFormData("file", file.name, body)
-//
-//                NetClient.getInstance()
-//                    .create(IApiService::class.java)
-//                    .uploadImg(map, formData)
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
-//                    .subscribe(object : BaseObserver<UploadImgBean>() {
-//                        override fun onSuccess(t: UploadImgBean?) {
-//                            t?.data?.let {
-//                                val hashMap = HashMap<String, String>()
-//                                hashMap["token"] = ConfigPreferences.instance.getToken()
-//                                hashMap["id"] = id
-//                                hashMap["url"] = t.data.webUrl
-//                                NetClient.getInstance()
-//                                    .create(IApiService::class.java)
-//                                    .uploadVoucher(
-//                                        RequestBody.create(
-//                                            "application/json".toMediaTypeOrNull(),
-//                                            Gson().toJson(hashMap)
-//                                        )
-//                                    )
-//                                    .subscribeOn(Schedulers.io())
-//                                    .observeOn(AndroidSchedulers.mainThread())
-//                                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
-//                                    .subscribe(object : BaseObserver<BaseModel>() {
-//                                        override fun onSuccess(t: BaseModel?) {
-//                                            ToastUtils.showToast("上传成功")
-//                                        }
-//
-//                                        override fun onError(msg: String?) {
-//                                            ToastUtils.showToast(msg)
-//                                        }
-//                                    })
-//                            }
-//                        }
-//
-//                        override fun onError(msg: String?) {
-//                            ToastUtils.showToast(msg)
-//                        }
-//                    })
+                NetClient.getInstance()
+                    .create(IApiService::class.java)
+                    .uploadImg(map, formData)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                    .subscribe(object : BaseObserver<UploadImgBean>() {
+                        override fun onSuccess(t: UploadImgBean?) {
+                            t?.data?.let {
+                                val hashMap = HashMap<String, String>()
+                                hashMap["token"] = ConfigPreferences.instance.getToken()
+                                hashMap["id"] = id
+                                hashMap["url"] = t.data.webUrl
+                                NetClient.getInstance()
+                                    .create(IApiService::class.java)
+                                    .uploadVoucher(
+                                        RequestBody.create(
+                                            "application/json".toMediaTypeOrNull(),
+                                            Gson().toJson(hashMap)
+                                        )
+                                    )
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                                    .subscribe(object : BaseObserver<BaseModel>() {
+                                        override fun onSuccess(t: BaseModel?) {
+                                            ToastUtils.showToast("上传成功")
+                                        }
+
+                                        override fun onError(msg: String?) {
+                                            ToastUtils.showToast(msg)
+                                        }
+                                    })
+                            }
+                        }
+
+                        override fun onError(msg: String?) {
+                            ToastUtils.showToast(msg)
+                        }
+                    })
             }
     }
 }

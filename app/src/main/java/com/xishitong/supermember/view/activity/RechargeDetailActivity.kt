@@ -63,7 +63,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        recycler_view.layoutManager = LinearLayoutManager(this)
         detailAllAdapter = DetailAllAdapter(listData)
         detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         detailAllAdapter!!.isFirstOnly(false)
@@ -95,24 +95,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
                     return
                 }
                 if (data.status == 1 && data.courierNumber != null) {//快递单号
-                    val builder = DialogUtils.Builder(this)
-                    dialogUtils = builder.view(R.layout.dialog_courier_number)
-                        .cancelable(true)
-                        .gravity(Gravity.CENTER)
-                        .cancelTouchout(true)
-                        .addViewOnclick(R.id.tv_copy) {
-                            //获取剪贴板管理器：
-                            val cm: ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            // 创建普通字符型ClipData
-                            val mClipData = ClipData.newPlainText("Label", data.courierNumber)
-                            // 将ClipData内容放到系统剪贴板里。
-                            cm.primaryClip = mClipData
-                            ToastUtils.showToast("复制成功")
-                            dialogUtils?.dismiss()
-                        }
-                        .style(R.style.Dialog)
-                        .build()
-                    dialogUtils!!.show()
+                    showCourierNumberDialog(data.courierNumber)
                 }
             }
         }

@@ -99,6 +99,10 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         return false
     }
 
+    fun selectNavigationItem() {
+        bottom_navigation.selectedItemId = bottom_navigation.menu.getItem(1).itemId
+    }
+
     private fun switchFragment(index: Int) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.hide(fragments?.get(lastfragment)!!)//隐藏上个Fragment

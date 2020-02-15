@@ -89,4 +89,5 @@ dependencies {
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
     //noinspection GradleCompatible
 //    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.zxing:core:3.3.3'
 }
