@@ -20,3 +20,5 @@ const val PAY_MEMBERSHIP = "http://www.seniornet.cn/js/sjh5test/pages/equityrech
 const val VIP_AGREEMENT = "http://www.seniornet.cn/js/sjh5test/xstagreement/xstagreement"
 //我的-规则说明
 const val RULE = "http://www.seniornet.cn/js/sjh5test/pages/guize/guize"
+//列表每页数量
+const val LIMIT = 20

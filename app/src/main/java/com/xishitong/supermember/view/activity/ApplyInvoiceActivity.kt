@@ -36,9 +36,9 @@ import okhttp3.RequestBody
 class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private var type = 1//0个人  1企业
-    private var userInfo:UserBean.DataBean? = null
-    private var orderNo:String = ""
-    private var addressInfo:MyAddressBean.DataBean.ListBean? = null
+    private var userInfo: UserBean.DataBean? = null
+    private var orderNo: String = ""
+    private var addressInfo: MyAddressBean.DataBean.ListBean? = null
 
     companion object {
         var textSize = AbsoluteSizeSpan(13, true)
@@ -77,17 +77,17 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
 
     //获取用户的收件地址
     private fun getAddress() {
-        val hashMap = mapOf(Pair("token",ConfigPreferences.instance.getToken()))
+        val hashMap = mapOf(Pair("token", ConfigPreferences.instance.getToken()))
         NetClient.getInstance()
             .create(IApiService::class.java)
             .getAddressList(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(object :BaseObserver<MyAddressBean>(){
+            .subscribe(object : BaseObserver<MyAddressBean>() {
                 override fun onSuccess(t: MyAddressBean?) {
-                    t?.data?.list?.let {lists->
-                        if (lists.size>0) {
+                    t?.data?.list?.let { lists ->
+                        if (lists.size > 0) {
                             addressInfo = lists[0]
                             setAddress()
                         }
@@ -123,7 +123,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
     }
 
     private fun getUserInfo() {
-        val hashMap = HashMap<String,Any>()
+        val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         NetClient.getInstance()
             .create(IApiService::class.java)
@@ -131,9 +131,9 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(object :BaseObserver<UserBean>(){
+            .subscribe(object : BaseObserver<UserBean>() {
                 override fun onSuccess(t: UserBean?) {
-                    t?.data?.let {userBean->
+                    t?.data?.let { userBean ->
                         userInfo = userBean
                         setUserData()
                     }
@@ -150,8 +150,8 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
             R.id.fl_back -> {
                 finish()
             }
-            R.id.ll_add_addr->{
-                startActivity(Intent(this,ModifyAddressActivity::class.java))
+            R.id.ll_add_addr -> {
+                startActivity(Intent(this, ModifyAddressActivity::class.java))
             }
             R.id.btn_submit -> {
                 //校验数据
@@ -200,22 +200,31 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                     ToastUtils.showToast("请输入银行账户")
                     return
                 }
+                showLoading()
                 val hashMap = HashMap<String, Any>()
                 hashMap["token"] = ConfigPreferences.instance.getToken()
                 hashMap["orderNo"] = orderNo
                 hashMap["type"] = "2"//发票类型 1增值税专用发票 2普通发票 3专业发票
                 hashMap["content"] = "信息技术服务类"
                 hashMap["title"] = "$type"
-                hashMap["addressName"] = name
-                hashMap["addressPhone"] = phone
-                hashMap["addressGegion"] = ""
-                hashMap["addressDetailed"] = ""
-                hashMap["companyName"] = ""
-                hashMap["companyNumber"] = ""
-                hashMap["moreAddress"] = ""
-                hashMap["moreMobile"] = ""
-                hashMap["moreBank"] = ""
-                hashMap["moreBankAccount"] = ""
+                hashMap["addressName"] = addressInfo?.name ?: ""
+                hashMap["addressPhone"] = addressInfo?.phone ?: ""
+                hashMap["addressGegion"] = addressInfo?.gegion ?: ""
+                hashMap["addressDetailed"] = addressInfo?.detailed ?: ""
+                hashMap["companyName"] = if (type == 1) {
+                    name
+                } else {
+                    ""
+                }
+                hashMap["companyNumber"] = if (type == 1) {
+                    idCardNo
+                } else {
+                    ""
+                }
+                hashMap["moreAddress"] = homeAddr
+                hashMap["moreMobile"] = phone
+                hashMap["moreBank"] = depositBank
+                hashMap["moreBankAccount"] = bankAccount
                 NetClient.getInstance()
                     .create(IApiService::class.java)
                     .applyInvoice(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
@@ -224,11 +233,13 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                     .compose(bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(object : BaseObserver<BaseModel>() {
                         override fun onSuccess(t: BaseModel?) {
+                            hideLoading()
                             ToastUtils.showToast("申请成功")
                             finish()
                         }
 
                         override fun onError(msg: String?) {
+                            hideLoading()
                             ToastUtils.showToast(msg)
                         }
                     })
@@ -310,8 +321,8 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
 
     //设置用户信息
     private fun setUserData() {
-        when(type) {
-            1->{
+        when (type) {
+            1 -> {
                 userInfo?.let {
                     et_name.setText(userInfo!!.name)
                     et_idcard_number.setText(userInfo!!.idCard)
@@ -319,7 +330,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                     et_bank_account.setText(userInfo!!.bankCard)
                 }
             }
-            2->{
+            2 -> {
                 et_name.setText("")
                 et_idcard_number.setText("")
                 et_phone_number.setText("")

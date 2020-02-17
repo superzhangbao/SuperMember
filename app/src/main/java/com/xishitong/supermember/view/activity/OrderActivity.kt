@@ -1,30 +1,32 @@
 package com.xishitong.supermember.view.activity
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.Manifest
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.entity.LocalMedia
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.OrderAdapter
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.BaseModel
+import com.xishitong.supermember.base.LIMIT
 import com.xishitong.supermember.bean.OrderBean
 import com.xishitong.supermember.bean.UploadImgBean
 import com.xishitong.supermember.network.BaseObserver
@@ -47,12 +49,13 @@ import java.io.File
  * 订单Activity
  */
 class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
-    BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemChildClickListener {
+    BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemChildClickListener, OnLoadMoreListener {
 
     private var type = "0"
     private var orderAdapter: OrderAdapter? = null
     private var listData: MutableList<OrderBean.DataBean.ListBean> = mutableListOf()
-//    private var courierNumberDialog:DialogUtils? = null
+    private var page = 1
+    private var choosePicImageDialog: DialogUtils? = null
 
     override fun setContentView(): Int {
         return R.layout.activity_processing_order
@@ -104,8 +107,9 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     }
 
     private fun initSmartRefresh() {
+        smart_refresh.setEnableLoadMore(true)
         smart_refresh.setOnRefreshListener(this)
-        smart_refresh.setEnableLoadMore(false)
+        smart_refresh.setOnLoadMoreListener(this)
         smart_refresh.autoRefresh()
     }
 
@@ -119,11 +123,12 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
         orderAdapter?.isUseEmpty(true)
+        page = 1
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["status"] = type
-        hashMap["page"] = "1"
-        hashMap["limit"] = "20"
+        hashMap["page"] = "$page"
+        hashMap["limit"] = LIMIT
         NetClient.getInstance()
             .create(IApiService::class.java)
             .getOrderList(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
@@ -132,8 +137,16 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<OrderBean>() {
                 override fun onSuccess(t: OrderBean?) {
-                    smart_refresh.finishRefresh()
+//                    smart_refresh.finishRefresh()
                     t?.data?.let {
+                        it.list?.let { list ->
+                            if (list.size < LIMIT) {
+                                smart_refresh.finishRefreshWithNoMoreData()
+                            } else {
+                                smart_refresh.finishRefresh()
+                                smart_refresh.setNoMoreData(false)
+                            }
+                        }
                         listData = it.list
                         orderAdapter!!.setNewData(listData)
                     }
@@ -141,6 +154,45 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
 
                 override fun onError(msg: String?) {
                     smart_refresh.finishRefresh()
+                    ToastUtils.showToast(msg)
+                }
+            })
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout) {
+        ToastUtils.showToast("正在加载")
+        orderAdapter?.isUseEmpty(true)
+        page++
+        val hashMap = HashMap<String, Any>()
+        hashMap["token"] = ConfigPreferences.instance.getToken()
+        hashMap["status"] = type
+        hashMap["page"] = "$page"
+        hashMap["limit"] = LIMIT
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .getOrderList(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(object : BaseObserver<OrderBean>() {
+                override fun onSuccess(t: OrderBean?) {
+//                    smart_refresh.finishLoadMore()
+                    t?.data?.let {
+                        it.list?.let { list ->
+                            if (list.size < LIMIT) {
+                                smart_refresh.finishLoadMoreWithNoMoreData()
+                            } else {
+                                smart_refresh.finishRefresh()
+                            }
+                            listData.addAll(it.list)
+                            orderAdapter!!.setNewData(listData)
+                        }
+
+                    }
+                }
+
+                override fun onError(msg: String?) {
+                    smart_refresh.finishLoadMore()
                     ToastUtils.showToast(msg)
                 }
             })
@@ -159,7 +211,14 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                 when ((view as TextView).text) {
                     "上传凭证" -> {
                         //直接上传凭证
-                        uploadVoucher("${listBean.id}")
+                        RxPermissions(this)
+                            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .doOnNext {
+                                if (it) {
+                                    uploadVoucher("${listBean.id}")
+                                }
+                            }
+                            .subscribe()
                     }
                     "查看/修改凭证", "查看凭证" -> {
                         val urlList = listBean.urlList
@@ -183,7 +242,11 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                 showCourierNumberDialog(listBean.courierNumber)
             }
             R.id.tv_receice_address -> {//收货地址
-                showReceiveAddrDialog(listBean.addressName,listBean.addressPhone,listBean.addressGegion+listBean.addressDetailed)
+                showReceiveAddrDialog(
+                    listBean.addressName,
+                    listBean.addressPhone,
+                    listBean.addressGegion + listBean.addressDetailed
+                )
             }
             R.id.tv_order_qrcode -> {//订单二维码
                 showQrCodeDialog(listBean.billId)
@@ -192,9 +255,48 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     }
 
     private fun uploadVoucher(id: String) {
+        val builder = DialogUtils.Builder(this)
+        choosePicImageDialog = builder.view(R.layout.dialog_selectsex)
+            .cancelable(true)
+            .gravity(Gravity.BOTTOM)
+            .cancelTouchout(false)
+            .style(R.style.Dialog)
+            .addViewOnclick(R.id.tv_man) {
+                selectPicFromCamera(id)
+                choosePicImageDialog?.dismiss()
+            }
+            .addViewOnclick(R.id.tv_women) {
+                selectPicFromAlbum(id)
+                choosePicImageDialog?.dismiss()
+            }
+            .addViewOnclick(R.id.tv_cancle) { choosePicImageDialog?.dismiss() }
+            .build()
+        choosePicImageDialog!!.show()
+    }
+
+    private fun selectPicFromCamera(id: String) {
+        RxPermissions(this)
+            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            .doOnNext {
+                if (!it) {
+                    ToastUtils.showToast("没有相机权限")
+                } else {
+                    PictureSelector.create(this)
+                        .openCamera(PictureMimeType.ofImage())
+                        .loadImageEngine(GlideEngine.createGlideEngine()) // 请参考Demo GlideEngine.java
+                        .compress(true)
+                        .forResult { result ->
+                            //上传oss
+                            uploadImage(result, id)
+                        }
+                }
+            }
+            .subscribe()
+    }
+
+    private fun selectPicFromAlbum(id: String) {
         PictureSelector.create(this)
             .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-    //                    .theme()//主题样式(不设置为默认样式) 也可参考demo values/styles下 例如：R.style.picture.white.style
             .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项   参考Demo MainActivity中代码
             .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
             .isWeChatStyle(true)// 是否开启微信图片选择风格，此开关开启了才可使用微信主题！！！
@@ -215,54 +317,74 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .isDragFrame(true)// 是否可拖动裁剪框(固定)
             .forResult { result ->
                 //上传oss
-                val map = HashMap<String, RequestBody>()
-                val path =
-                    RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
-                map["path"] = path
-                val file = File(result[0].compressPath)
-                val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
-                val formData = MultipartBody.Part.createFormData("file", file.name, body)
-
-                NetClient.getInstance()
-                    .create(IApiService::class.java)
-                    .uploadImg(map, formData)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                    .subscribe(object : BaseObserver<UploadImgBean>() {
-                        override fun onSuccess(t: UploadImgBean?) {
-                            t?.data?.let {
-                                val hashMap = HashMap<String, String>()
-                                hashMap["token"] = ConfigPreferences.instance.getToken()
-                                hashMap["id"] = id
-                                hashMap["url"] = t.data.webUrl
-                                NetClient.getInstance()
-                                    .create(IApiService::class.java)
-                                    .uploadVoucher(
-                                        RequestBody.create(
-                                            "application/json".toMediaTypeOrNull(),
-                                            Gson().toJson(hashMap)
-                                        )
-                                    )
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                                    .subscribe(object : BaseObserver<BaseModel>() {
-                                        override fun onSuccess(t: BaseModel?) {
-                                            ToastUtils.showToast("上传成功")
-                                        }
-
-                                        override fun onError(msg: String?) {
-                                            ToastUtils.showToast(msg)
-                                        }
-                                    })
-                            }
-                        }
-
-                        override fun onError(msg: String?) {
-                            ToastUtils.showToast(msg)
-                        }
-                    })
+                uploadImage(result, id)
             }
+    }
+
+    private fun uploadImage(result: MutableList<LocalMedia>, id: String) {
+        val map = HashMap<String, RequestBody>()
+        val path =
+            RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
+        map["path"] = path
+        val file = File(result[0].compressPath)
+        val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
+        val formData = MultipartBody.Part.createFormData("file", file.name, body)
+        showLoading()
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .uploadImg(map, formData)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(object : BaseObserver<UploadImgBean>() {
+                override fun onSuccess(t: UploadImgBean?) {
+                    if (t?.data != null) {
+                        val hashMap = HashMap<String, String>()
+                        hashMap["token"] = ConfigPreferences.instance.getToken()
+                        hashMap["id"] = id
+                        hashMap["url"] = t.data.webUrl
+                        NetClient.getInstance()
+                            .create(IApiService::class.java)
+                            .uploadVoucher(
+                                RequestBody.create(
+                                    "application/json".toMediaTypeOrNull(),
+                                    Gson().toJson(hashMap)
+                                )
+                            )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                            .subscribe(object : BaseObserver<BaseModel>() {
+                                override fun onSuccess(t: BaseModel?) {
+                                    hideLoading()
+                                    ToastUtils.showToast("上传成功")
+                                    //刷新列表
+                                    smart_refresh.autoRefresh()
+                                }
+
+                                override fun onError(msg: String?) {
+                                    hideLoading()
+                                    ToastUtils.showToast(msg)
+                                }
+                            })
+                    } else {
+                        hideLoading()
+                    }
+                }
+
+                override fun onError(msg: String?) {
+                    hideLoading()
+                    ToastUtils.showToast(msg)
+                }
+            })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        choosePicImageDialog?.let {
+            if (choosePicImageDialog!!.isShowing) {
+                choosePicImageDialog!!.dismiss()
+            }
+        }
     }
 }

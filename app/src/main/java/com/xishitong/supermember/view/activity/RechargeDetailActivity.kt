@@ -1,15 +1,11 @@
 package com.xishitong.supermember.view.activity
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
@@ -42,7 +38,6 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     private var detailAllAdapter: DetailAllAdapter? = null
     private var emptyView: View? = null
     private var listData: List<BalanceBean.DataBean.ListBean> = ArrayList()
-    private var dialogUtils: DialogUtils? = null
 
     override fun setContentView(): Int {
         return R.layout.activity_recharge_detail
@@ -78,6 +73,11 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     private fun initSmartRefresh() {
         smart_refresh.setOnRefreshListener(this)
         smart_refresh.setEnableLoadMore(false)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         smart_refresh.autoRefresh()
     }
 
@@ -136,15 +136,6 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
         when (v?.id) {
             R.id.fl_back -> {
                 finish()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        dialogUtils?.let {
-            if (it.isShowing) {
-                it.dismiss()
             }
         }
     }

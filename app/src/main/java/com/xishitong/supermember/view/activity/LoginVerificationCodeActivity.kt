@@ -93,12 +93,14 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
         inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
         et!!.forEachIndexed { index, _ ->
             val x = index
+            LogUtil.e(TAG,"addTextChangedListener:$index")
             et!![index].addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    LogUtil.e(TAG,"s:$s====")
                     if (s.toString().length == 1) {
                         if (x == et!!.size-1) {
                             et!![et!!.size - 1].isFocusable = true
@@ -122,6 +124,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
             })
 
             et!![x].setOnKeyListener { v, keyCode, event ->
+                LogUtil.e(TAG,"keyCode:$keyCode====event${event.keyCode}")
                 if (event.keyCode == KeyEvent.KEYCODE_BACK) {
                     finish()
                     return@setOnKeyListener false
@@ -158,6 +161,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
      * 登陆
      */
     private fun login() {
+        showLoading()
         val code1 = et_one.text.toString().trim()
         val code2 = et_two.text.toString().trim()
         val code3 = et_three.text.toString().trim()
@@ -174,6 +178,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<LoginBean>() {
                 override fun onSuccess(t: LoginBean?) {
+                    hideLoading()
                     t?.data?.let {
                         ConfigPreferences.instance.setLoginState(true)
                         //保存token
@@ -187,6 +192,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
                 }
 
                 override fun onError(msg: String?) {
+                    hideLoading()
                     ToastUtils.showToast(msg)
                 }
             })

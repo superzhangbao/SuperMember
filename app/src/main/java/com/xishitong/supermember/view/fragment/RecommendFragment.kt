@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
  * date : 2020-02-11 16:42
  * description :精品推荐fragment
  */
-class RecommendFragment : BaseFragment(), androidx.viewpager.widget.ViewPager.OnPageChangeListener {
+class RecommendFragment : BaseFragment(), ViewPager.OnPageChangeListener {
 
     private var mHomeViewPager: BannerViewPager<MutableList<CommonBean.DataBean.ListBean>, HomeViewHolder>? = null
     override fun setContentView(): Int {
@@ -86,10 +86,10 @@ class RecommendFragment : BaseFragment(), androidx.viewpager.widget.ViewPager.On
 }
 
 class HomeViewHolder: ViewHolder<MutableList<CommonBean.DataBean.ListBean>>, BaseQuickAdapter.OnItemClickListener {
-    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
     private var commonAdapter:CommonAdapter? = null
     override fun onBind(context: Context?, data: MutableList<CommonBean.DataBean.ListBean>?, position: Int, size: Int) {
-        recyclerView!!.layoutManager = androidx.recyclerview.widget.GridLayoutManager(context, 5)
+        recyclerView!!.layoutManager = GridLayoutManager(context, 5)
         commonAdapter = CommonAdapter(data)
         commonAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         commonAdapter!!.isFirstOnly(false)

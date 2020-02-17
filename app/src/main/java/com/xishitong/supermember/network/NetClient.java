@@ -46,7 +46,7 @@ public class NetClient {
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)//写操作 超时时间
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)//读操作 超时时间
                 .retryOnConnectionFailure(RETRY_ONCONNECTION_FAILURE)
-                .sslSocketFactory(HttpSLL.getAllSLLContext().getSocketFactory())          //忽略https证书
+//                .sslSocketFactory(HttpSLL.getAllSLLContext().getSocketFactory())          //忽略https证书
                 .build();
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)

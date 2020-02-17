@@ -47,7 +47,6 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
 
     override fun init(savedInstanceState: Bundle?) {
         initToolBar()
-        initView()
         initProvinceData()
     }
 
@@ -79,16 +78,9 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
         btn_submit.setOnClickListener(this)
     }
 
-    private fun initView() {
-
-
-
-
-    }
-
     private fun initProvinceData() {
         Observable.just(1)
-            .subscribeOn(Schedulers.computation())
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .doOnNext {
@@ -142,6 +134,7 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun modifyOrDeleteAddr(name: String, phone: String, location: String, detailAddr: String, status: Int) {
+        showLoading()
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["addressName"] = name
@@ -158,10 +151,12 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<BaseModel>() {
                 override fun onSuccess(t: BaseModel?) {
+                    hideLoading()
                     finish()
                 }
 
                 override fun onError(msg: String?) {
+                    hideLoading()
                     ToastUtils.showToast(msg)
                 }
             })
@@ -171,6 +166,7 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
      * 提交新地址
      */
     private fun submitNewAddr(name: String, phone: String, location: String, detailAddr: String) {
+        showLoading()
         val hashMap = HashMap<String, String>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["addressName"] = name
@@ -185,10 +181,12 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<BaseModel>() {
                 override fun onSuccess(t: BaseModel?) {
+                    hideLoading()
                     finish()
                 }
 
                 override fun onError(msg: String?) {
+                    hideLoading()
                     ToastUtils.showToast(msg)
                 }
             })

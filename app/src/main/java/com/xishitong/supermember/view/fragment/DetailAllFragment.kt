@@ -53,7 +53,7 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
     }
 
     private fun initRecyclerView() {
-        recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
         detailAllAdapter = DetailAllAdapter(listData)
         detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         detailAllAdapter!!.isFirstOnly(false)

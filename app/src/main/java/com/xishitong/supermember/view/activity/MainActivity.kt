@@ -39,14 +39,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private fun requestPermission() {
         AgentWebConfig.debug()
         RxPermissions(this)
-            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .doOnNext {
-                if (it) {
-                    ToastUtils.showToast("已获得权限")
-                } else {
-                    ToastUtils.showToast("未获得权限")
-                }
-            }
+            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA)
             .subscribe()
     }
 

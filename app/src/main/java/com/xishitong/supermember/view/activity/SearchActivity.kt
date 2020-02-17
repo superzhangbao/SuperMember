@@ -52,12 +52,14 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
     }
 
     private fun getHotData(searchAdapter: SearchAdapter) {
+        showLoading()
         Observable.just(1)
-            .delay(2, TimeUnit.SECONDS)
+            .delay(1, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .doOnNext {
+                hideLoading()
                 searchAdapter.setNewData(tags)
             }
             .subscribe()

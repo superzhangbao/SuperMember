@@ -41,6 +41,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
     var mReceiveAddrDialog: DialogUtils? = null
     var mQrCodeDialog: DialogUtils? = null
     private var mSyncEncodeQRCode: Bitmap? = null
+    protected var mLoadingView:LoadingViewUtils? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +57,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
             }
         }
         setContentView(View.inflate(this, setContentView(), null))
+        mLoadingView = LoadingViewUtils(this)
         init(savedInstanceState)
         EventBus.getDefault().register(this)
     }
@@ -96,6 +98,17 @@ abstract class BaseActivity : RxAppCompatActivity() {
                 mReceiveAddrDialog!!.dismiss()
             }
         }
+        mLoadingView?.let {
+            mLoadingView!!.dismiss()
+        }
+    }
+
+    protected fun showLoading() {
+        mLoadingView?.show()
+    }
+
+    protected fun hideLoading() {
+        mLoadingView?.dismiss()
     }
 
     protected fun showReceiveAddrDialog(name:String,phone:String,address:String) {

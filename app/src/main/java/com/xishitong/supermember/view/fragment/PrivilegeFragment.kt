@@ -175,7 +175,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
      * 初始化秒杀数据
      */
     private fun initFlashSale() {
-        recycler_view.layoutManager = GridLayoutManager(App.getInstance(), 3)
+        recycler_view.layoutManager = GridLayoutManager(activity, 3)
         val flashSaleAdapter = FlashSaleAdapter(null)
         flashSaleAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
         flashSaleAdapter.isFirstOnly(false)

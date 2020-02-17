@@ -26,7 +26,7 @@ import java.lang.reflect.Field
 class DetailOfMembershipActivity : BaseActivity(), TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>,
     View.OnClickListener {
 
-    private val fragments: ArrayList<androidx.fragment.app.Fragment> = ArrayList()
+    private val fragments: ArrayList<Fragment> = ArrayList()
     override fun setContentView(): Int {
             return R.layout.activity_detail_of_membership
     }
