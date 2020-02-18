@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.DetailAllAdapter
 import com.xishitong.supermember.base.BaseFragment
 import com.xishitong.supermember.base.DETAIL_TYPE
+import com.xishitong.supermember.base.LIMIT
 import com.xishitong.supermember.bean.BalanceBean
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
@@ -32,12 +34,14 @@ import okhttp3.RequestBody
  *  description :
  */
 class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
-    BaseQuickAdapter.OnItemChildClickListener, OnRefreshListener {
+    BaseQuickAdapter.OnItemChildClickListener, OnRefreshListener, OnLoadMoreListener {
 
     private var detailAllAdapter: DetailAllAdapter? = null
     private var emptyView: View? = null
-    private var listData: List<BalanceBean.DataBean.ListBean> = ArrayList()
+    private var listData: MutableList<BalanceBean.DataBean.ListBean> = ArrayList()
     private var type = "0"
+    private var page = 1
+
     override fun setContentView(): Int {
         return R.layout.fragment_detail_all
     }
@@ -66,25 +70,25 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
     }
 
     private fun initSmartRefresh() {
+        smart_refresh.setEnableLoadMore(true)
         smart_refresh.setOnRefreshListener(this)
-        smart_refresh.setEnableLoadMore(false)
+        smart_refresh.setOnLoadMoreListener(this)
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        ToastUtils.showToast("点击了$position")
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         when (view?.id) {
             R.id.tv_all -> {
                 val data = listData[position]
-                if (data.status == 0 && data.type ==1) {//申请发票
+                if (data.status == 0 && data.type == 1) {//申请发票
                     val intent = Intent(activity, ApplyInvoiceActivity::class.java)
                     intent.putExtra("orderNo", data.billId)
                     startActivity(intent)
                     return
                 }
-                if (data.status == 1 && data.courierNumber!= null) {//快递单号
+                if (data.status == 1 && data.courierNumber != null) {//快递单号
                     ToastUtils.showToast("快递单号")
                 }
             }
@@ -93,11 +97,12 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
         detailAllAdapter?.isUseEmpty(true)
+        page = 1
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["status"] = type
-        hashMap["page"] = 1
-        hashMap["limit"] = 10
+        hashMap["page"] = page
+        hashMap["limit"] = LIMIT
         NetClient.getInstance()
             .create(IApiService::class.java)
             .getBalanceList(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
@@ -106,9 +111,60 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
             .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
             .subscribe(object : BaseObserver<BalanceBean>() {
                 override fun onSuccess(t: BalanceBean?) {
-                    smart_refresh.finishRefresh()
+//                    smart_refresh.finishRefresh()
                     t?.data?.list?.let { list ->
                         listData = when (type) {
+                            "0" -> {
+                                list
+                            }
+                            "1" -> {
+                                list.filter { listBean ->
+                                    listBean.type == 1
+                                }.toMutableList()
+                            }
+                            "2" -> {
+                                list.filter { listBean ->
+                                    listBean.type == 2
+                                }.toMutableList()
+                            }
+                            else -> listData
+                        }
+                        if (listData.size < LIMIT) {
+                            smart_refresh.finishRefreshWithNoMoreData()
+                        } else {
+                            smart_refresh.finishRefresh()
+                            smart_refresh.setNoMoreData(false)
+                        }
+                        detailAllAdapter!!.setNewData(listData)
+                    }
+                }
+
+                override fun onError(msg: String?) {
+                    smart_refresh.finishRefresh()
+                    ToastUtils.showToast(msg)
+                }
+            })
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout) {
+        detailAllAdapter?.isUseEmpty(true)
+        page++
+        val hashMap = HashMap<String, Any>()
+        hashMap["token"] = ConfigPreferences.instance.getToken()
+        hashMap["status"] = type
+        hashMap["page"] = page
+        hashMap["limit"] = LIMIT
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .getBalanceList(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+            .subscribe(object : BaseObserver<BalanceBean>() {
+                override fun onSuccess(t: BalanceBean?) {
+//                    smart_refresh.finishRefresh()
+                    t?.data?.list?.let { list ->
+                        val newList = when (type) {
                             "0" -> {
                                 list
                             }
@@ -122,8 +178,14 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
                                     listBean.type == 2
                                 }
                             }
-                            else -> listData
+                            else -> list
                         }
+                        if (newList.size < LIMIT) {
+                            smart_refresh.finishLoadMoreWithNoMoreData()
+                        } else {
+                            smart_refresh.finishRefresh()
+                        }
+                        listData.addAll(newList)
                         detailAllAdapter!!.setNewData(listData)
                     }
                 }

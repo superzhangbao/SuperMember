@@ -23,8 +23,7 @@ import java.lang.reflect.Field
 /**
  * 会费明细activity
  */
-class DetailOfMembershipActivity : BaseActivity(), TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>,
-    View.OnClickListener {
+class DetailOfMembershipActivity : BaseActivity(), View.OnClickListener {
 
     private val fragments: ArrayList<Fragment> = ArrayList()
     override fun setContentView(): Int {
@@ -75,7 +74,6 @@ class DetailOfMembershipActivity : BaseActivity(), TabLayout.BaseOnTabSelectedLi
         fragments.add(detailAllFragment3)
 
         view_pager.adapter = DetailOfMembershipAdapter(supportFragmentManager, fragments)
-        tablayout.addOnTabSelectedListener(this)
         setTabLayoutIndicatorWidth(20.0f)
         tablayout.setupWithViewPager(view_pager)
     }
@@ -86,18 +84,6 @@ class DetailOfMembershipActivity : BaseActivity(), TabLayout.BaseOnTabSelectedLi
                 finish()
             }
         }
-    }
-
-    override fun onTabReselected(p0: TabLayout.Tab?) {
-
-    }
-
-    override fun onTabUnselected(p0: TabLayout.Tab?) {
-
-    }
-
-    override fun onTabSelected(p0: TabLayout.Tab?) {
-        LogUtil.e("onTabSelected${p0!!.position}")
     }
 
     /**

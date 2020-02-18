@@ -107,7 +107,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             it.setSpan(UnderlineSpan(), 15, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT,"禧世通超级会员协议", null))
+                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT,null))
                     val intent = Intent(this@LoginActivity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }
@@ -119,10 +119,5 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        LogUtil.e(TAG,"onDestroy")
     }
 }

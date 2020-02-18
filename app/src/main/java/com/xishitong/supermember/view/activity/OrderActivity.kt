@@ -127,7 +127,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["status"] = type
-        hashMap["page"] = "$page"
+        hashMap["page"] = page
         hashMap["limit"] = LIMIT
         NetClient.getInstance()
             .create(IApiService::class.java)
@@ -160,13 +160,12 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     }
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
-        ToastUtils.showToast("正在加载")
         orderAdapter?.isUseEmpty(true)
         page++
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["status"] = type
-        hashMap["page"] = "$page"
+        hashMap["page"] = page
         hashMap["limit"] = LIMIT
         NetClient.getInstance()
             .create(IApiService::class.java)
@@ -184,7 +183,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             } else {
                                 smart_refresh.finishRefresh()
                             }
-                            listData.addAll(it.list)
+                            listData.addAll(list)
                             orderAdapter!!.setNewData(listData)
                         }
 

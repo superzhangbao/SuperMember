@@ -23,6 +23,7 @@ import com.xishitong.supermember.adapter.FlashSaleAdapter
 import com.xishitong.supermember.base.APPLY_FOR_MEMBERSHIP
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseFragment
+import com.xishitong.supermember.base.LIMITED_SECKILL
 import com.xishitong.supermember.bean.BannerBean
 import com.xishitong.supermember.bean.BannerDataBean
 import com.xishitong.supermember.bean.CommonBean
@@ -140,9 +141,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     val enName = bannerData[position].enName
                     val pName = bannerData[position].parentName
                     if (enName == "creditCard") {
-                        EventBus.getDefault().postSticky(
-                            WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696", "信用卡", null)
-                        )
+                        EventBus.getDefault().postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696",  null))
                         val intent = Intent(activity, CommonWebActivity::class.java)
                         startActivity(intent)
                         return
@@ -153,18 +152,14 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                         return
                     }
                     if (enName == "chezhubang") {
-                        EventBus.getDefault().postSticky(
-                            WebEvent("https://st.czb365.com/v3_prod/?pft=92656476", "车租帮", null)
-                        )
+                        EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476",  null))
                         val intent = Intent(activity, CommonWebActivity::class.java)
                         startActivity(intent)
                         return
                     }
                     val url =
                         "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
-                    EventBus.getDefault().postSticky(
-                        WebEvent(url, "车租帮", null)
-                    )
+                    EventBus.getDefault().postSticky(WebEvent(url,  null))
                     val intent = Intent(activity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }
@@ -309,9 +304,9 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         val data = adapter?.data as MutableList<SaleBean.DataBean.ListBean>?
-        val encode = URLEncoder.encode(Gson().toJson(data?.get(position)))
-        val url = "http://www.seniornet.cn/js/sjh5test/pages/temaidetail/temaidetail?good=$encode"
-        EventBus.getDefault().postSticky(WebEvent(url, "限时秒杀", null))
+        val id = data?.get(position)?.id
+        val url = "$LIMITED_SECKILL$id"
+        EventBus.getDefault().postSticky(WebEvent(url, null))
         val intent = Intent(activity, CommonWebActivity::class.java)
         startActivity(intent)
     }

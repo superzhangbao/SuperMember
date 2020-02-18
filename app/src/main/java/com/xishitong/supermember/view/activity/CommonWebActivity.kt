@@ -1,14 +1,18 @@
 package com.xishitong.supermember.view.activity
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.LinearLayout
 import com.gyf.immersionbar.ImmersionBar
 import com.just.agentweb.AgentWeb
 import com.just.agentweb.AgentWebConfig
+import com.just.agentweb.MiddlewareWebChromeBase
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.event.WebEvent
@@ -23,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class CommonWebActivity : BaseActivity(), View.OnClickListener {
     private var mAgentWeb: AgentWeb? = null
+    private var mMiddleWareWebChrome: MiddlewareWebChromeBase? = null
 
     override fun setContentView(): Int {
         return R.layout.activity_common_web
@@ -37,18 +42,20 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
         ImmersionBar.with(this).statusBarDarkFont(true).init()
         rl_toobar.setBackgroundColor(Color.WHITE)
         fl_back.visibility = View.VISIBLE
-        tv_title.text = getString(R.string.receiving_address)
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
         fl_back.setOnClickListener(this)
     }
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
     fun onWebEvent(webEvent: WebEvent) {
-        tv_title.text = webEvent.title
         val url = if (webEvent.token == null) {
             webEvent.url
         } else {
-            "${webEvent.url}${webEvent.token}"
+            if (webEvent.url.contains("?")) {
+                "${webEvent.url}&token=${webEvent.token}"
+            } else {
+                "${webEvent.url}?token=${webEvent.token}"
+            }
         }
         initAgentWeb(url)
     }
@@ -64,6 +71,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
             )
             .useDefaultIndicator()
             .setMainFrameErrorView(R.layout.webview_error, R.id.tv_reload)
+            .useMiddlewareWebChrome(getMiddleWareWebChrome())
             .createAgentWeb()
             .ready()
             .go(url)
@@ -77,6 +85,25 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
+
+    private fun getMiddleWareWebChrome(): MiddlewareWebChromeBase {
+        return object : MiddlewareWebChromeBase() {
+            override fun onReceivedTitle(view: WebView, title: String) {
+                super.onReceivedTitle(view, title)
+                setTitle(view, title)
+            }
+        }.also { this.mMiddleWareWebChrome = it }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setTitle(view: WebView, title: String) {
+        if (!TextUtils.isEmpty(title) && title.length > 10) {
+            tv_title.text = "${title.substring(0, 10)}..."
+        }else{
+            tv_title.text = title
+        }
+    }
+
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (mAgentWeb?.handleKeyEvent(keyCode, event)!!) {
@@ -92,5 +119,10 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     override fun onResume() {
         mAgentWeb?.webLifeCycle?.onResume()
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mAgentWeb?.webLifeCycle?.onDestroy()
     }
 }
