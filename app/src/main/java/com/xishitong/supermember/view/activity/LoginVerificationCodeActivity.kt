@@ -20,6 +20,7 @@ import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.PHONE_NUMBER
 import com.xishitong.supermember.bean.LoginBean
+import com.xishitong.supermember.event.LoginEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
@@ -33,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_login_verification_code.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
 
 /**
@@ -187,7 +189,9 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
                         ConfigPreferences.instance.setIsMember(it.isMember)
                         //保存手机号
                         ConfigPreferences.instance.setPhone(phone)
+                        EventBus.getDefault().post(LoginEvent())
                         startActivity(Intent(this@LoginVerificationCodeActivity, MainActivity::class.java))
+
                     }
                 }
 

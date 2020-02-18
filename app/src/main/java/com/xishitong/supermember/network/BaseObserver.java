@@ -55,6 +55,7 @@ public abstract class BaseObserver<T extends BaseModel> implements Observer<T> {
             onSuccess(t);
         }else if (t.code == 401) {
             EventBus.getDefault().post(new LogoutEvent());
+            onError(t.message);
         }else {
             onError(t.message);
         }

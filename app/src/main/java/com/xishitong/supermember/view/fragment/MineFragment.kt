@@ -11,6 +11,7 @@ import com.xishitong.supermember.base.BaseFragment
 import com.xishitong.supermember.base.PAY_MEMBERSHIP
 import com.xishitong.supermember.base.RULE
 import com.xishitong.supermember.bean.UserInfoBean
+import com.xishitong.supermember.event.LoginEvent
 import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
@@ -24,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_mine.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  *  author : zhangbao
@@ -37,6 +40,7 @@ class MineFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun initView(view: View) {
+        EventBus.getDefault().register(this)
         tv_rule.setOnClickListener(this)
         tv_vip_recharge.setOnClickListener(this)
         processing_order.setOnClickListener(this)
@@ -52,11 +56,6 @@ class MineFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun initData() {
-
-    }
-
-    override fun onResume() {
-        super.onResume()
         //请求个人信息
         val hashMap = HashMap<String, String>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
@@ -70,7 +69,7 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 @SuppressLint("SetTextI18n")
                 override fun onSuccess(t: UserInfoBean?) {
                     t?.data?.let {
-                        tv_integral.text = "${it.money/100.0}"
+                        tv_integral.text = "${it.money / 100.0}"
                         tv_phone.text = "No.${ConfigPreferences.instance.getPhone()}"
                         ConfigPreferences.instance.setIsMember(it.isMember)
                         if (it.isMember) {
@@ -87,10 +86,15 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             })
     }
 
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    fun onLoginEvent(loginEvent: LoginEvent) {
+        initData()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tv_rule -> {
-                EventBus.getDefault().postSticky(WebEvent(RULE,null))
+                EventBus.getDefault().postSticky(WebEvent(RULE, null))
                 val intent = Intent(activity, CommonWebActivity::class.java)
                 startActivity(intent)
             }
@@ -116,25 +120,25 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             R.id.processing_order -> {
                 //处理中订单
                 val intent = Intent(activity, OrderActivity::class.java)
-                intent.putExtra("type","100")
+                intent.putExtra("type", "100")
                 startActivity(intent)
             }
             R.id.completed_order -> {
                 //已完成订单
                 val intent = Intent(activity, OrderActivity::class.java)
-                intent.putExtra("type","200")
+                intent.putExtra("type", "200")
                 startActivity(intent)
             }
             R.id.fail_order -> {
                 //失败订单
                 val intent = Intent(activity, OrderActivity::class.java)
-                intent.putExtra("type","300")
+                intent.putExtra("type", "300")
                 startActivity(intent)
             }
             R.id.all_order -> {
                 //全部订单
                 val intent = Intent(activity, OrderActivity::class.java)
-                intent.putExtra("type","0")
+                intent.putExtra("type", "0")
                 startActivity(intent)
             }
             R.id.apply_invoice -> {
@@ -157,5 +161,10 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 ConfigPreferences.instance.setPhone("")
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 }
