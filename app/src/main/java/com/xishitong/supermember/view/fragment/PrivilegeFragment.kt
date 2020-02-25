@@ -1,32 +1,28 @@
 package com.xishitong.supermember.view.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.SystemClock
-import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.DetailOfMembershipAdapter
 import com.xishitong.supermember.adapter.FlashSaleAdapter
-import com.xishitong.supermember.base.APPLY_FOR_MEMBERSHIP
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseFragment
 import com.xishitong.supermember.base.LIMITED_SECKILL
 import com.xishitong.supermember.bean.BannerBean
-import com.xishitong.supermember.bean.BannerDataBean
-import com.xishitong.supermember.bean.CommonBean
 import com.xishitong.supermember.bean.SaleBean
 import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
@@ -34,10 +30,8 @@ import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.DateUtil
-import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
-import com.xishitong.supermember.view.activity.CheckVoucherActivity
 import com.xishitong.supermember.view.activity.CommonWebActivity
 import com.xishitong.supermember.view.activity.MainActivity
 import com.xishitong.supermember.view.activity.SearchActivity
@@ -45,14 +39,14 @@ import com.xishitong.supermember.widget.OvalIndicatorView
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.TransformerStyle
 import com.zhpan.bannerview.holder.ViewHolder
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_privilege.*
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
-import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -82,10 +76,26 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         tab3.setOnClickListener(this)
         tab4.setOnClickListener(this)
 
-        fragments.add(RecommendFragment())
-        fragments.add(RecommendFragment())
-        fragments.add(RecommendFragment())
-        fragments.add(RecommendFragment())
+        val recommendFragment1 = RecommendFragment()
+        val bundle1 = Bundle()
+        bundle1.putInt("type",1)
+        recommendFragment1.arguments = bundle1
+        val recommendFragment2 = RecommendFragment()
+        val bundle2 = Bundle()
+        bundle2.putInt("type",2)
+        recommendFragment2.arguments = bundle2
+        val recommendFragment3 = RecommendFragment()
+        val bundle3 = Bundle()
+        bundle3.putInt("type",3)
+        recommendFragment3.arguments = bundle3
+        val recommendFragment4 = RecommendFragment()
+        val bundle4 = Bundle()
+        bundle4.putInt("type",4)
+        recommendFragment4.arguments = bundle4
+        fragments.add(recommendFragment1)
+        fragments.add(recommendFragment2)
+        fragments.add(recommendFragment3)
+        fragments.add(recommendFragment4)
 
         view_pager.adapter = DetailOfMembershipAdapter(activity?.supportFragmentManager, fragments)
         view_pager.addOnPageChangeListener(this)
@@ -141,7 +151,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     val enName = bannerData[position].enName
                     val pName = bannerData[position].parentName
                     if (enName == "creditCard") {
-                        EventBus.getDefault().postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696",  null))
+                        EventBus.getDefault()
+                            .postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696", null))
                         val intent = Intent(activity, CommonWebActivity::class.java)
                         startActivity(intent)
                         return
@@ -152,14 +163,14 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                         return
                     }
                     if (enName == "chezhubang") {
-                        EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476",  null))
+                        EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476", null))
                         val intent = Intent(activity, CommonWebActivity::class.java)
                         startActivity(intent)
                         return
                     }
                     val url =
                         "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
-                    EventBus.getDefault().postSticky(WebEvent(url,  null))
+                    EventBus.getDefault().postSticky(WebEvent(url, null))
                     val intent = Intent(activity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }
@@ -169,6 +180,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     /**
      * 初始化秒杀数据
      */
+    @SuppressLint("SetTextI18n")
     private fun initFlashSale() {
         recycler_view.layoutManager = GridLayoutManager(activity, 3)
         val flashSaleAdapter = FlashSaleAdapter(null)
@@ -186,24 +198,23 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         var endTime = ""
         try {
             when (split[0].toInt()) {
-                in 0..10 -> {
+                in 0 until 10 -> {
                     starTime = "${split1[0]} " + startTimeList[0]
                     endTime = "${split1[0]} " + endTimeList[0]
                 }
-                in 10..14 -> {
+                in 10 until 14 -> {
                     starTime = "${split1[0]} " + startTimeList[1]
                     endTime = "${split1[0]} " + endTimeList[1]
-
                 }
-                in 14..18 -> {
+                in 14 until 18 -> {
                     starTime = "${split1[0]} " + startTimeList[2]
                     endTime = "${split1[0]} " + endTimeList[2]
                 }
-                in 18..20 -> {
+                in 18 until 20 -> {
                     starTime = "${split1[0]} " + startTimeList[3]
                     endTime = "${split1[0]} " + endTimeList[3]
                 }
-                in 20..22 -> {
+                in 20 until 22 -> {
                     starTime = "${split1[0]} " + startTimeList[4]
                     endTime = "${split1[0]} " + endTimeList[4]
                 }
@@ -216,8 +227,6 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         hashMap["productName"] = ""
         hashMap["startTime"] = starTime
         hashMap["endTime"] = endTime
-        LogUtil.e(TAG,starTime)
-        LogUtil.e(TAG,endTime)
         hashMap["status"] = "1"
         hashMap["page"] = "1"
         hashMap["limit"] = "6"
@@ -238,6 +247,41 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     flashSaleAdapter.setNewData(null)
                 }
             })
+        //开始倒计时
+        try {
+            val endTimeStamp = DateUtil.dateToStamp(endTime)
+            val currentTimeMillis = System.currentTimeMillis()
+            Observable.interval(0, 1, TimeUnit.SECONDS)
+                .take(endTimeStamp.minus(currentTimeMillis).div(1000))
+                .map { (endTimeStamp.minus(currentTimeMillis).div(1000).minus(it).minus(1)) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    val totalMin = it.div(60)
+                    val hour = totalMin.div(60)
+                    val mins = totalMin.rem(60)
+
+                    tv_end_time_hour.text = "${if (hour < 10) {
+                        "0${hour}"
+                    } else {
+                        "$hour"
+                    }}:"
+                    tv_end_time_min.text = "${if (mins < 10) {
+                        "0${mins}"
+                    } else {
+                        "$mins"
+                    }}:"
+
+                    val sec = it.rem(60)
+                    if (sec < 10) {
+                        tv_end_time_sec.text = "0$sec"
+                    } else {
+                        tv_end_time_sec.text = sec.toString()
+                    }
+                }
+                .compose(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .subscribe()
+        } catch (e: Exception) {
+        }
     }
 
     override fun onClick(v: View?) {

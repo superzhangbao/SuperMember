@@ -113,7 +113,7 @@ public abstract class BaseObserver<T extends BaseModel> implements Observer<T> {
     private void onExceptions(int unknownError, String message) {
         switch (unknownError) {
             case CONNECT_ERROR:
-                onError("网络不可用，请检查网络连接！");
+                onError("网络不可用，请检查网络连接!");
                 break;
             case CONNECT_TIMEOUT:
                 onError("连接超时");
@@ -126,7 +126,7 @@ public abstract class BaseObserver<T extends BaseModel> implements Observer<T> {
                 break;
             //网络不可用
             case NETWORK_ERROR:
-                onError("网络不可用，请检查网络连接！");
+                onError("网络不可用，请检查网络连接!");
                 break;
             default:
                 onError("未知错误");

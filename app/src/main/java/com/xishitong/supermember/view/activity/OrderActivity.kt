@@ -205,6 +205,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
         when (view?.id) {
             R.id.tv_fail_reason -> {//失败原因
                 ToastUtils.showToast("失败原因")
+                //todo
             }
             R.id.tv_voucher -> {//凭证
                 when ((view as TextView).text) {

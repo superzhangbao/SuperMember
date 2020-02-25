@@ -8,7 +8,6 @@
             android:id="@+id/iv"
             android:layout_width="26dp"
             android:layout_height="26dp"
-            android:background="@color/color_6BB467"
             android:layout_marginTop="13dp"
             android:layout_centerHorizontal="true"/>
     <TextView

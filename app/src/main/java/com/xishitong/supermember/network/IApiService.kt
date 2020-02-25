@@ -22,6 +22,11 @@ interface IApiService {
     @Headers("Content-Type: application/json;charset=UTF-8")
     fun login(@Body body: RequestBody): Observable<LoginBean>
 
+    //首页ICON展示
+    @POST("/marketShelf/getBoutiqueSale")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    fun getBoutiqueSale(@Body body: RequestBody): Observable<BoutiqueSaleBean>
+
     //特权banner
     @POST("marketShelf/getBanner")
     @Headers("Content-Type: application/json;charset=UTF-8")
@@ -89,6 +94,8 @@ interface IApiService {
 
     @Multipart
     @POST("/image/upload")
-    fun uploadImg(@PartMap map:HashMap<String,RequestBody>,
-                  @Part path: MultipartBody.Part):Observable<UploadImgBean>
+    fun uploadImg(
+        @PartMap map: HashMap<String, RequestBody>,
+        @Part path: MultipartBody.Part
+    ): Observable<UploadImgBean>
 }

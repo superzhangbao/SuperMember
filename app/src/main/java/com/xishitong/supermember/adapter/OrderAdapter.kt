@@ -89,11 +89,15 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                 //获赠积分
                 setText(R.id.tv_content3, "获赠积分:${listBean.productValue/100.0}")
                 setVisible(R.id.tv_content3,true)
+            }else{
+                setVisible(R.id.tv_content3,false)
             }
             if (listBean.deductAmount!=0) {
                 //积分抵扣
                 setText(R.id.tv_content3, "积分抵扣:¥${listBean.deductAmount/100.0}")
                 setVisible(R.id.tv_content3,true)
+            }else{
+                setVisible(R.id.tv_content3,false)
             }
 
             //商品数量

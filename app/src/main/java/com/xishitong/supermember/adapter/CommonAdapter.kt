@@ -5,21 +5,21 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.xishitong.supermember.R
-import com.xishitong.supermember.bean.CommonBean
+import com.xishitong.supermember.bean.BoutiqueSaleBean
 
 /**
  * author : zhangbao
  * date : 2020-02-11 17:39
  * description :
  */
-class CommonAdapter(data: MutableList<CommonBean.DataBean.ListBean>?):
-    BaseQuickAdapter<CommonBean.DataBean.ListBean, BaseViewHolder>(R.layout.item_common,data){
-    override fun convert(helper: BaseViewHolder, item: CommonBean.DataBean.ListBean?) {
+class CommonAdapter(data: MutableList<BoutiqueSaleBean.DataBean>?):
+    BaseQuickAdapter<BoutiqueSaleBean.DataBean, BaseViewHolder>(R.layout.item_common,data){
+    override fun convert(helper: BaseViewHolder, item: BoutiqueSaleBean.DataBean?) {
         with(helper) {
-            setText(R.id.tv_title, data[adapterPosition].title)
+            setText(R.id.tv_title, data[adapterPosition].name)
             val imageView = getView(R.id.iv) as ImageView
             Glide.with(mContext)
-                .load(data[adapterPosition].imgUrl)
+                .load(data[adapterPosition].icon)
                 .into(imageView)
         }
     }
