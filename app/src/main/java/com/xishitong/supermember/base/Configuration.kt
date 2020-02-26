@@ -24,3 +24,5 @@ const val RULE = "http://www.seniornet.cn/js/sjh5test/pages/guize/guize"
 const val LIMITED_SECKILL = "http://www.seniornet.cn/js/sjh5test/pages/temaidetail/temaidetail?goodId="
 //列表每页数量
 const val LIMIT = 10
+//h5交互调用方法的名字
+const val JS_NAME = "app"

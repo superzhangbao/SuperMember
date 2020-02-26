@@ -15,6 +15,7 @@ import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.CommonAdapter
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseFragment
+import com.xishitong.supermember.base.BaseFragment.Companion.TAG
 import com.xishitong.supermember.bean.BoutiqueSaleBean
 import com.xishitong.supermember.bean.CommonBean
 import com.xishitong.supermember.event.WebEvent
@@ -44,7 +45,7 @@ class RecommendFragment : BaseFragment(){
 
     private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
     private var type = 1
-    var data = mutableListOf<MutableList<BoutiqueSaleBean.DataBean>>()
+    var data:MutableList<MutableList<BoutiqueSaleBean.DataBean>> = mutableListOf()
 
     override fun setContentView(): Int {
         return R.layout.fragment_recommend
@@ -133,7 +134,7 @@ class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQ
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        EventBus.getDefault().postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url, ConfigPreferences.instance.getToken()))
+        EventBus.getDefault().postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
         val intent = Intent(context, CommonWebActivity::class.java)
         context?.startActivity(intent)
     }

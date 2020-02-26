@@ -7,11 +7,9 @@ package com.xishitong.supermember.event;
  */
 public class WebEvent {
     private String url;
-    private String token;
 
-    public WebEvent(String url, String token) {
+    public WebEvent(String url) {
         this.url = url;
-        this.token = token;
     }
 
     public String getUrl() {
@@ -22,19 +20,10 @@ public class WebEvent {
         this.url = url;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     @Override
     public String toString() {
         return "WebEvent{" +
                 "url='" + url + '\'' +
-                ", token='" + token + '\'' +
                 '}';
     }
 }

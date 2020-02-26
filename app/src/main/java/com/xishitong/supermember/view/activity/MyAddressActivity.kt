@@ -74,7 +74,7 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
         myAddressAdapter = MyAddressAdapter(listData)
-        myAddressAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+        myAddressAdapter!!.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
         myAddressAdapter!!.isFirstOnly(false)
         myAddressAdapter!!.onItemClickListener = this
         myAddressAdapter!!.onItemChildClickListener = this

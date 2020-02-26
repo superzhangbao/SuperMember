@@ -25,7 +25,6 @@ import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_apply_invoice.*
-import kotlinx.android.synthetic.main.activity_my_address.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody

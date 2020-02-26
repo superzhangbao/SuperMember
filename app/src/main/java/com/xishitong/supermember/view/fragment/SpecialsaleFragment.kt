@@ -9,6 +9,7 @@ import com.just.agentweb.AgentWeb
 import com.just.agentweb.AgentWebConfig
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseFragment
+import com.xishitong.supermember.base.JS_NAME
 import com.xishitong.supermember.base.SPECIAL_SALE
 import com.xishitong.supermember.base.VIP_AGREEMENT
 import com.xishitong.supermember.event.GoToDetailEvent
@@ -39,14 +40,20 @@ class SpecialsaleFragment:BaseFragment(), FragmentKeyDown {
         EventBus.getDefault().register(this)
         AgentWebConfig.clearDiskCache(activity)
         AgentWebConfig.removeAllCookies()
+        val url =
+            if (SPECIAL_SALE.contains("?")) {
+                "${SPECIAL_SALE}&token=${ConfigPreferences.instance.getToken()}&inType=app"
+            } else {
+                "${SPECIAL_SALE}?token=${ConfigPreferences.instance.getToken()}&inType=app"
+            }
         mAgentWeb = AgentWeb.with(this)
             .setAgentWebParent(container, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
             .useDefaultIndicator()
             .setMainFrameErrorView(R.layout.webview_error,R.id.tv_reload)
             .createAgentWeb()
             .ready()
-            .go(SPECIAL_SALE+"?token=${ConfigPreferences.instance.getToken()}&inType=app")
-        mAgentWeb!!.jsInterfaceHolder.addJavaObject("android", AndroidInterface(mAgentWeb!!, activity))
+            .go(url)
+        mAgentWeb!!.jsInterfaceHolder.addJavaObject(JS_NAME, AndroidInterface(mAgentWeb!!, activity))
     }
 
     override fun initData() {
@@ -55,7 +62,7 @@ class SpecialsaleFragment:BaseFragment(), FragmentKeyDown {
 
     @Subscribe(threadMode = ThreadMode.POSTING)
     fun onGoToDetailEvent(goToDetailEvent: GoToDetailEvent) {
-        EventBus.getDefault().postSticky(WebEvent(goToDetailEvent.url, if (goToDetailEvent.needToken) ConfigPreferences.instance.getToken() else null))
+        EventBus.getDefault().postSticky(WebEvent(goToDetailEvent.url))
         val intent = Intent(activity, CommonWebActivity::class.java)
         startActivity(intent)
     }

@@ -17,6 +17,7 @@ import com.xishitong.supermember.R
 import com.xishitong.supermember.event.LogoutEvent
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.*
+import com.xishitong.supermember.view.activity.CommonWebActivity
 import com.xishitong.supermember.view.activity.LoginActivity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -39,9 +40,10 @@ abstract class BaseActivity : RxAppCompatActivity() {
     var mAppManager: AppManager? = null
     var mCourierNumberDialog: DialogUtils? = null
     var mReceiveAddrDialog: DialogUtils? = null
+    var mErrorReasonDialog: DialogUtils? = null
     var mQrCodeDialog: DialogUtils? = null
     private var mSyncEncodeQRCode: Bitmap? = null
-    protected var mLoadingView:LoadingViewUtils? = null
+    protected var mLoadingView: LoadingViewUtils? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +76,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
         ConfigPreferences.instance.setIsMember(false)
         ConfigPreferences.instance.setPhone("")
         startActivity(Intent(this, LoginActivity::class.java))
+        mAppManager?.finishActivity(CommonWebActivity::class.java)
     }
 
     override fun onDestroy() {
@@ -98,6 +101,11 @@ abstract class BaseActivity : RxAppCompatActivity() {
                 mReceiveAddrDialog!!.dismiss()
             }
         }
+        mErrorReasonDialog?.let {
+            if (mErrorReasonDialog!!.isShowing) {
+                mErrorReasonDialog!!.dismiss()
+            }
+        }
         mLoadingView?.let {
             mLoadingView!!.dismiss()
         }
@@ -111,7 +119,21 @@ abstract class BaseActivity : RxAppCompatActivity() {
         mLoadingView?.dismiss()
     }
 
-    protected fun showReceiveAddrDialog(name:String,phone:String,address:String) {
+    //订单失败原因dialog
+    protected fun showErrorReasonDialog( resaon: String) {
+        val builder = DialogUtils.Builder(this)
+        mErrorReasonDialog = builder.view(R.layout.dialog_error_reason)
+            .cancelable(true)
+            .gravity(Gravity.CENTER)
+            .cancelTouchout(true)
+            .settext(resaon, R.id.tv_error_reason)
+            .style(R.style.Dialog)
+            .build()
+        mErrorReasonDialog!!.show()
+    }
+
+    //收货地址dialog
+    protected fun showReceiveAddrDialog(name: String, phone: String, address: String) {
         val builder = DialogUtils.Builder(this)
         mReceiveAddrDialog = builder.view(R.layout.dialog_receive_addr)
             .cancelable(true)
@@ -148,20 +170,25 @@ abstract class BaseActivity : RxAppCompatActivity() {
         mCourierNumberDialog!!.show()
     }
 
-    protected fun showQrCodeDialog(code: String) {
+    //处理中订单二维码dialog
+    protected fun showQrCodeDialog(customer: String, amount: String, code: String) {
         val builder = DialogUtils.Builder(this)
         mCourierNumberDialog = builder.view(R.layout.dialog_qrcode)
             .cancelable(true)
             .gravity(Gravity.CENTER)
             .cancelTouchout(true)
             .style(R.style.Dialog)
+            .settext("客户:$customer", R.id.tv_customer)
+            .settext("金额:$amount", R.id.tv_amount)
             .build()
         val ivQrcode: ImageView = builder.childView.findViewById(R.id.iv_qrcode)
         mCourierNumberDialog!!.show()
         val filePath = "${getFileRoot(App.getInstance())}${File.separator}qr_${System.currentTimeMillis()}.jpg"
         Observable.create<Bitmap?> {
-            val createQRImage = QRCodeUtil.createQRImage(code, UiUtils.dip2px(this, 280.0f),
-                UiUtils.dip2px(this, 280.0f), null, filePath)
+            val createQRImage = QRCodeUtil.createQRImage(
+                code, UiUtils.dip2px(this, 280.0f),
+                UiUtils.dip2px(this, 280.0f), null, filePath
+            )
             if (createQRImage) {
                 mSyncEncodeQRCode = BitmapFactory.decodeFile(filePath)
                 it.onNext(mSyncEncodeQRCode.let { bitmap -> bitmap }!!)
@@ -190,7 +217,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
     }
 
     //文件存储根目录
-    private fun getFileRoot( context: Context):String {
+    private fun getFileRoot(context: Context): String {
         if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
             val external = context.applicationContext.getExternalFilesDir(null)
             if (external != null) {

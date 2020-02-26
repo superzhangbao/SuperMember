@@ -15,7 +15,10 @@ import com.just.agentweb.AgentWebConfig
 import com.just.agentweb.MiddlewareWebChromeBase
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
+import com.xishitong.supermember.base.JS_NAME
 import com.xishitong.supermember.event.WebEvent
+import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.web.AndroidInterface
 import kotlinx.android.synthetic.main.activity_common_web.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import org.greenrobot.eventbus.Subscribe
@@ -48,20 +51,18 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
     fun onWebEvent(webEvent: WebEvent) {
-        val url = if (webEvent.token == null) {
-            webEvent.url
-        } else {
+        val url =
             if (webEvent.url.contains("?")) {
-                "${webEvent.url}&token=${webEvent.token}"
+                "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app"
             } else {
-                "${webEvent.url}?token=${webEvent.token}"
+                "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app"
             }
-        }
         initAgentWeb(url)
     }
 
     private fun initAgentWeb(url: String) {
         AgentWebConfig.clearDiskCache(this)
+        AgentWebConfig.removeAllCookies()
         mAgentWeb = AgentWeb.with(this)
             .setAgentWebParent(
                 container, LinearLayout.LayoutParams(
@@ -75,7 +76,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
             .createAgentWeb()
             .ready()
             .go(url)
-
+        mAgentWeb!!.jsInterfaceHolder.addJavaObject(JS_NAME, AndroidInterface(mAgentWeb!!, this))
     }
 
     override fun onClick(v: View?) {
@@ -99,7 +100,7 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     private fun setTitle(view: WebView, title: String) {
         if (!TextUtils.isEmpty(title) && title.length > 10) {
             tv_title.text = "${title.substring(0, 10)}..."
-        }else{
+        } else {
             tv_title.text = title
         }
     }

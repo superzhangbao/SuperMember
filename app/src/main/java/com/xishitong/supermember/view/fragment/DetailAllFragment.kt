@@ -59,7 +59,7 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(activity)
         detailAllAdapter = DetailAllAdapter(listData)
-        detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+        detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
         detailAllAdapter!!.isFirstOnly(false)
         detailAllAdapter!!.onItemClickListener = this
         detailAllAdapter!!.onItemChildClickListener = this
@@ -183,7 +183,7 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
                         if (newList.size < LIMIT) {
                             smart_refresh.finishLoadMoreWithNoMoreData()
                         } else {
-                            smart_refresh.finishRefresh()
+                            smart_refresh.finishLoadMore()
                         }
                         listData.addAll(newList)
                         detailAllAdapter!!.setNewData(listData)
@@ -191,7 +191,7 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
                 }
 
                 override fun onError(msg: String?) {
-                    smart_refresh.finishRefresh()
+                    smart_refresh.finishLoadMore()
                     ToastUtils.showToast(msg)
                 }
             })

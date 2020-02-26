@@ -63,7 +63,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
         detailAllAdapter = DetailAllAdapter(listData)
-        detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+        detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
         detailAllAdapter!!.isFirstOnly(false)
         detailAllAdapter!!.onItemClickListener = this
         detailAllAdapter!!.onItemChildClickListener = this
@@ -167,7 +167,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
                         if (dataList.size< LIMIT) {
                             smart_refresh.finishLoadMoreWithNoMoreData()
                         }else{
-                            smart_refresh.finishRefresh()
+                            smart_refresh.finishLoadMore()
                         }
                         listData.addAll(dataList)
                         detailAllAdapter!!.setNewData(listData)
@@ -175,7 +175,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
                 }
 
                 override fun onError(msg: String?) {
-                    smart_refresh.finishRefresh()
+                    smart_refresh.finishLoadMore()
                     ToastUtils.showToast(msg)
                 }
             })

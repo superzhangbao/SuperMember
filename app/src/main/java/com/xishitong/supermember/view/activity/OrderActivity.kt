@@ -35,6 +35,7 @@ import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.DialogUtils
 import com.xishitong.supermember.util.GlideEngine
+import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -181,7 +182,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             if (list.size < LIMIT) {
                                 smart_refresh.finishLoadMoreWithNoMoreData()
                             } else {
-                                smart_refresh.finishRefresh()
+                                smart_refresh.finishLoadMore()
                             }
                             listData.addAll(list)
                             orderAdapter!!.setNewData(listData)
@@ -204,8 +205,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
         val listBean = listData[position]
         when (view?.id) {
             R.id.tv_fail_reason -> {//失败原因
-                ToastUtils.showToast("失败原因")
-                //todo
+                showErrorReasonDialog(listBean.reason)
             }
             R.id.tv_voucher -> {//凭证
                 when ((view as TextView).text) {
@@ -249,7 +249,10 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                 )
             }
             R.id.tv_order_qrcode -> {//订单二维码
-                showQrCodeDialog(listBean.billId)
+                val hashMap = HashMap<String,String>()
+                hashMap["billId"] = listBean.billId
+                hashMap["payId"] = listBean.payOrderId
+                showQrCodeDialog("${listBean.name}/${listBean.userPhone}","${listBean.amount / 100.0}",Gson().toJson(hashMap))
             }
         }
     }

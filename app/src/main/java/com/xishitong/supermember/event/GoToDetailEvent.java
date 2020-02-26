@@ -7,11 +7,9 @@ package com.xishitong.supermember.event;
  */
 public class GoToDetailEvent {
     private String url;
-    private Boolean needToken;
 
-    public GoToDetailEvent(String url, Boolean needToken) {
+    public GoToDetailEvent(String url) {
         this.url = url;
-        this.needToken = needToken;
     }
 
     public String getUrl() {
@@ -22,19 +20,10 @@ public class GoToDetailEvent {
         this.url = url;
     }
 
-    public Boolean getNeedToken() {
-        return needToken;
-    }
-
-    public void setNeedToken(Boolean needToken) {
-        this.needToken = needToken;
-    }
-
     @Override
     public String toString() {
         return "GoToDetailEvent{" +
                 "url='" + url + '\'' +
-                ", needToken=" + needToken +
                 '}';
     }
 }

@@ -107,7 +107,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             it.setSpan(UnderlineSpan(), 15, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT,null))
+                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT))
                     val intent = Intent(this@LoginActivity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }

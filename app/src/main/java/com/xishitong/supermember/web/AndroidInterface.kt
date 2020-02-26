@@ -20,12 +20,12 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
     }
 
     @JavascriptInterface
-    fun goToDetail(url: String?, needToken: Boolean) {
-        EventBus.getDefault().post(GoToDetailEvent(url,true))
+    fun goToDetail(url: String?) {
+        EventBus.getDefault().post(GoToDetailEvent(url))
     }
 
     @JavascriptInterface
-    fun login() {
+    fun toLogin() {
         EventBus.getDefault().post(LogoutEvent())
     }
 }

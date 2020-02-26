@@ -94,7 +94,7 @@ class MineFragment : BaseFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tv_rule -> {
-                EventBus.getDefault().postSticky(WebEvent(RULE, null))
+                EventBus.getDefault().postSticky(WebEvent(RULE))
                 val intent = Intent(activity, CommonWebActivity::class.java)
                 startActivity(intent)
             }
@@ -106,12 +106,12 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 if (ConfigPreferences.instance.getISMember()) {
                     //会费缴纳
                     EventBus.getDefault().postSticky(
-                        WebEvent(PAY_MEMBERSHIP, ConfigPreferences.instance.getToken())
+                        WebEvent(PAY_MEMBERSHIP)
                     )
                 } else {
                     //申请入会
                     EventBus.getDefault().postSticky(
-                        WebEvent(APPLY_FOR_MEMBERSHIP, ConfigPreferences.instance.getToken())
+                        WebEvent(APPLY_FOR_MEMBERSHIP)
                     )
                 }
                 val intent = Intent(activity, CommonWebActivity::class.java)
