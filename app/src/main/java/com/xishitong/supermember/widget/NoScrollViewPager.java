@@ -40,4 +40,15 @@ public class NoScrollViewPager extends ViewPager {
             return super.onInterceptTouchEvent(arg0);
         }
     }
+
+    @Override
+    public void setCurrentItem(int item, boolean smoothScroll) {
+        super.setCurrentItem(item, smoothScroll);
+    }
+
+    @Override
+    public void setCurrentItem(int item) {
+        //去除页面切换时的滑动翻页效果
+        super.setCurrentItem(item, false);
+    }
 }

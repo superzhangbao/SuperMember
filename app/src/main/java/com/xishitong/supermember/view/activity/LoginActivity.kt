@@ -104,18 +104,18 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private fun getClickableSpan(): SpannableStringBuilder {
         return SpannableStringBuilder(getString(R.string.login_agreement)).also {
-            it.setSpan(UnderlineSpan(), 15, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            it.setSpan(UnderlineSpan(), 15, 18, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
                     EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT))
                     val intent = Intent(this@LoginActivity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }
-            }, 15, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }, 15, 18, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(
                 ForegroundColorSpan(resources.getColor(R.color.color_6BB467)),
                 15,
-                22,
+                18,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }

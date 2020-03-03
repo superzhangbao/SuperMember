@@ -14,10 +14,9 @@ import com.xishitong.supermember.util.LogUtil
 class MyAddressAdapter(data: MutableList<MyAddressBean.DataBean.ListBean>?):
     BaseQuickAdapter<MyAddressBean.DataBean.ListBean,BaseViewHolder>(R.layout.item_myaddress,data) {
     override fun convert(helper: BaseViewHolder, item: MyAddressBean.DataBean.ListBean?) {
-        LogUtil.e(item.toString())
         with(helper) {
             setText(R.id.tv_name,data[adapterPosition].name)
-            setText(R.id.tv_phone,data[adapterPosition].userPhone)
+            setText(R.id.tv_phone,data[adapterPosition].phone)
             setText(R.id.tv_address,"${data[adapterPosition].gegion} ${data[adapterPosition].detailed}")
         }
     }

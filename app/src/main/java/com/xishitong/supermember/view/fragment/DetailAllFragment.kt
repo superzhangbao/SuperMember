@@ -22,6 +22,7 @@ import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.view.activity.ApplyInvoiceActivity
+import com.xishitong.supermember.view.activity.DetailOfMembershipActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_detail_all.*
@@ -89,7 +90,8 @@ class DetailAllFragment : BaseFragment(), BaseQuickAdapter.OnItemClickListener,
                     return
                 }
                 if (data.status == 1 && data.courierNumber != null) {//快递单号
-                    ToastUtils.showToast("快递单号")
+                    val membershipActivity = activity as DetailOfMembershipActivity
+                    membershipActivity.showBaseCourierNumberDialog(data.courierNumber)
                 }
             }
         }

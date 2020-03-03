@@ -13,14 +13,14 @@ import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
-import com.xishitong.supermember.base.BaseActivity
-import com.xishitong.supermember.base.BaseModel
+import com.xishitong.supermember.base.*
 import com.xishitong.supermember.bean.MyAddressBean
 import com.xishitong.supermember.bean.UserBean
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
+import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -40,7 +40,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
     private var addressInfo: MyAddressBean.DataBean.ListBean? = null
 
     companion object {
-        var textSize = AbsoluteSizeSpan(13, true)
+        var textSize = AbsoluteSizeSpan(16, true)
     }
 
     override fun setContentView(): Int {
@@ -59,6 +59,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
         fl_back.setOnClickListener(this)
 
         ll_add_addr.setOnClickListener(this)
+        ll_receive_addr.setOnClickListener(this)
         btn_submit.setOnClickListener(this)
         spinner.onItemSelectedListener = this
         orderNo = intent.getStringExtra("orderNo")
@@ -67,10 +68,6 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
         //设置hint的大小
         initEditText()
         getUserInfo()
-    }
-
-    override fun onResume() {
-        super.onResume()
         getAddress()
     }
 
@@ -100,25 +97,25 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
     }
 
     private fun initEditText() {
-        val s2 = SpannableString("请输入真实名称")
-        s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val s3 = SpannableString("请输入身份证号")
-        s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val s4 = SpannableString("请输入家庭地址")
-        s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val s5 = SpannableString("请输入电话号码")
-        s5.setSpan(textSize, 0, s5.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val s6 = SpannableString("请输入开户银行")
-        s6.setSpan(textSize, 0, s6.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val s7 = SpannableString("请输入银行账户")
-        s7.setSpan(textSize, 0, s7.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s2 = SpannableString("请输入真实名称")
+//        s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s3 = SpannableString("请输入身份证号")
+//        s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s4 = SpannableString("请输入家庭地址")
+//        s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s5 = SpannableString("请输入电话号码")
+//        s5.setSpan(textSize, 0, s5.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s6 = SpannableString("请输入开户银行")
+//        s6.setSpan(textSize, 0, s6.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val s7 = SpannableString("请输入银行账户")
+//        s7.setSpan(textSize, 0, s7.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-        et_name.hint = s2
-        et_idcard_number.hint = s3
-        et_home_addr.hint = s4
-        et_phone_number.hint = s5
-        et_deposit_bank.hint = s6
-        et_bank_account.hint = s7
+//        et_name.hint = s2
+//        et_idcard_number.hint = s3
+//        et_home_addr.hint = s4
+//        et_phone_number.hint = s5
+//        et_deposit_bank.hint = s6
+//        et_bank_account.hint = s7
     }
 
     private fun getUserInfo() {
@@ -151,6 +148,11 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
             }
             R.id.ll_add_addr -> {
                 startActivity(Intent(this, ModifyAddressActivity::class.java))
+            }
+            R.id.ll_receive_addr -> {
+                val intent = Intent(this, MyAddressActivity::class.java)
+                intent.putExtra("from", CHOOSE)
+                startActivityForResult(intent, REQUEST_CODE_APPLYINVOICE)
             }
             R.id.btn_submit -> {
                 //校验数据
@@ -246,6 +248,22 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data != null && resultCode == RESULT_CODE_MYADDRESS) {
+            if (requestCode == REQUEST_CODE_APPLYINVOICE) {
+                val name = data.getStringExtra("name")
+                val phone = data.getStringExtra("phone")
+                val gegion = data.getStringExtra("gegion")
+                val detailed = data.getStringExtra("detailed")
+                LogUtil.e(TAG,name)
+                tv_receice_name.text = "$name ($phone)"
+                tv_receice_address.text = "$gegion $detailed"
+            }
+        }
+    }
+
     override fun onNothingSelected(parent: AdapterView<*>?) {
 
     }
@@ -294,26 +312,26 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
     private fun changeEditTextHint() {
         when (type) {
             1 -> {
-                val s2 = SpannableString("请输入真实名称")
-                s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                val s3 = SpannableString("请输入身份证号")
-                s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                val s4 = SpannableString("请输入家庭地址")
-                s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                et_name.hint = s2
-                et_idcard_number.hint = s3
-                et_home_addr.hint = s4
+//                val s2 = SpannableString("请输入真实名称")
+//                s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                val s3 = SpannableString("请输入身份证号")
+//                s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                val s4 = SpannableString("请输入家庭地址")
+//                s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                et_name.hint = "请输入真实名称"
+                et_idcard_number.hint = "请输入身份证号"
+                et_home_addr.hint = "请输入家庭地址"
             }
             2 -> {
-                val s2 = SpannableString("请输入单位名称")
-                s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                val s3 = SpannableString("请输入单位税号")
-                s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                val s4 = SpannableString("请输入单位地址")
-                s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                et_name.hint = s2
-                et_idcard_number.hint = s3
-                et_home_addr.hint = s4
+//                val s2 = SpannableString("请输入单位名称")
+//                s2.setSpan(textSize, 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                val s3 = SpannableString("请输入单位税号")
+//                s3.setSpan(textSize, 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                val s4 = SpannableString("请输入单位地址")
+//                s4.setSpan(textSize, 0, s4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                et_name.hint = "请输入单位名称"
+                et_idcard_number.hint = "请输入单位税号"
+                et_home_addr.hint = "请输入单位地址"
             }
         }
     }

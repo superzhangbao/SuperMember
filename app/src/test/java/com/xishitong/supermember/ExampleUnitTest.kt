@@ -13,9 +13,7 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        var a = 10
-        repeat(10) {
-            println(it)
-        }
+        var a = 10020
+        println(a/100.00)
     }
 }

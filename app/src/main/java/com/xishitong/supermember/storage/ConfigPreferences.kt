@@ -11,10 +11,6 @@ import java.util.*
  */
 class ConfigPreferences private constructor() {
     private val mSharedPreferences: SharedPreferences
-    private val LOGIN_STATE = "login_state"
-    private val TOKEN = "token"
-    private val IS_MEMBER = "is_member"
-    private val PHONE = "phone"
 
     private object ConfigPreHolder {
         internal val PREFERENCES = ConfigPreferences()
@@ -24,6 +20,11 @@ class ConfigPreferences private constructor() {
         private const val PREFERENCE = "settings"
         val instance: ConfigPreferences
             get() = ConfigPreHolder.PREFERENCES
+
+        private const val LOGIN_STATE = "login_state"
+        private const val TOKEN = "token"
+        private const val IS_MEMBER = "is_member"
+        private const val PHONE = "phone"
     }
 
     init {

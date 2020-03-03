@@ -2,14 +2,15 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:layout_marginTop="10dp"
         android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/ll_right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="15dp">
 
@@ -38,44 +39,35 @@
                 android:text="订单编号：CN13558633377"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
-                android:layout_marginTop="12.5dp"/>
+                android:layout_marginTop="12.5dp"
+                android:layout_marginBottom="8dp"/>
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/ll_right"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="15dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
             android:gravity="end">
-        <LinearLayout
+
+        <TextView
+                android:id="@+id/tv_integral"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20.5dp">
-            <TextView
-                    android:id="@+id/tv_integral_left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+2000."
-                    android:textSize="17sp"
-                    android:textColor="@color/color_333333"/>
-            <TextView
-                    android:id="@+id/tv_integral_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="00个积分"
-                    android:textSize="13sp"
-                    android:textColor="@color/color_333333"/>
-        </LinearLayout>
-
+                android:text=""
+                android:textSize="14sp"
+                android:textColor="@color/color_333333"
+                android:layout_marginTop="20dp"/>
 
 
         <TextView
                 android:id="@+id/tv_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="（缴纳金额：¥1998.00）"
+                android:text="（缴纳金额：¥）"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
                 android:layout_marginTop="6dp"/>
@@ -93,6 +85,7 @@
                 android:paddingEnd="11dp"
                 android:paddingTop="6.5dp"
                 android:paddingBottom="6.5dp"
-                android:clickable="true"/>
+                android:clickable="true"
+                android:layout_marginBottom="8dp"/>
     </LinearLayout>
 </RelativeLayout>

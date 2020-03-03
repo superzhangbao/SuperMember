@@ -41,6 +41,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
     var mCourierNumberDialog: DialogUtils? = null
     var mReceiveAddrDialog: DialogUtils? = null
     var mErrorReasonDialog: DialogUtils? = null
+    var mApplyInvoiceDialog:DialogUtils? = null
     var mQrCodeDialog: DialogUtils? = null
     private var mSyncEncodeQRCode: Bitmap? = null
     protected var mLoadingView: LoadingViewUtils? = null
@@ -130,6 +131,20 @@ abstract class BaseActivity : RxAppCompatActivity() {
             .style(R.style.Dialog)
             .build()
         mErrorReasonDialog!!.show()
+    }
+
+    //申请开票dialog
+    protected fun showApplyInvoiceDialog(listener:View.OnClickListener) {
+        val builder = DialogUtils.Builder(this)
+        mApplyInvoiceDialog = builder.view(R.layout.dialog_apply)
+            .cancelable(true)
+            .gravity(Gravity.CENTER)
+            .cancelTouchout(true)
+            .style(R.style.Dialog)
+            .addViewOnclick(R.id.cancle) { mApplyInvoiceDialog?.dismiss() }
+            .addViewOnclick(R.id.down,listener)
+            .build()
+        mApplyInvoiceDialog!!.show()
     }
 
     //收货地址dialog

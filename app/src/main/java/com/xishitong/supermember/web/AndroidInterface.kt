@@ -3,6 +3,7 @@ package com.xishitong.supermember.web
 import android.content.Context
 import android.webkit.JavascriptInterface
 import com.just.agentweb.AgentWeb
+import com.xishitong.supermember.event.CloseCurrentPageEvent
 import com.xishitong.supermember.event.GoToDetailEvent
 import com.xishitong.supermember.event.LogoutEvent
 import com.xishitong.supermember.util.ToastUtils
@@ -27,5 +28,10 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
     @JavascriptInterface
     fun toLogin() {
         EventBus.getDefault().post(LogoutEvent())
+    }
+
+    @JavascriptInterface
+    fun closeCurrentPage(){
+        EventBus.getDefault().post(CloseCurrentPageEvent())
     }
 }

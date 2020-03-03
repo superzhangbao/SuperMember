@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.xishitong.supermember.R
 import com.xishitong.supermember.bean.OrderBean
+import com.xishitong.supermember.util.LogUtil
 
 /**
  * author : zhangbao
@@ -17,6 +18,7 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
     override fun convert(helper: BaseViewHolder, item: OrderBean.DataBean.ListBean?) {
         with(helper) {
             val listBean = data[adapterPosition]
+            LogUtil.e(TAG,listBean.toString())
             val orderType = listBean.orderType
             //时间
             setText(R.id.tv_date, listBean.addTime)
@@ -62,7 +64,7 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             //订单状态
             setText(R.id.tv_order_state, orderStatus)
             if (listBean.status == 5 || listBean.status == 99) {
-                setTextColor(R.id.tv_order_state,mContext.resources.getColor(R.color.color_333333))
+                setTextColor(R.id.tv_order_state,mContext.resources.getColor(R.color.color_999999))
             }else{
                 setTextColor(R.id.tv_order_state,mContext.resources.getColor(R.color.color_6BB467))
             }
@@ -122,24 +124,29 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                         setVisible(R.id.tv_voucher,true)
                         setText(R.id.tv_voucher,"查看凭证")
                         addOnClickListener(R.id.tv_voucher)
+                    }else{
+                        setGone(R.id.tv_voucher,false)
                     }
                 }
                 2 -> {
                     setVisible(R.id.tv_voucher,true)
                     setText(R.id.tv_voucher,"上传凭证")
                     addOnClickListener(R.id.tv_voucher)
+                    setGone(R.id.tv_fail_reason,false)
                 }
                 3 -> {
                     if (orderType == 1) {
+                        setVisible(R.id.tv_voucher,true)
+                        addOnClickListener(R.id.tv_voucher)
                         if (listBean.processStatus == "cw") {
-                            setVisible(R.id.tv_voucher,true)
                             setText(R.id.tv_voucher,"查看/修改凭证")
-                            addOnClickListener(R.id.tv_voucher)
                         } else {
-                            setVisible(R.id.tv_voucher,true)
                             setText(R.id.tv_voucher,"查看凭证")
-                            addOnClickListener(R.id.tv_voucher)
                         }
+                        setGone(R.id.tv_fail_reason,false)
+                    }else{
+                        setGone(R.id.tv_voucher,false)
+                        setGone(R.id.tv_fail_reason,false)
                     }
                 }
                 99 -> {
@@ -147,20 +154,33 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                         setVisible(R.id.tv_voucher,true)
                         setText(R.id.tv_voucher,"查看凭证")
                         addOnClickListener(R.id.tv_voucher)
+                    }else{
+                        setGone(R.id.tv_voucher,false)
                     }
+                }
+                else->{
+                    setGone(R.id.tv_voucher,false)
+                    setGone(R.id.tv_fail_reason,false)
                 }
             }
             if (listBean.courierNumber != null) {//快递单号
                 setVisible(R.id.tv_courier_number,true)
                 addOnClickListener(R.id.tv_courier_number)
+            }else{
+                setGone(R.id.tv_courier_number,false)
             }
             if (orderType == 3) {//收货地址
                 setVisible(R.id.tv_receice_address,true)
                 addOnClickListener(R.id.tv_receice_address)
+            }else{
+                setGone(R.id.tv_receice_address,false)
             }
             if (listBean.payType == "pos") {//订单二维码
+                LogUtil.e(TAG,listBean.payType)
                 setVisible(R.id.tv_order_qrcode,true)
                 addOnClickListener(R.id.tv_order_qrcode)
+            }else{
+                setGone(R.id.tv_order_qrcode,false)
             }
         }
     }

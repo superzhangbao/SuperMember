@@ -17,6 +17,8 @@ import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.MyAddressAdapter
 import com.xishitong.supermember.base.ADD_OR_MODIFY
 import com.xishitong.supermember.base.BaseActivity
+import com.xishitong.supermember.base.CHOOSE
+import com.xishitong.supermember.base.RESULT_CODE_MYADDRESS
 import com.xishitong.supermember.bean.MyAddressBean
 import com.xishitong.supermember.bean.MyAddressBean.DataBean
 import com.xishitong.supermember.network.BaseObserver
@@ -42,6 +44,7 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
 
     private var myAddressAdapter: MyAddressAdapter? = null
     private var listData: MutableList<DataBean.ListBean>? = null
+    private var from:String = ""
 
     override fun setContentView(): Int {
         return R.layout.activity_my_address
@@ -69,6 +72,7 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
         fl_back.setOnClickListener(this)
         add_address.setOnClickListener(this)
+        from = intent.getStringExtra("from")
     }
 
     private fun initRecyclerView() {
@@ -101,14 +105,23 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         listData?.let {
-            val intent = Intent(this, ModifyAddressActivity::class.java)
-            intent.putExtra("name", listData!![position].name)
-            intent.putExtra("phone",listData!![position].phone)
-            intent.putExtra("gegion",listData!![position].gegion)
-            intent.putExtra("detailed",listData!![position].detailed)
-            intent.putExtra("id","${listData!![position].id}")
-            intent.putExtra(ADD_OR_MODIFY,1)
-            startActivity(intent)
+            if (from == CHOOSE) {
+                intent.putExtra("name", listData!![position].name)
+                intent.putExtra("phone",listData!![position].phone)
+                intent.putExtra("gegion",listData!![position].gegion)
+                intent.putExtra("detailed",listData!![position].detailed)
+                setResult(RESULT_CODE_MYADDRESS,intent)
+                finish()
+            }else{
+                val intent = Intent(this, ModifyAddressActivity::class.java)
+                intent.putExtra("name", listData!![position].name)
+                intent.putExtra("phone",listData!![position].phone)
+                intent.putExtra("gegion",listData!![position].gegion)
+                intent.putExtra("detailed",listData!![position].detailed)
+                intent.putExtra("id","${listData!![position].id}")
+                intent.putExtra(ADD_OR_MODIFY,1)
+                startActivity(intent)
+            }
         }
     }
 

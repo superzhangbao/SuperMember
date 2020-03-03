@@ -1,16 +1,11 @@
 package com.xishitong.supermember.view.activity
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.ConfigurationInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -19,12 +14,9 @@ import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.listener.OnResultCallbackListener
-import com.luck.picture.lib.style.PictureParameterStyle
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
-import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.BaseModel
 import com.xishitong.supermember.bean.CheckVoucherBean
@@ -33,18 +25,17 @@ import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
-import com.xishitong.supermember.util.*
-import com.xishitong.supermember.view.fragment.NetViewHolder
-import com.xishitong.supermember.widget.FigureIndicatorView
+import com.xishitong.supermember.util.DialogUtils
+import com.xishitong.supermember.util.GlideEngine
+import com.xishitong.supermember.util.ToastUtils
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.TransformerStyle
 import com.zhpan.bannerview.holder.ViewHolder
-import com.zhpan.bannerview.utils.BannerUtils
+import com.zhpan.indicator.enums.IndicatorStyle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_check_voucher.*
 import kotlinx.android.synthetic.main.common_toolbar.*
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -208,14 +199,17 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
         val path =
             RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
         map["path"] = path
-        val file = File(result[0].compressPath)
-        val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
-        val formData = MultipartBody.Part.createFormData("file", file.name, body)
-
         showLoading()
+        val arrayList = ArrayList<MultipartBody.Part>()
+        result.forEach {
+            val file = File(it.compressPath)
+            val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
+            val formData = MultipartBody.Part.createFormData("file", file.name, body)
+            arrayList.add(formData)
+        }
         NetClient.getInstance()
             .create(IApiService::class.java)
-            .uploadImg(map, formData)
+            .uploadImg(map, arrayList)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
@@ -223,9 +217,15 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
                 override fun onSuccess(t: UploadImgBean?) {
                     if (t?.data != null) {
                         val hashMap = HashMap<String, String>()
+                        var sb = StringBuilder()
+                        t.data.forEach {
+                            sb = sb.append(it.webUrl).append(",")
+                        }
+                        val url = sb.toString().substring(0, sb.lastIndex)
+
                         hashMap["token"] = ConfigPreferences.instance.getToken()
                         hashMap["id"] = id
-                        hashMap["url"] = t.data.webUrl
+                        hashMap["url"] = url
                         NetClient.getInstance()
                             .create(IApiService::class.java)
                             .editVoucher(
@@ -239,8 +239,8 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
                             .compose(bindUntilEvent(ActivityEvent.DESTROY))
                             .subscribe(object : BaseObserver<BaseModel>() {
                                 override fun onSuccess(t: BaseModel?) {
-                                    hideLoading()
                                     ToastUtils.showToast("上传成功")
+                                    hideLoading()
                                     finish()
                                 }
 
@@ -273,15 +273,26 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
 
 class VoucherViewHolder : ViewHolder<String> {
     private var imageView: ImageView? = null
-    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_ad_banner, viewGroup, false)
-        imageView = view.findViewById(R.id.iv_ad_banner)
-        return view
-    }
+//    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
+//        val view = LayoutInflater.from(context).inflate(R.layout.item_ad_banner, viewGroup, false)
+//        imageView = view.findViewById(R.id.iv_ad_banner)
+//        return view
+//    }
+//
+//    override fun onBind(context: Context?, data: String?, position: Int, size: Int) {
+//        Glide.with(context!!)
+//            .load(data!!)
+//            .into(imageView!!)
+//    }
 
-    override fun onBind(context: Context?, data: String?, position: Int, size: Int) {
-        Glide.with(context!!)
+    override fun onBind(itemView: View?, data: String?, position: Int, size: Int) {
+        imageView = itemView?.findViewById(R.id.iv_ad_banner)
+        Glide.with(imageView!!)
             .load(data!!)
             .into(imageView!!)
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.item_ad_banner
     }
 }

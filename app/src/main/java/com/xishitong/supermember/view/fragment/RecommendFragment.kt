@@ -29,6 +29,7 @@ import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.activity.CommonWebActivity
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.holder.ViewHolder
+import com.zhpan.indicator.enums.IndicatorStyle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_recommend.*
@@ -41,11 +42,11 @@ import org.greenrobot.eventbus.EventBus
  * date : 2020-02-11 16:42
  * description :精品推荐fragment
  */
-class RecommendFragment : BaseFragment(){
+class RecommendFragment : BaseFragment() {
 
     private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
     private var type = 1
-    var data:MutableList<MutableList<BoutiqueSaleBean.DataBean>> = mutableListOf()
+    var data: MutableList<MutableList<BoutiqueSaleBean.DataBean>> = mutableListOf()
 
     override fun setContentView(): Int {
         return R.layout.fragment_recommend
@@ -86,17 +87,18 @@ class RecommendFragment : BaseFragment(){
                         }
 
                         mHomeViewPager!!.setIndicatorVisibility(View.VISIBLE)
+                            .setIndicatorStyle(IndicatorStyle.ROUND_RECT)
                             .setIndicatorView(oval_indicator)
-                            .setIndicatorColor(
+                            .setIndicatorSliderColor(
                                 resources.getColor(R.color.color_88F86024),
                                 resources.getColor(R.color.color_F86024)
                             )
                             .setCanLoop(false)
                             .setAutoPlay(false)
-                            .setIndicatorGap(UiUtils.dip2px(App.getInstance(), 3.0f))
+                            .setIndicatorSliderGap(UiUtils.dip2px(App.getInstance(), 4.0f))
                             .setIndicatorHeight(UiUtils.dip2px(App.getInstance(), 4.0f))
-                            .setIndicatorWidth(
-                                UiUtils.dip2px(App.getInstance(), 3.0f),
+                            .setIndicatorSliderWidth(
+                                UiUtils.dip2px(App.getInstance(), 4.0f),
                                 UiUtils.dip2px(App.getInstance(), 10.0f)
                             )
                             .setHolderCreator { HomeViewHolder() }
@@ -113,29 +115,44 @@ class RecommendFragment : BaseFragment(){
 }
 
 class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQuickAdapter.OnItemClickListener {
-    private var recyclerView: RecyclerView? = null
-    private var commonAdapter: CommonAdapter? = null
-    private var context:Context? = null
+//    private var recyclerView: RecyclerView? = null
+//    private var commonAdapter: CommonAdapter? = null
+//    private var context:Context =
 
-    override fun onBind(context: Context?, data: MutableList<BoutiqueSaleBean.DataBean>?, position: Int, size: Int) {
-        this.context = context
-        recyclerView!!.layoutManager = GridLayoutManager(context, 5)
-        commonAdapter = CommonAdapter(data)
-        commonAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
-        commonAdapter!!.isFirstOnly(false)
-        commonAdapter!!.onItemClickListener = this
-        commonAdapter!!.bindToRecyclerView(recyclerView)
-    }
-
-    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
-        val view = LayoutInflater.from(context).inflate(R.layout.fragment_common, viewGroup, false)
-        recyclerView = view.findViewById(R.id.recycler_view)
-        return view
-    }
+//    override fun onBind(context: Context?, data: MutableList<BoutiqueSaleBean.DataBean>?, position: Int, size: Int) {
+//        this.context = context
+//        recyclerView!!.layoutManager = GridLayoutManager(context, 5)
+//        commonAdapter = CommonAdapter(data)
+//        commonAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+//        commonAdapter!!.isFirstOnly(false)
+//        commonAdapter!!.onItemClickListener = this
+//        commonAdapter!!.bindToRecyclerView(recyclerView)
+//    }
+//
+//    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
+//        val view = LayoutInflater.from(context).inflate(R.layout.fragment_common, viewGroup, false)
+//        recyclerView = view.findViewById(R.id.recycler_view)
+//        return view
+//    }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        EventBus.getDefault().postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
-        val intent = Intent(context, CommonWebActivity::class.java)
-        context?.startActivity(intent)
+        EventBus.getDefault()
+            .postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
+        val intent = Intent(view?.context, CommonWebActivity::class.java)
+        view?.context?.startActivity(intent)
+    }
+
+    override fun onBind(itemView: View?, data: MutableList<BoutiqueSaleBean.DataBean>?, position: Int, size: Int) {
+        val recyclerView: RecyclerView? = itemView?.findViewById(R.id.recycler_view)
+        recyclerView?.layoutManager = GridLayoutManager(itemView?.context, 5)
+        val commonAdapter = CommonAdapter(data)
+        commonAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
+        commonAdapter.isFirstOnly(true)
+        commonAdapter.onItemClickListener = this
+        commonAdapter.bindToRecyclerView(recyclerView)
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_common
     }
 }

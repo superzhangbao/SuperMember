@@ -97,6 +97,45 @@ public class OrderBean extends BaseModel {
             public String updateTime;
             public String userPhone;
             public List<String> urlList;
+
+            @Override
+            public String toString() {
+                return "ListBean{" +
+                        "account='" + account + '\'' +
+                        ", addTime='" + addTime + '\'' +
+                        ", addressDetailed='" + addressDetailed + '\'' +
+                        ", addressGegion='" + addressGegion + '\'' +
+                        ", addressName='" + addressName + '\'' +
+                        ", addressPhone='" + addressPhone + '\'' +
+                        ", amount=" + amount +
+                        ", bankAccount='" + bankAccount + '\'' +
+                        ", bankCard='" + bankCard + '\'' +
+                        ", bankName='" + bankName + '\'' +
+                        ", billId='" + billId + '\'' +
+                        ", buyNum=" + buyNum +
+                        ", completeTime='" + completeTime + '\'' +
+                        ", courierNumber='" + courierNumber + '\'' +
+                        ", deductAmount=" + deductAmount +
+                        ", id=" + id +
+                        ", imgUrl='" + imgUrl + '\'' +
+                        ", name='" + name + '\'' +
+                        ", orderType=" + orderType +
+                        ", originalAmount=" + originalAmount +
+                        ", payOrderId='" + payOrderId + '\'' +
+                        ", payType='" + payType + '\'' +
+                        ", processStatus='" + processStatus + '\'' +
+                        ", productId='" + productId + '\'' +
+                        ", productImg='" + productImg + '\'' +
+                        ", productName='" + productName + '\'' +
+                        ", productValue=" + productValue +
+                        ", reason='" + reason + '\'' +
+                        ", saleRemark='" + saleRemark + '\'' +
+                        ", status=" + status +
+                        ", updateTime='" + updateTime + '\'' +
+                        ", userPhone='" + userPhone + '\'' +
+                        ", urlList=" + urlList +
+                        '}';
+            }
         }
     }
 }

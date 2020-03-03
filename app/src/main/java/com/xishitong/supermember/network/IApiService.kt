@@ -95,7 +95,7 @@ interface IApiService {
     @Multipart
     @POST("/image/upload")
     fun uploadImg(
-        @PartMap map: HashMap<String, RequestBody>,
-        @Part path: MultipartBody.Part
+        @PartMap path: HashMap<String, RequestBody>,
+        @Part map: List<MultipartBody.Part>
     ): Observable<UploadImgBean>
 }

@@ -29,6 +29,7 @@ import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login_verification_code.*
 import kotlinx.android.synthetic.main.common_toolbar.*
@@ -178,7 +179,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(object : BaseObserver<LoginBean>() {
+            .subscribe(object :BaseObserver<LoginBean>(){
                 override fun onSuccess(t: LoginBean?) {
                     hideLoading()
                     t?.data?.let {

@@ -11,7 +11,7 @@
             android:layout_weight="1">
 
     </com.zhpan.bannerview.BannerViewPager>
-    <com.xishitong.supermember.widget.OvalIndicatorView
+    <com.zhpan.indicator.IndicatorView
             android:id="@+id/oval_indicator"
             android:layout_width="match_parent"
             android:layout_height="30dp"

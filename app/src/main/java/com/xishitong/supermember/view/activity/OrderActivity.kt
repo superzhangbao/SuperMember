@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
+import com.google.zxing.oned.MultiFormatUPCEANReader
 import com.gyf.immersionbar.ImmersionBar
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -215,7 +216,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .doOnNext {
                                 if (it) {
-                                    uploadVoucher("${listBean.id}")
+                                    uploadVoucher("${listBean.id}", listBean.billId)
                                 }
                             }
                             .subscribe()
@@ -249,15 +250,19 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                 )
             }
             R.id.tv_order_qrcode -> {//订单二维码
-                val hashMap = HashMap<String,String>()
+                val hashMap = HashMap<String, String>()
                 hashMap["billId"] = listBean.billId
                 hashMap["payId"] = listBean.payOrderId
-                showQrCodeDialog("${listBean.name}/${listBean.userPhone}","${listBean.amount / 100.0}",Gson().toJson(hashMap))
+                showQrCodeDialog(
+                    "${listBean.name}/${listBean.userPhone}",
+                    "${listBean.amount / 100.0}",
+                    Gson().toJson(hashMap)
+                )
             }
         }
     }
 
-    private fun uploadVoucher(id: String) {
+    private fun uploadVoucher(id: String, billId: String) {
         val builder = DialogUtils.Builder(this)
         choosePicImageDialog = builder.view(R.layout.dialog_selectsex)
             .cancelable(true)
@@ -265,11 +270,11 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .cancelTouchout(false)
             .style(R.style.Dialog)
             .addViewOnclick(R.id.tv_man) {
-                selectPicFromCamera(id)
+                selectPicFromCamera(id, billId)
                 choosePicImageDialog?.dismiss()
             }
             .addViewOnclick(R.id.tv_women) {
-                selectPicFromAlbum(id)
+                selectPicFromAlbum(id, billId)
                 choosePicImageDialog?.dismiss()
             }
             .addViewOnclick(R.id.tv_cancle) { choosePicImageDialog?.dismiss() }
@@ -277,7 +282,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
         choosePicImageDialog!!.show()
     }
 
-    private fun selectPicFromCamera(id: String) {
+    private fun selectPicFromCamera(id: String, billId: String) {
         RxPermissions(this)
             .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
             .doOnNext {
@@ -290,14 +295,14 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                         .compress(true)
                         .forResult { result ->
                             //上传oss
-                            uploadImage(result, id)
+                            uploadImage(result, id, billId)
                         }
                 }
             }
             .subscribe()
     }
 
-    private fun selectPicFromAlbum(id: String) {
+    private fun selectPicFromAlbum(id: String, billId: String) {
         PictureSelector.create(this)
             .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
             .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项   参考Demo MainActivity中代码
@@ -320,22 +325,26 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .isDragFrame(true)// 是否可拖动裁剪框(固定)
             .forResult { result ->
                 //上传oss
-                uploadImage(result, id)
+                uploadImage(result, id, billId)
             }
     }
 
-    private fun uploadImage(result: MutableList<LocalMedia>, id: String) {
+    private fun uploadImage(result: MutableList<LocalMedia>, id: String, billId: String) {
         val map = HashMap<String, RequestBody>()
         val path =
             RequestBody.create("application/json".toMediaTypeOrNull(), "xstvip")
         map["path"] = path
-        val file = File(result[0].compressPath)
-        val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
-        val formData = MultipartBody.Part.createFormData("file", file.name, body)
         showLoading()
+        val arrayList = ArrayList<MultipartBody.Part>()
+        result.forEach {
+            val file = File(it.compressPath)
+            val body = RequestBody.create("multiart/form-data".toMediaTypeOrNull(), file)
+            val formData = MultipartBody.Part.createFormData("file", file.name, body)
+            arrayList.add(formData)
+        }
         NetClient.getInstance()
             .create(IApiService::class.java)
-            .uploadImg(map, formData)
+            .uploadImg(map, arrayList)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
@@ -343,9 +352,15 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                 override fun onSuccess(t: UploadImgBean?) {
                     if (t?.data != null) {
                         val hashMap = HashMap<String, String>()
+                        var sb = StringBuilder()
+                        t.data.forEach {
+                            sb = sb.append(it.webUrl).append(",")
+                        }
+                        val url = sb.toString().substring(0, sb.lastIndex)
+                        LogUtil.e(TAG,"url:$url")
                         hashMap["token"] = ConfigPreferences.instance.getToken()
                         hashMap["id"] = id
-                        hashMap["url"] = t.data.webUrl
+                        hashMap["url"] = url
                         NetClient.getInstance()
                             .create(IApiService::class.java)
                             .uploadVoucher(
@@ -360,9 +375,14 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             .subscribe(object : BaseObserver<BaseModel>() {
                                 override fun onSuccess(t: BaseModel?) {
                                     hideLoading()
-                                    ToastUtils.showToast("上传成功")
                                     //刷新列表
                                     smart_refresh.autoRefresh()
+                                    //提示开票
+                                    showApplyInvoiceDialog(View.OnClickListener {
+                                        val intent = Intent(this@OrderActivity, ApplyInvoiceActivity::class.java)
+                                        intent.putExtra("orderNo", billId)
+                                        startActivity(intent)
+                                    })
                                 }
 
                                 override fun onError(msg: String?) {

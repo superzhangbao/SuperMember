@@ -1,13 +1,10 @@
 package com.xishitong.supermember.view.fragment
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -30,15 +27,17 @@ import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.DateUtil
+import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.activity.CommonWebActivity
 import com.xishitong.supermember.view.activity.MainActivity
 import com.xishitong.supermember.view.activity.SearchActivity
-import com.xishitong.supermember.widget.OvalIndicatorView
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.TransformerStyle
 import com.zhpan.bannerview.holder.ViewHolder
+import com.zhpan.indicator.enums.IndicatorSlideMode
+import com.zhpan.indicator.enums.IndicatorStyle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -55,7 +54,7 @@ import java.util.concurrent.TimeUnit
  *  description :特权fragment
  */
 class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPageChangeListener,
-    BaseQuickAdapter.OnItemClickListener {
+    BaseQuickAdapter.OnItemClickListener, BannerViewPager.OnPageClickListener {
 
     private var mBannerViewPager: BannerViewPager<BannerBean.DataBean, NetViewHolder>? = null
     private var bannerData: List<BannerBean.DataBean> = ArrayList()
@@ -102,14 +101,14 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     }
 
     override fun initData() {
-        initAdBanner()
+        getAdBannerData()
         initFlashSale()
     }
 
     /**
      * 初始化广告banner
      */
-    private fun initAdBanner() {
+    private fun getAdBannerData() {
         val hashMapOf = hashMapOf(Pair("status", "1"))
         NetClient.getInstance()
             .create(IApiService::class.java)
@@ -117,64 +116,67 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(FragmentEvent.DESTROY))
-            .subscribe(object : BaseObserver<BannerBean>(), BannerViewPager.OnPageClickListener {
+            .subscribe(object : BaseObserver<BannerBean>() {
                 override fun onSuccess(t: BannerBean?) {
                     t?.data?.let { data ->
                         bannerData = data
-                        mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
-                            .setIndicatorView(OvalIndicatorView(App.getInstance()))
-                            .setIndicatorColor(Color.GRAY, Color.WHITE)
-                            .setInterval(3000)
-                            .setCanLoop(true)
-                            .setAutoPlay(true)
-                            .setPageTransformerStyle(TransformerStyle.DEPTH)
-                            .setIndicatorGap(UiUtils.dip2px(App.getInstance(), 3.0f))
-                            .setIndicatorHeight(UiUtils.dip2px(App.getInstance(), 4.0f))
-                            .setIndicatorWidth(
-                                UiUtils.dip2px(App.getInstance(), 3.0f),
-                                UiUtils.dip2px(App.getInstance(), 10.0f)
-                            )
-                            .setRoundCorner(UiUtils.dip2px(App.getInstance(), 7.0f))
-                            .setScrollDuration(1000)
-                            .setOnPageClickListener(this)
-                            .setHolderCreator { NetViewHolder() }
-                            .create(data)
+                        initAdBanner(data)
                     }
                 }
 
                 override fun onError(msg: String?) {
                     ToastUtils.showToast(msg)
                 }
-
-                override fun onPageClick(position: Int) {
-                    //banner点击事件处理
-                    val enName = bannerData[position].enName
-                    val pName = bannerData[position].parentName
-                    if (enName == "creditCard") {
-                        EventBus.getDefault()
-                            .postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696"))
-                        val intent = Intent(activity, CommonWebActivity::class.java)
-                        startActivity(intent)
-                        return
-                    }
-                    if (enName == "temai") {
-                        //跳转到特卖tab
-                        (activity as MainActivity).selectNavigationItem()
-                        return
-                    }
-                    if (enName == "chezhubang") {
-                        EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476"))
-                        val intent = Intent(activity, CommonWebActivity::class.java)
-                        startActivity(intent)
-                        return
-                    }
-                    val url =
-                        "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
-                    EventBus.getDefault().postSticky(WebEvent(url))
-                    val intent = Intent(activity, CommonWebActivity::class.java)
-                    startActivity(intent)
-                }
             })
+    }
+
+    private fun initAdBanner(data: MutableList<BannerBean.DataBean>) {
+        mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
+            .setIndicatorSliderColor(Color.GRAY, Color.WHITE)
+            .setIndicatorStyle(IndicatorStyle.ROUND_RECT)
+            .setInterval(3000)
+            .setCanLoop(true)
+            .setAutoPlay(true)
+            .setPageTransformerStyle(TransformerStyle.DEPTH)
+            .setIndicatorSliderGap(UiUtils.dip2px(App.getInstance(), 4.0f))
+            .setIndicatorHeight(resources.getDimensionPixelOffset(R.dimen.dp_4))
+            .setIndicatorSliderWidth(UiUtils.dip2px(App.getInstance(), 4.0f),
+                UiUtils.dip2px(App.getInstance(), 10.0f))
+            .setIndicatorSlideMode(IndicatorSlideMode.NORMAL)
+            .setRoundCorner(UiUtils.dip2px(App.getInstance(), 7.0f))
+            .setScrollDuration(500)
+            .setOnPageClickListener(this)
+            .setHolderCreator { NetViewHolder() }
+            .create(data)
+    }
+
+    override fun onPageClick(position: Int) {
+        //banner点击事件处理
+        val enName = bannerData[position].enName
+        val pName = bannerData[position].parentName
+        if (enName == "creditCard") {
+            EventBus.getDefault()
+                .postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696"))
+            val intent = Intent(activity, CommonWebActivity::class.java)
+            startActivity(intent)
+            return
+        }
+        if (enName == "temai") {
+            //跳转到特卖tab
+            (activity as MainActivity).selectNavigationItem()
+            return
+        }
+        if (enName == "chezhubang") {
+            EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476"))
+            val intent = Intent(activity, CommonWebActivity::class.java)
+            startActivity(intent)
+            return
+        }
+        val url =
+            "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
+        EventBus.getDefault().postSticky(WebEvent(url))
+        val intent = Intent(activity, CommonWebActivity::class.java)
+        startActivity(intent)
     }
 
     /**
@@ -218,6 +220,10 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     starTime = "${split1[0]} " + startTimeList[4]
                     endTime = "${split1[0]} " + endTimeList[4]
                 }
+                in 22 until 24->{
+                    starTime = "${split1[0]} " + startTimeList[5]
+                    endTime = "${split1[0]} " + endTimeList[5]
+                }
             }
         } catch (e: Exception) {
         }
@@ -225,8 +231,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["productName"] = ""
-        hashMap["startTime"] = starTime
-        hashMap["endTime"] = endTime
+        hashMap["startTime"] = ""
+        hashMap["endTime"] = ""
         hashMap["status"] = "1"
         hashMap["page"] = "1"
         hashMap["limit"] = "6"
@@ -358,15 +364,26 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
 class NetViewHolder : ViewHolder<BannerBean.DataBean> {
     private var imageView: ImageView? = null
-    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_ad_banner, viewGroup, false)
-        imageView = view.findViewById(R.id.iv_ad_banner)
-        return view
+    override fun getLayoutId(): Int {
+
+        return R.layout.item_ad_banner
     }
 
-    override fun onBind(context: Context?, data: BannerBean.DataBean?, position: Int, size: Int) {
-        Glide.with(context!!)
+    override fun onBind(itemView: View?, data: BannerBean.DataBean?, position: Int, size: Int) {
+        imageView = itemView?.findViewById(R.id.iv_ad_banner)
+        Glide.with(imageView!!)
             .load(data!!.photo)
             .into(imageView!!)
     }
+
+//    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
+//        val view = LayoutInflater.from(context).inflate(R.layout.item_ad_banner, viewGroup, false)
+//        imageView = view.findViewById(R.id.iv_ad_banner)
+//        return view
+//    }
+//
+//    override fun onBind(context: Context?, data: BannerBean.DataBean?, position: Int, size: Int) {
+//
+//    }
+
 }

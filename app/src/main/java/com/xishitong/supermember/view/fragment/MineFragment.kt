@@ -99,58 +99,58 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 startActivity(intent)
             }
             R.id.tv_vip_recharge -> {
-                if (!ConfigPreferences.instance.getLoginState()) {
-                    startActivity(Intent(activity, LoginActivity::class.java))
-                    return
-                }
+                if (checkLogin()) return
                 if (ConfigPreferences.instance.getISMember()) {
                     //会费缴纳
-                    EventBus.getDefault().postSticky(
-                        WebEvent(PAY_MEMBERSHIP)
-                    )
+                    EventBus.getDefault().postSticky(WebEvent(PAY_MEMBERSHIP))
                 } else {
                     //申请入会
-                    EventBus.getDefault().postSticky(
-                        WebEvent(APPLY_FOR_MEMBERSHIP)
-                    )
+                    EventBus.getDefault().postSticky(WebEvent(APPLY_FOR_MEMBERSHIP))
                 }
                 val intent = Intent(activity, CommonWebActivity::class.java)
                 startActivity(intent)
             }
             R.id.processing_order -> {
                 //处理中订单
+                if (checkLogin()) return
                 val intent = Intent(activity, OrderActivity::class.java)
                 intent.putExtra("type", "100")
                 startActivity(intent)
             }
             R.id.completed_order -> {
                 //已完成订单
+                if (checkLogin()) return
                 val intent = Intent(activity, OrderActivity::class.java)
                 intent.putExtra("type", "200")
                 startActivity(intent)
             }
             R.id.fail_order -> {
                 //失败订单
+                if (checkLogin()) return
                 val intent = Intent(activity, OrderActivity::class.java)
                 intent.putExtra("type", "300")
                 startActivity(intent)
             }
             R.id.all_order -> {
                 //全部订单
+                if (checkLogin()) return
                 val intent = Intent(activity, OrderActivity::class.java)
                 intent.putExtra("type", "0")
                 startActivity(intent)
             }
             R.id.apply_invoice -> {
                 //申请开票
+                if (checkLogin()) return
                 startActivity(Intent(activity, RechargeDetailActivity::class.java))
             }
             R.id.details_of_membership -> {
                 //会费明细
+                if (checkLogin()) return
                 startActivity(Intent(activity, DetailOfMembershipActivity::class.java))
             }
             R.id.my_address -> {
                 //我的地址
+                if (checkLogin()) return
                 startActivity(Intent(activity, MyAddressActivity::class.java))
             }
             R.id.logout -> {
@@ -159,8 +159,19 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 ConfigPreferences.instance.setToken("")
                 ConfigPreferences.instance.setIsMember(false)
                 ConfigPreferences.instance.setPhone("")
+                tv_vip_recharge.text = resources.getString(R.string.apply_for_membership)
+                tv_integral.text = "0"
+                tv_phone.text = ""
             }
         }
+    }
+
+    private fun checkLogin(): Boolean {
+        if (!ConfigPreferences.instance.getLoginState()) {
+            startActivity(Intent(activity, LoginActivity::class.java))
+            return true
+        }
+        return false
     }
 
     override fun onDestroy() {

@@ -7,8 +7,8 @@ import android.graphics.Paint;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
-import com.zhpan.bannerview.indicator.BaseIndicatorView;
 import com.zhpan.bannerview.utils.BannerUtils;
+import com.zhpan.indicator.base.BaseIndicatorView;
 
 /**
  * author : zhangbao
@@ -19,7 +19,7 @@ public class FigureIndicatorView extends BaseIndicatorView {
 
     private int radius = BannerUtils.dp2px(20);
 
-    private int backgroundColor = Color.parseColor("#191919");
+    private int backgroundColor = Color.parseColor("#262626");
 
     private int textColor = Color.WHITE;
 
@@ -49,12 +49,12 @@ public class FigureIndicatorView extends BaseIndicatorView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (pageSize > 1) {
+        if (getPageSize() > 1) {
             mPaint.setColor(backgroundColor);
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, mPaint);
             mPaint.setColor(textColor);
             mPaint.setTextSize(textSize);
-            String text = currentPosition+ 1 + "/" + pageSize;
+            String text = getCurrentPosition() + 1 + "/" + getPageSize();
             int textWidth = (int) mPaint.measureText(text);
             Paint.FontMetricsInt fontMetricsInt = mPaint.getFontMetricsInt();
             int baseline = (getMeasuredHeight() - fontMetricsInt.bottom + fontMetricsInt.top) / 2 - fontMetricsInt.top;

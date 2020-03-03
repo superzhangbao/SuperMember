@@ -117,4 +117,8 @@ class DetailOfMembershipActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
+
+    fun showBaseCourierNumberDialog(courierNumber:String){
+        showCourierNumberDialog(courierNumber)
+    }
 }

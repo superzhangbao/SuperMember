@@ -20,8 +20,8 @@ class FlashSaleAdapter(data: MutableList<SaleBean.DataBean.ListBean>?) :
         with(helper) {
             val textView = getView<TextView>(R.id.tv_market_amount)
             textView.paint.flags = Paint. STRIKE_THRU_TEXT_FLAG
-            setText(R.id.tv_original_amount,"¥${data[adapterPosition].originalAmount}")
-            setText(R.id.tv_market_amount,"¥${data[adapterPosition].marketAmount}")
+            setText(R.id.tv_original_amount,"¥${data[adapterPosition].originalAmount/100.0}")
+            setText(R.id.tv_market_amount,"¥${data[adapterPosition].marketAmount/100.0}")
 
             val imageView = getView(R.id.iv_goods_img) as ImageView
             Glide.with(mContext)

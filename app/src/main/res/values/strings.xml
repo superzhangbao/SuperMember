@@ -4,10 +4,10 @@
     <string name="privilege">特权</string>
     <string name="specialsale">特卖</string>
     <string name="welcome_login">欢迎登陆</string>
-    <string name="login_title">禧世通超级会员中心</string>
+    <string name="login_title">禧世通</string>
     <string name="login_notice">注：不支持虚拟运营商和携号转网的号码注册登录-用户端</string>
-    <string name="login_second_title">禧世通超级会员中心-用户端</string>
-    <string name="login_agreement">未注册的手机号验证后自动生成 禧世通超级会员 帐号</string>
+    <string name="login_second_title">禧世通-用户端</string>
+    <string name="login_agreement">未注册的手机号验证后自动生成 禧世通 帐号</string>
     <string name="input_verification_code">输入验证码</string>
     <string name="sended_message">短信验证码已发送到</string>
     <string name="vertification_code_error">验证码错误</string>
@@ -28,7 +28,7 @@
     </string>
     <string name="integral">积分(个)</string>
     <string name="vip">会员卡</string>
-    <string name="xishitong_vip">禧世通超级会员</string>
+    <string name="xishitong_vip">禧世通</string>
     <string name="logout">退出登录</string>
     <string name="please_input_phonenumber">请输入手机号码</string>
     <string name="apply_for_membership">申请入会</string>

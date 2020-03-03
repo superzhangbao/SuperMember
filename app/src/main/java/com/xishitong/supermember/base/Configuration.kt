@@ -26,3 +26,8 @@ const val LIMITED_SECKILL = "http://www.seniornet.cn/js/sjh5test/pages/temaideta
 const val LIMIT = 10
 //h5交互调用方法的名字
 const val JS_NAME = "app"
+
+const val CHOOSE = "choose"
+
+const val REQUEST_CODE_APPLYINVOICE = 100
+const val RESULT_CODE_MYADDRESS = 200

@@ -12,6 +12,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.BaseFragment
+import com.xishitong.supermember.event.CloseCurrentPageEvent
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.view.fragment.MineFragment
@@ -19,6 +20,8 @@ import com.xishitong.supermember.view.fragment.PrivilegeFragment
 import com.xishitong.supermember.view.fragment.SpecialsaleFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_toolbar.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -115,5 +118,10 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    fun onCloseCurrentPageEvent(closeCurrentPageEvent: CloseCurrentPageEvent) {
+        mAppManager?.finishActivity(CommonWebActivity::class.java)
     }
 }

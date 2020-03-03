@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.LinearLayout
 import com.gyf.immersionbar.ImmersionBar
@@ -42,7 +43,10 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
 
     private fun initToolBar() {
         v_state_bar.setBackgroundColor(Color.WHITE)
-        ImmersionBar.with(this).statusBarDarkFont(true).init()
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .keyboardEnable(true)
+            .init()
         rl_toobar.setBackgroundColor(Color.WHITE)
         fl_back.visibility = View.VISIBLE
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
@@ -53,9 +57,9 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     fun onWebEvent(webEvent: WebEvent) {
         val url =
             if (webEvent.url.contains("?")) {
-                "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app"
+                "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
             } else {
-                "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app"
+                "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
             }
         initAgentWeb(url)
     }
