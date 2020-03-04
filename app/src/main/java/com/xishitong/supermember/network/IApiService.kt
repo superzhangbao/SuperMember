@@ -98,4 +98,9 @@ interface IApiService {
         @PartMap path: HashMap<String, RequestBody>,
         @Part map: List<MultipartBody.Part>
     ): Observable<UploadImgBean>
+
+    @POST("/marketShelf/getOneSale")
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    fun search(@Body body: RequestBody):Observable<BoutiqueSaleBean>
+
 }

@@ -1,13 +1,9 @@
 package com.xishitong.supermember.view.fragment
 
-import android.content.Context
 import android.content.Intent
-import androidx.viewpager.widget.ViewPager
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -15,15 +11,11 @@ import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.CommonAdapter
 import com.xishitong.supermember.base.App
 import com.xishitong.supermember.base.BaseFragment
-import com.xishitong.supermember.base.BaseFragment.Companion.TAG
 import com.xishitong.supermember.bean.BoutiqueSaleBean
-import com.xishitong.supermember.bean.CommonBean
 import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
-import com.xishitong.supermember.storage.ConfigPreferences
-import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import com.xishitong.supermember.util.UiUtils
 import com.xishitong.supermember.view.activity.CommonWebActivity

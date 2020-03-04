@@ -2,9 +2,13 @@ package com.xishitong.supermember.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -22,7 +26,6 @@ import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
@@ -31,11 +34,12 @@ import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 
 
-class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, View.OnClickListener, TextWatcher {
-    private var allData = mutableListOf<BoutiqueSaleBean.DataBean>()
+class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, View.OnClickListener, TextWatcher,
+    TextView.OnEditorActionListener {
     private var hotData = mutableListOf<BoutiqueSaleBean.DataBean>()
-    private var searchedData = mutableListOf<BoutiqueSaleBean.DataBean>()
-    private var searchAdapter:SearchAdapter? = null
+    private var searchAdapter: SearchAdapter? = null
+    private var lastChangeTime: Long = 0
+
     override fun setContentView(): Int {
         return R.layout.activity_search
     }
@@ -56,34 +60,10 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
         searchAdapter!!.bindToRecyclerView(recycler_view)
 
         et_search.addTextChangedListener(this)
+        et_search.setOnEditorActionListener(this)
 
-        getAllData()
         //获取数据
         getHotData()
-    }
-
-    private fun getAllData() {
-        repeat(3) {
-            val hashMap = HashMap<String, Int>()
-            hashMap["sort"] = it + 2
-            NetClient.getInstance()
-                .create(IApiService::class.java)
-                .getBoutiqueSale(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(object : BaseObserver<BoutiqueSaleBean>() {
-                    override fun onSuccess(t: BoutiqueSaleBean?) {
-                        t?.data?.let { dataBean ->
-                            allData.addAll(dataBean)
-                        }
-                    }
-
-                    override fun onError(msg: String?) {
-                        ToastUtils.showToast(msg)
-                    }
-                })
-        }
     }
 
     private fun getHotData() {
@@ -100,7 +80,6 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
                 override fun onSuccess(t: BoutiqueSaleBean?) {
                     hideLoading()
                     t?.data?.let { dataBean ->
-                        allData.addAll(dataBean)
                         if (dataBean.size <= 15) {
                             hotData = dataBean
                             searchAdapter!!.setNewData(dataBean)
@@ -139,30 +118,43 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
             searchAdapter?.setNewData(hotData)
             return
         }
-        Observable.just(1)
-            .subscribeOn(Schedulers.io())
-            .compose(bindUntilEvent(ActivityEvent.DESTROY))
-            .doOnNext {
-                LogUtil.e(TAG,Thread.currentThread().name)
-                searchedData.clear()
-                allData.forEach {
-                    if (it.name.contains(searchStr)) {
-                        searchedData.add(it)
-                    }
-                }
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
-                LogUtil.e(TAG,Thread.currentThread().name)
-                searchAdapter?.setNewData(searchedData)
-//                searchedData.clear()
-            }
-            .subscribe()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    }
+
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            //点击搜索的时候隐藏软键盘
+//            hideKeyboard(EditText);
+            LogUtil.e(TAG,"哈哈搜索，${v?.text}")
+            showLoading()
+            val hashMap = HashMap<String, String>()
+            hashMap["name"] = v?.text.toString()
+            hashMap["sort"] = "1"
+            NetClient.getInstance()
+                .create(IApiService::class.java)
+                .search(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<BoutiqueSaleBean>() {
+                    override fun onSuccess(t: BoutiqueSaleBean?) {
+                        hideLoading()
+                        t?.data?.let { dataBean ->
+                            searchAdapter?.setNewData(dataBean)
+                        }
+                    }
+
+                    override fun onError(msg: String?) {
+                        hideLoading()
+                        ToastUtils.showToast(msg)
+                    }
+                })
+            return true
+        }
+        return false
     }
 }

@@ -231,8 +231,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
         hashMap["productName"] = ""
-        hashMap["startTime"] = ""
-        hashMap["endTime"] = ""
+        hashMap["startTime"] = starTime
+        hashMap["endTime"] = endTime
         hashMap["status"] = "1"
         hashMap["page"] = "1"
         hashMap["limit"] = "6"
