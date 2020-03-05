@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.xishitong.supermember">
+          package="com.cystal.app">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
-            android:name=".base.App"
+            android:name="cn.cystal.app.base.App"
             android:allowBackup="true"
             android:icon="@mipmap/logo"
             android:label="@string/app_name"
@@ -22,7 +22,7 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.activity.SplashActivity"
+        <activity android:name="cn.cystal.app.view.activity.SplashActivity"
                   android:screenOrientation="portrait"
                 android:theme="@style/Splash">
             <intent-filter>
@@ -31,55 +31,51 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".view.activity.RechargeDetailActivity"
+        <activity android:name="cn.cystal.app.view.activity.RechargeDetailActivity"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".view.activity.SearchActivity"
+        <activity android:name="cn.cystal.app.view.activity.SearchActivity"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".view.activity.CheckVoucherActivity"
+        <activity android:name="cn.cystal.app.view.activity.CheckVoucherActivity"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".view.activity.CommonWebActivity"
+        <activity android:name="cn.cystal.app.view.activity.CommonWebActivity"
                   android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.MainActivity"
+                android:name="cn.cystal.app.view.activity.MainActivity"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
         </activity>
         <activity
-                android:name=".view.activity.LoginActivity"
+                android:name="cn.cystal.app.view.activity.LoginActivity"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.OrderActivity"
+                android:name="cn.cystal.app.view.activity.OrderActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.DetailOfMembershipActivity"
+                android:name="cn.cystal.app.view.activity.DetailOfMembershipActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.ModifyAddressActivity"
+                android:name="cn.cystal.app.view.activity.ModifyAddressActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.MyAddressActivity"
+                android:name="cn.cystal.app.view.activity.MyAddressActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.ApplyInvoiceActivity"
+                android:name="cn.cystal.app.view.activity.ApplyInvoiceActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".view.activity.LoginVerificationCodeActivity"
+                android:name="cn.cystal.app.view.activity.LoginVerificationCodeActivity"
                 android:screenOrientation="portrait">
         </activity> <!-- 屏幕适配 -->
         <meta-data

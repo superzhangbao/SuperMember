@@ -542,6 +542,7 @@
                         android:layout_marginBottom="33dp"
                         android:background="@drawable/btn_login_bg"
                         android:textColor="@color/white"
+                        style="?attr/buttonBarButtonStyle"
                         android:textSize="16sp"/>
             </LinearLayout>
         </FrameLayout>

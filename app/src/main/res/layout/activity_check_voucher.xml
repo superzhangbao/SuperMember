@@ -6,7 +6,7 @@
         android:background="@color/color_191919">
 
     <include layout="@layout/common_toolbar"/>
-    <com.xishitong.supermember.widget.FigureIndicatorView
+    <cn.cystal.app.widget.FigureIndicatorView
             android:id="@+id/figure_indicator_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
