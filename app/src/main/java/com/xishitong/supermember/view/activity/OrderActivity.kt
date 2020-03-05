@@ -139,7 +139,6 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<OrderBean>() {
                 override fun onSuccess(t: OrderBean?) {
-//                    smart_refresh.finishRefresh()
                     t?.data?.let {
                         it.list?.let { list ->
                             if (list.size < LIMIT) {
@@ -177,7 +176,6 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<OrderBean>() {
                 override fun onSuccess(t: OrderBean?) {
-//                    smart_refresh.finishLoadMore()
                     t?.data?.let {
                         it.list?.let { list ->
                             if (list.size < LIMIT) {
@@ -233,6 +231,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             }
                             val intent = Intent(this, CheckVoucherActivity::class.java)
                             intent.putExtra("id", "${listBean.id}")
+                            intent.putExtra("billId",listBean.billId)
                             intent.putExtra("type", type)
                             startActivity(intent)
                         }
@@ -382,6 +381,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                                         val intent = Intent(this@OrderActivity, ApplyInvoiceActivity::class.java)
                                         intent.putExtra("orderNo", billId)
                                         startActivity(intent)
+                                        mApplyInvoiceDialog?.dismiss()
                                     })
                                 }
 

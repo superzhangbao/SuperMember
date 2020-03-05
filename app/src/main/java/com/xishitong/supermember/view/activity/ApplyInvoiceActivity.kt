@@ -51,6 +51,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
         v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
+            .keyboardEnable(true)
             .init()
         rl_toobar.setBackgroundColor(Color.WHITE)
         fl_back.visibility = View.VISIBLE
@@ -62,7 +63,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
         ll_receive_addr.setOnClickListener(this)
         btn_submit.setOnClickListener(this)
         spinner.onItemSelectedListener = this
-        orderNo = intent.getStringExtra("orderNo")
+//        orderNo = intent.getStringExtra("orderNo")
         tv_order_number.text = orderNo
 
         //设置hint的大小
@@ -202,7 +203,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                     return
                 }
                 showLoading()
-                val hashMap = HashMap<String, Any>()
+                val hashMap = HashMap<String, String>()
                 hashMap["token"] = ConfigPreferences.instance.getToken()
                 hashMap["orderNo"] = orderNo
                 hashMap["type"] = "2"//发票类型 1增值税专用发票 2普通发票 3专业发票
@@ -212,12 +213,22 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                 hashMap["addressPhone"] = addressInfo?.phone ?: ""
                 hashMap["addressGegion"] = addressInfo?.gegion ?: ""
                 hashMap["addressDetailed"] = addressInfo?.detailed ?: ""
-                hashMap["companyName"] = if (type == 1) {
+                hashMap["invoiceName"] = if (type == 1) {
                     name
                 } else {
                     ""
                 }
-                hashMap["companyNumber"] = if (type == 1) {
+                hashMap["companyName"] = if (type == 2) {
+                    name
+                } else {
+                    ""
+                }
+                hashMap["idCard"] = if (type == 1) {
+                    idCardNo
+                } else {
+                    ""
+                }
+                hashMap["companyNumber"] = if (type == 2) {
                     idCardNo
                 } else {
                     ""
@@ -257,7 +268,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
                 val phone = data.getStringExtra("phone")
                 val gegion = data.getStringExtra("gegion")
                 val detailed = data.getStringExtra("detailed")
-                LogUtil.e(TAG,name)
+                LogUtil.e(TAG, name)
                 tv_receice_name.text = "$name ($phone)"
                 tv_receice_address.text = "$gegion $detailed"
             }

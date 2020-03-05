@@ -7,10 +7,10 @@ import com.xishitong.supermember.bean.BalanceBean
 
 /**
  *  author : zhangbao
- *  date : 2020-02-10 21:31
- *  description : 会费明细列表数据适配器
+ *  date : 2020-03-04 22:34
+ *  description :
  */
-class DetailAllAdapter(data: List<BalanceBean.DataBean.ListBean>) :
+class RechargeDetailAdapter (data: List<BalanceBean.DataBean.ListBean>) :
     BaseQuickAdapter<BalanceBean.DataBean.ListBean, BaseViewHolder>(R.layout.item_detail_all, data) {
     override fun convert(helper: BaseViewHolder, item: BalanceBean.DataBean.ListBean?) {
         with(helper) {
@@ -23,12 +23,7 @@ class DetailAllAdapter(data: List<BalanceBean.DataBean.ListBean>) :
                 if (type == 1) "+¥${data[adapterPosition].money / 100.00}个积分" else "-¥${data[adapterPosition].money / 100.00}个积分"
             setText(R.id.tv_integral, text)
             if (type == 1) {
-                val amount = data[adapterPosition].amount
-                if (amount == null) {
-                    setText(R.id.tv_money, "")
-                }else{
-                    setText(R.id.tv_money, "（缴纳金额：¥${amount}）")
-                }
+                setText(R.id.tv_money, "（缴纳金额：¥${data[adapterPosition].amount}）")
                 if (data[adapterPosition].status == 0) {
                     setVisible(R.id.tv_all, true)
                     setText(R.id.tv_all, "申请发票")

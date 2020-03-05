@@ -128,9 +128,6 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            //点击搜索的时候隐藏软键盘
-//            hideKeyboard(EditText);
-            LogUtil.e(TAG,"哈哈搜索，${v?.text}")
             showLoading()
             val hashMap = HashMap<String, String>()
             hashMap["name"] = v?.text.toString()

@@ -6,11 +6,9 @@ import android.view.View
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.xishitong.supermember.R
-import com.xishitong.supermember.base.APPLY_FOR_MEMBERSHIP
-import com.xishitong.supermember.base.BaseFragment
-import com.xishitong.supermember.base.PAY_MEMBERSHIP
-import com.xishitong.supermember.base.RULE
+import com.xishitong.supermember.base.*
 import com.xishitong.supermember.bean.UserInfoBean
+import com.xishitong.supermember.event.CloseCurrentPageEvent
 import com.xishitong.supermember.event.LoginEvent
 import com.xishitong.supermember.event.WebEvent
 import com.xishitong.supermember.network.BaseObserver
@@ -91,6 +89,11 @@ class MineFragment : BaseFragment(), View.OnClickListener {
         initData()
     }
 
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    fun onCloseCurrentPageEvent(closeCurrentPageEvent: CloseCurrentPageEvent){
+        initData()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tv_rule -> {
@@ -151,7 +154,9 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             R.id.my_address -> {
                 //我的地址
                 if (checkLogin()) return
-                startActivity(Intent(activity, MyAddressActivity::class.java))
+                val intent = Intent(activity, MyAddressActivity::class.java)
+                intent.putExtra("from", MINE)
+                startActivity(intent)
             }
             R.id.logout -> {
                 ToastUtils.showToast("退出登陆")
@@ -162,6 +167,8 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 tv_vip_recharge.text = resources.getString(R.string.apply_for_membership)
                 tv_integral.text = "0"
                 tv_phone.text = ""
+                val mainActivity = activity as MainActivity
+                mainActivity.selectNavigationItem(0)
             }
         }
     }

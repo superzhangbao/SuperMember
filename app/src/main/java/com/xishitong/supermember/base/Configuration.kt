@@ -28,6 +28,7 @@ const val LIMIT = 10
 const val JS_NAME = "app"
 
 const val CHOOSE = "choose"
+const val MINE = "mine"
 
 const val REQUEST_CODE_APPLYINVOICE = 100
 const val RESULT_CODE_MYADDRESS = 200

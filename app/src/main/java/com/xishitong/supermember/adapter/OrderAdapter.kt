@@ -18,7 +18,7 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
     override fun convert(helper: BaseViewHolder, item: OrderBean.DataBean.ListBean?) {
         with(helper) {
             val listBean = data[adapterPosition]
-            LogUtil.e(TAG,listBean.toString())
+            LogUtil.e(TAG, listBean.toString())
             val orderType = listBean.orderType
             //时间
             setText(R.id.tv_date, listBean.addTime)
@@ -64,9 +64,9 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             //订单状态
             setText(R.id.tv_order_state, orderStatus)
             if (listBean.status == 5 || listBean.status == 99) {
-                setTextColor(R.id.tv_order_state,mContext.resources.getColor(R.color.color_999999))
-            }else{
-                setTextColor(R.id.tv_order_state,mContext.resources.getColor(R.color.color_6BB467))
+                setTextColor(R.id.tv_order_state, mContext.resources.getColor(R.color.color_999999))
+            } else {
+                setTextColor(R.id.tv_order_state, mContext.resources.getColor(R.color.color_6BB467))
             }
             //产品名称
             setText(R.id.tv_goods_name, listBean.productName)
@@ -87,19 +87,18 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             )
             //订单编号
             setText(R.id.tv_content2, "订单编号:${listBean.billId}")
-            if (orderType==1) {
+            if (orderType == 1) {
                 //获赠积分
-                setText(R.id.tv_content3, "获赠积分:${listBean.productValue/100.0}")
-                setVisible(R.id.tv_content3,true)
-            }else{
-                setVisible(R.id.tv_content3,false)
-            }
-            if (listBean.deductAmount!=0) {
-                //积分抵扣
-                setText(R.id.tv_content3, "积分抵扣:¥${listBean.deductAmount/100.0}")
-                setVisible(R.id.tv_content3,true)
-            }else{
-                setVisible(R.id.tv_content3,false)
+                setText(R.id.tv_content3, "获赠积分:${listBean.productValue / 100.0}")
+                setVisible(R.id.tv_content3, true)
+            } else {
+                if (listBean.deductAmount != 0) {
+                    //积分抵扣
+                    setText(R.id.tv_content3, "积分抵扣:¥${listBean.deductAmount / 100.0}")
+                    setVisible(R.id.tv_content3, true)
+                } else {
+                    setGone(R.id.tv_content3, false)
+                }
             }
 
             //商品数量
@@ -108,7 +107,10 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             setText(R.id.tv_one_amount_left, "¥${(listBean.originalAmount / 100.0).toString().split(".")[0]}.")
             setText(R.id.tv_one_amount_right, (listBean.originalAmount / 100.0).toString().split(".")[1])
             setText(R.id.tv_all_goods_count, "共${listBean.buyNum}件商品,实付款:")
-            setText(R.id.tv_all_amount_left, "¥${(listBean.amount * listBean.buyNum / 100.0).toString().split(".")[0]}.")
+            setText(
+                R.id.tv_all_amount_left,
+                "¥${(listBean.amount * listBean.buyNum / 100.0).toString().split(".")[0]}."
+            )
             setText(R.id.tv_all_amount_right, (listBean.amount * listBean.buyNum / 100.0).toString().split(".")[1])
             val imageView = getView(R.id.iv_goods_img) as ImageView
             Glide.with(mContext)
@@ -118,69 +120,69 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             //按钮部分
             when (listBean.status) {
                 5 -> {
-                    setVisible(R.id.tv_fail_reason,true)
+                    setVisible(R.id.tv_fail_reason, true)
                     addOnClickListener(R.id.tv_fail_reason)
                     if (listBean.processStatus != "cw" && orderType == 1) {
-                        setVisible(R.id.tv_voucher,true)
-                        setText(R.id.tv_voucher,"查看凭证")
+                        setVisible(R.id.tv_voucher, true)
+                        setText(R.id.tv_voucher, "查看凭证")
                         addOnClickListener(R.id.tv_voucher)
-                    }else{
-                        setGone(R.id.tv_voucher,false)
+                    } else {
+                        setGone(R.id.tv_voucher, false)
                     }
                 }
                 2 -> {
-                    setVisible(R.id.tv_voucher,true)
-                    setText(R.id.tv_voucher,"上传凭证")
+                    setVisible(R.id.tv_voucher, true)
+                    setText(R.id.tv_voucher, "上传凭证")
                     addOnClickListener(R.id.tv_voucher)
-                    setGone(R.id.tv_fail_reason,false)
+                    setGone(R.id.tv_fail_reason, false)
                 }
                 3 -> {
                     if (orderType == 1) {
-                        setVisible(R.id.tv_voucher,true)
+                        setVisible(R.id.tv_voucher, true)
                         addOnClickListener(R.id.tv_voucher)
                         if (listBean.processStatus == "cw") {
-                            setText(R.id.tv_voucher,"查看/修改凭证")
+                            setText(R.id.tv_voucher, "查看/修改凭证")
                         } else {
-                            setText(R.id.tv_voucher,"查看凭证")
+                            setText(R.id.tv_voucher, "查看凭证")
                         }
-                        setGone(R.id.tv_fail_reason,false)
-                    }else{
-                        setGone(R.id.tv_voucher,false)
-                        setGone(R.id.tv_fail_reason,false)
+                        setGone(R.id.tv_fail_reason, false)
+                    } else {
+                        setGone(R.id.tv_voucher, false)
+                        setGone(R.id.tv_fail_reason, false)
                     }
                 }
                 99 -> {
                     if (orderType == 1 && listBean.processStatus != "cw") {
-                        setVisible(R.id.tv_voucher,true)
-                        setText(R.id.tv_voucher,"查看凭证")
+                        setVisible(R.id.tv_voucher, true)
+                        setText(R.id.tv_voucher, "查看凭证")
                         addOnClickListener(R.id.tv_voucher)
-                    }else{
-                        setGone(R.id.tv_voucher,false)
+                    } else {
+                        setGone(R.id.tv_voucher, false)
                     }
                 }
-                else->{
-                    setGone(R.id.tv_voucher,false)
-                    setGone(R.id.tv_fail_reason,false)
+                else -> {
+                    setGone(R.id.tv_voucher, false)
+                    setGone(R.id.tv_fail_reason, false)
                 }
             }
             if (listBean.courierNumber != null) {//快递单号
-                setVisible(R.id.tv_courier_number,true)
+                setVisible(R.id.tv_courier_number, true)
                 addOnClickListener(R.id.tv_courier_number)
-            }else{
-                setGone(R.id.tv_courier_number,false)
+            } else {
+                setGone(R.id.tv_courier_number, false)
             }
             if (orderType == 3) {//收货地址
-                setVisible(R.id.tv_receice_address,true)
+                setVisible(R.id.tv_receice_address, true)
                 addOnClickListener(R.id.tv_receice_address)
-            }else{
-                setGone(R.id.tv_receice_address,false)
+            } else {
+                setGone(R.id.tv_receice_address, false)
             }
             if (listBean.payType == "pos") {//订单二维码
-                LogUtil.e(TAG,listBean.payType)
-                setVisible(R.id.tv_order_qrcode,true)
+                LogUtil.e(TAG, listBean.payType)
+                setVisible(R.id.tv_order_qrcode, true)
                 addOnClickListener(R.id.tv_order_qrcode)
-            }else{
-                setGone(R.id.tv_order_qrcode,false)
+            } else {
+                setGone(R.id.tv_order_qrcode, false)
             }
         }
     }

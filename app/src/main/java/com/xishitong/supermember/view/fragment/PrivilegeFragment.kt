@@ -163,7 +163,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         }
         if (enName == "temai") {
             //跳转到特卖tab
-            (activity as MainActivity).selectNavigationItem()
+            (activity as MainActivity).selectNavigationItem(1)
             return
         }
         if (enName == "chezhubang") {

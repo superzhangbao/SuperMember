@@ -13,10 +13,9 @@ import static com.xishitong.supermember.base.ConfigurationKt.RELEASE_BASE_URL;
 
 public class NetClient {
 
-    private static int CONNECT_TIMEOUT = 10;
-    private static int CALL_TIMEOUT = 10;
-    private static int WRITE_TIMEOUT = 60;
-    private static int READ_TIMEOUT = 60;
+    private static int CONNECT_TIMEOUT = 5;
+    private static int WRITE_TIMEOUT = 5;
+    private static int READ_TIMEOUT = 5;
     private static boolean RETRY_ONCONNECTION_FAILURE = false;
     private static String BASE_URL = RELEASE_BASE_URL;
     private Retrofit mRetrofit;
@@ -63,11 +62,6 @@ public class NetClient {
 
     public NetClient connectTimeOut(int connectTtime) {
         CONNECT_TIMEOUT = connectTtime;
-        return this;
-    }
-
-    public NetClient callTimeOut(int callTime) {
-        CALL_TIMEOUT = callTime;
         return this;
     }
 

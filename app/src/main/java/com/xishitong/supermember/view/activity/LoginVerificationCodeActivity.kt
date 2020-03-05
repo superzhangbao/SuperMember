@@ -16,26 +16,35 @@ import android.widget.EditText
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
+import com.xishitong.supermember.BuildConfig
 import com.xishitong.supermember.R
 import com.xishitong.supermember.base.BaseActivity
+import com.xishitong.supermember.base.DEBUG_BASE_URL
 import com.xishitong.supermember.base.PHONE_NUMBER
+import com.xishitong.supermember.base.RELEASE_BASE_URL
+import com.xishitong.supermember.bean.CommonBean
 import com.xishitong.supermember.bean.LoginBean
+import com.xishitong.supermember.bean.LoginErrorBean
 import com.xishitong.supermember.event.LoginEvent
-import com.xishitong.supermember.network.BaseObserver
 import com.xishitong.supermember.network.IApiService
 import com.xishitong.supermember.network.NetClient
 import com.xishitong.supermember.storage.ConfigPreferences
 import com.xishitong.supermember.util.LogUtil
 import com.xishitong.supermember.util.ToastUtils
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login_verification_code.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -47,7 +56,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
 
     private var et: Array<EditText>? = null
     private var flag = true
-    private var phone:String = ""
+    private var phone: String = ""
 
     override fun setContentView(): Int {
         return R.layout.activity_login_verification_code
@@ -75,7 +84,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
         fl_back.setOnClickListener(this)
         tv_title.text = getString(R.string.login_title)
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        tv_send_message_to.text = getString(R.string.sended_message)+intent.getStringExtra(PHONE_NUMBER)
+        tv_send_message_to.text = getString(R.string.sended_message) + intent.getStringExtra(PHONE_NUMBER)
     }
 
     /**
@@ -96,16 +105,15 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
         inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
         et!!.forEachIndexed { index, _ ->
             val x = index
-            LogUtil.e(TAG,"addTextChangedListener:$index")
+            LogUtil.e(TAG, "addTextChangedListener:$index")
             et!![index].addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    LogUtil.e(TAG,"s:$s====")
                     if (s.toString().length == 1) {
-                        if (x == et!!.size-1) {
+                        if (x == et!!.size - 1) {
                             et!![et!!.size - 1].isFocusable = true
                             et!![et!!.size - 1].isFocusableInTouchMode = true
                             et!![et!!.size - 1].requestFocus()
@@ -127,29 +135,28 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
             })
 
             et!![x].setOnKeyListener { v, keyCode, event ->
-                LogUtil.e(TAG,"keyCode:$keyCode====event${event.keyCode}")
                 if (event.keyCode == KeyEvent.KEYCODE_BACK) {
                     finish()
                     return@setOnKeyListener false
-                }else{
+                } else {
                     if (flag) {
                         flag = false
                         if (event.keyCode == KeyEvent.KEYCODE_DEL) {
                             if (et!![x].text.toString().length == 1) {
                                 et!![x].text.clear()
-                            }else if (et!![x].text.toString().isEmpty()) {
+                            } else if (et!![x].text.toString().isEmpty()) {
                                 if (x == 0) {
                                     et!![x].text.clear()
-                                }else{
-                                    et!![x-1].text.clear()
-                                    et!![x-1].isFocusable = true
-                                    et!![x-1].isFocusableInTouchMode = true
-                                    et!![x-1].requestFocus()
+                                } else {
+                                    et!![x - 1].text.clear()
+                                    et!![x - 1].isFocusable = true
+                                    et!![x - 1].isFocusableInTouchMode = true
+                                    et!![x - 1].requestFocus()
                                 }
                             }
                         }
                         return@setOnKeyListener true
-                    }else{
+                    } else {
                         flag = true
                         return@setOnKeyListener false
                     }
@@ -173,32 +180,57 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
         val code6 = et_six.text.toString().trim()
         val code = code1 + code2 + code3 + code4 + code5 + code6
         val hashMap = mutableMapOf("phone" to phone, "code" to code)
-        NetClient.getInstance()
-            .create(IApiService::class.java)
+
+        val builder = Retrofit.Builder()
+        val retrofit = builder
+            .baseUrl(if (BuildConfig.DEBUG) DEBUG_BASE_URL else RELEASE_BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+        retrofit.create(IApiService::class.java)
             .login(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(object :BaseObserver<LoginBean>(){
-                override fun onSuccess(t: LoginBean?) {
-                    hideLoading()
-                    t?.data?.let {
-                        ConfigPreferences.instance.setLoginState(true)
-                        //保存token
-                        ConfigPreferences.instance.setToken(it.token ?: "")
-                        //保存是否是会员
-                        ConfigPreferences.instance.setIsMember(it.isMember)
-                        //保存手机号
-                        ConfigPreferences.instance.setPhone(phone)
-                        EventBus.getDefault().post(LoginEvent())
-                        startActivity(Intent(this@LoginVerificationCodeActivity, MainActivity::class.java))
+            .subscribe(object : Observer<String> {
+                override fun onComplete() {
+                }
 
+                override fun onSubscribe(d: Disposable) {
+                }
+
+                override fun onNext(t: String) {
+                    hideLoading()
+                    val gson = Gson()
+                    try {
+                        val loginError = gson.fromJson(t, LoginErrorBean::class.java)
+                        if (loginError.code == 200) {
+                            val loginBean = gson.fromJson(t, LoginBean::class.java)
+                            if (loginBean.code == 200 && loginBean.data != null) {
+                                loginBean.data?.let {
+                                    ConfigPreferences.instance.setLoginState(true)
+                                    //保存token
+                                    ConfigPreferences.instance.setToken(it.token ?: "")
+                                    //保存是否是会员
+                                    ConfigPreferences.instance.setIsMember(it.isMember)
+                                    //保存手机号
+                                    ConfigPreferences.instance.setPhone(phone)
+                                    EventBus.getDefault().post(LoginEvent())
+                                    startActivity(Intent(this@LoginVerificationCodeActivity, MainActivity::class.java))
+                                }
+                            } else {
+                                ToastUtils.showToast(loginBean.message)
+                            }
+                        } else {
+                            ToastUtils.showToast(loginError.message)
+                        }
+                    } catch (e: Exception) {
                     }
                 }
 
-                override fun onError(msg: String?) {
+                override fun onError(e: Throwable) {
                     hideLoading()
-                    ToastUtils.showToast(msg)
+                    ToastUtils.showToast(e.message)
                 }
             })
     }

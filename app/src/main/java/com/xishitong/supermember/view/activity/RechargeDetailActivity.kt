@@ -15,6 +15,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.xishitong.supermember.R
 import com.xishitong.supermember.adapter.DetailAllAdapter
+import com.xishitong.supermember.adapter.RechargeDetailAdapter
 import com.xishitong.supermember.base.BaseActivity
 import com.xishitong.supermember.base.LIMIT
 import com.xishitong.supermember.bean.BalanceBean
@@ -37,7 +38,7 @@ import okhttp3.RequestBody
  */
 class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener,
     BaseQuickAdapter.OnItemChildClickListener, OnRefreshListener, View.OnClickListener, OnLoadMoreListener {
-    private var detailAllAdapter: DetailAllAdapter? = null
+    private var rechargeDetailAdapter: RechargeDetailAdapter? = null
     private var emptyView: View? = null
     private var listData: MutableList<BalanceBean.DataBean.ListBean> = ArrayList()
     private var page = 1
@@ -62,15 +63,15 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
 
     private fun initRecyclerView() {
         recycler_view.layoutManager = LinearLayoutManager(this)
-        detailAllAdapter = DetailAllAdapter(listData)
-        detailAllAdapter!!.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
-        detailAllAdapter!!.isFirstOnly(false)
-        detailAllAdapter!!.onItemClickListener = this
-        detailAllAdapter!!.onItemChildClickListener = this
+        rechargeDetailAdapter = RechargeDetailAdapter(listData)
+        rechargeDetailAdapter!!.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
+        rechargeDetailAdapter!!.isFirstOnly(false)
+        rechargeDetailAdapter!!.onItemClickListener = this
+        rechargeDetailAdapter!!.onItemChildClickListener = this
         emptyView = layoutInflater.inflate(R.layout.empty, recycler_view.parent as ViewGroup, false)
-        detailAllAdapter!!.emptyView = emptyView
-        detailAllAdapter!!.bindToRecyclerView(recycler_view)
-        detailAllAdapter!!.isUseEmpty(false)
+        rechargeDetailAdapter!!.emptyView = emptyView
+        rechargeDetailAdapter!!.bindToRecyclerView(recycler_view)
+        rechargeDetailAdapter!!.isUseEmpty(false)
     }
 
     private fun initSmartRefresh() {
@@ -106,7 +107,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     }
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
-        detailAllAdapter?.isUseEmpty(true)
+        rechargeDetailAdapter?.isUseEmpty(true)
         page = 1
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
@@ -121,19 +122,18 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(object : BaseObserver<BalanceBean>() {
                 override fun onSuccess(t: BalanceBean?) {
-//                    smart_refresh.finishRefresh()
                     t?.data?.list?.let { list ->
                         val dataList = list.filter { listBean ->
-                            listBean.type == 1
+                            listBean.type == 1 && listBean.status != 99
                         }
-                        if (dataList.size< LIMIT) {
+                        if (dataList.size < LIMIT) {
                             smart_refresh.finishRefreshWithNoMoreData()
-                        }else{
+                        } else {
                             smart_refresh.finishRefresh()
                             smart_refresh.setNoMoreData(false)
                         }
                         listData = dataList.toMutableList()
-                        detailAllAdapter!!.setNewData(listData)
+                        rechargeDetailAdapter!!.setNewData(listData)
                     }
                 }
 
@@ -145,7 +145,7 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     }
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
-        detailAllAdapter?.isUseEmpty(true)
+        rechargeDetailAdapter?.isUseEmpty(true)
         page++
         val hashMap = HashMap<String, Any>()
         hashMap["token"] = ConfigPreferences.instance.getToken()
@@ -162,15 +162,15 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
                 override fun onSuccess(t: BalanceBean?) {
                     t?.data?.list?.let { list ->
                         val dataList = list.filter { listBean ->
-                            listBean.type == 1
+                            listBean.type == 1 && listBean.status != 99
                         }
-                        if (dataList.size< LIMIT) {
+                        if (dataList.size < LIMIT) {
                             smart_refresh.finishLoadMoreWithNoMoreData()
-                        }else{
+                        } else {
                             smart_refresh.finishLoadMore()
                         }
                         listData.addAll(dataList)
-                        detailAllAdapter!!.setNewData(listData)
+                        rechargeDetailAdapter!!.setNewData(listData)
                     }
                 }
 

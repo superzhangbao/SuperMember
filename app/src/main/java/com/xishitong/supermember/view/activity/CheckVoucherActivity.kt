@@ -1,6 +1,7 @@
 package com.xishitong.supermember.view.activity
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
@@ -48,6 +49,7 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
 
     private var mBannerViewPager: BannerViewPager<String, VoucherViewHolder>? = null
     private var id = ""
+    private var billId = ""
     private var type = 0
     private var choosePicImageDialog: DialogUtils? = null
 
@@ -73,6 +75,7 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
 
         btn_submit_voucher.setOnClickListener(this)
         id = intent.getStringExtra("id")
+        billId = intent.getStringExtra("billId")
         type = intent.getIntExtra("type", 0)
         if (type == 1) {
             btn_submit_voucher.visibility = View.GONE
@@ -130,11 +133,11 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
                     .cancelTouchout(false)
                     .style(R.style.Dialog)
                     .addViewOnclick(R.id.tv_man) {
-                        selectPicFromCamera(id)
+                        selectPicFromCamera()
                         choosePicImageDialog?.dismiss()
                     }
                     .addViewOnclick(R.id.tv_women) {
-                        selectPicFromAlbum(id)
+                        selectPicFromAlbum()
                         choosePicImageDialog?.dismiss()
                     }
                     .addViewOnclick(R.id.tv_cancle) { choosePicImageDialog?.dismiss() }
@@ -144,7 +147,7 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    private fun selectPicFromCamera(id: String) {
+    private fun selectPicFromCamera() {
         RxPermissions(this)
             .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
             .doOnNext {
@@ -157,14 +160,14 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
                         .compress(true)
                         .forResult { result ->
                             //上传oss
-                            uploadImage(result, id)
+                            uploadImage(result)
                         }
                 }
             }
             .subscribe()
     }
 
-    private fun selectPicFromAlbum(id: String) {
+    private fun selectPicFromAlbum() {
         //选择图片
         PictureSelector.create(this)
             .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
@@ -188,12 +191,12 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
             .isDragFrame(true)// 是否可拖动裁剪框(固定)
             .forResult { result ->
                 //                        result?.forEachIndexed { index, localMedia ->
-                uploadImage(result, id)
+                uploadImage(result)
                 //                        }
             }
     }
 
-    private fun uploadImage(result: List<LocalMedia>, id: String) {
+    private fun uploadImage(result: List<LocalMedia>) {
         //上传oss
         val map = HashMap<String, RequestBody>()
         val path =
@@ -228,20 +231,20 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
                         hashMap["url"] = url
                         NetClient.getInstance()
                             .create(IApiService::class.java)
-                            .editVoucher(
-                                RequestBody.create(
-                                    "application/json".toMediaTypeOrNull(),
-                                    Gson().toJson(hashMap)
-                                )
-                            )
+                            .editVoucher(RequestBody.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMap)))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .compose(bindUntilEvent(ActivityEvent.DESTROY))
                             .subscribe(object : BaseObserver<BaseModel>() {
                                 override fun onSuccess(t: BaseModel?) {
-                                    ToastUtils.showToast("上传成功")
                                     hideLoading()
-                                    finish()
+                                    //提示开票
+                                    showApplyInvoiceDialog(View.OnClickListener {
+                                        val intent = Intent(this@CheckVoucherActivity, ApplyInvoiceActivity::class.java)
+                                        intent.putExtra("orderNo", billId)
+                                        startActivity(intent)
+                                        mApplyInvoiceDialog?.dismiss()
+                                    })
                                 }
 
                                 override fun onError(msg: String?) {
@@ -273,17 +276,6 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
 
 class VoucherViewHolder : ViewHolder<String> {
     private var imageView: ImageView? = null
-//    override fun createView(viewGroup: ViewGroup?, context: Context?, position: Int): View {
-//        val view = LayoutInflater.from(context).inflate(R.layout.item_ad_banner, viewGroup, false)
-//        imageView = view.findViewById(R.id.iv_ad_banner)
-//        return view
-//    }
-//
-//    override fun onBind(context: Context?, data: String?, position: Int, size: Int) {
-//        Glide.with(context!!)
-//            .load(data!!)
-//            .into(imageView!!)
-//    }
 
     override fun onBind(itemView: View?, data: String?, position: Int, size: Int) {
         imageView = itemView?.findViewById(R.id.iv_ad_banner)

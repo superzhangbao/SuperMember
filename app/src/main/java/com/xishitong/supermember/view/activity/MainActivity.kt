@@ -42,7 +42,10 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     private fun requestPermission() {
         AgentWebConfig.debug()
         RxPermissions(this)
-            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA)
+            .request(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION)
             .subscribe()
     }
 
@@ -95,8 +98,8 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         return false
     }
 
-    fun selectNavigationItem() {
-        bottom_navigation.selectedItemId = bottom_navigation.menu.getItem(1).itemId
+    fun selectNavigationItem(index: Int) {
+        bottom_navigation.selectedItemId = bottom_navigation.menu.getItem(index).itemId
     }
 
     private fun switchFragment(index: Int) {

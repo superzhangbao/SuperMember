@@ -6,6 +6,8 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * 所有接口
@@ -20,7 +22,7 @@ interface IApiService {
     //登陆
     @POST("login/userLogin")
     @Headers("Content-Type: application/json;charset=UTF-8")
-    fun login(@Body body: RequestBody): Observable<LoginBean>
+    fun login(@Body body: RequestBody): Observable<String>
 
     //首页ICON展示
     @POST("/marketShelf/getBoutiqueSale")
