@@ -21,6 +21,7 @@ class ConfigPreferences private constructor() {
         val instance: ConfigPreferences
             get() = ConfigPreHolder.PREFERENCES
 
+        private const val AGREEMENT = "agreement"
         private const val LOGIN_STATE = "login_state"
         private const val TOKEN = "token"
         private const val IS_MEMBER = "is_member"
@@ -30,6 +31,16 @@ class ConfigPreferences private constructor() {
     init {
         mSharedPreferences = Objects.requireNonNull(App.getInstance())
             .getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE)
+    }
+
+    fun setAgreementState(state:Boolean) {
+        val edit = mSharedPreferences.edit()
+        edit.putBoolean(AGREEMENT, state)
+        edit.commit()
+    }
+
+    fun getAgreementState():Boolean {
+        return mSharedPreferences.getBoolean(AGREEMENT,false)
     }
 
     fun setLoginState(login: Boolean) {

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cn.cystal.app.R
 import cn.cystal.app.adapter.CommonAdapter
 import cn.cystal.app.base.App
 import cn.cystal.app.base.BaseFragment
@@ -15,7 +16,6 @@ import cn.cystal.app.network.NetClient
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.util.UiUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.cystal.app.R
 import cn.cystal.app.view.activity.CommonWebActivity
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent

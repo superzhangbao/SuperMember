@@ -5,12 +5,12 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseFragment
 import cn.cystal.app.base.JS_NAME
 import cn.cystal.app.base.SPECIAL_SALE
 import com.just.agentweb.AgentWeb
 import com.just.agentweb.AgentWebConfig
-import com.cystal.app.R
 import cn.cystal.app.event.GoToDetailEvent
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences

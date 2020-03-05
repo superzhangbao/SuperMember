@@ -20,7 +20,7 @@ import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.*
 import cn.cystal.app.view.activity.CommonWebActivity
 import cn.cystal.app.view.activity.LoginActivity
-import com.cystal.app.R
+import cn.cystal.app.R
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable

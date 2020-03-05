@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import cn.cystal.app.R
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -15,7 +16,6 @@ import com.google.android.flexbox.JustifyContent
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
-import com.cystal.app.R
 import cn.cystal.app.adapter.SearchAdapter
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.bean.BoutiqueSaleBean

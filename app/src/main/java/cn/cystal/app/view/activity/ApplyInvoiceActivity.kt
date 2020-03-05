@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.text.style.AbsoluteSizeSpan
 import android.view.View
 import android.widget.AdapterView
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
-import com.cystal.app.R
 import cn.cystal.app.base.*
 import cn.cystal.app.bean.MyAddressBean
 import cn.cystal.app.bean.UserBean

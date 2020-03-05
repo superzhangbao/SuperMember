@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.cystal.app.R
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
@@ -22,7 +23,6 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
-import com.cystal.app.R
 import cn.cystal.app.adapter.OrderAdapter
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.BaseModel

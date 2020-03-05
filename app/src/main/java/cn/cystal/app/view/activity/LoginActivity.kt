@@ -11,8 +11,8 @@ import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.View
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
-import com.cystal.app.R
 import cn.cystal.app.base.PHONE_NUMBER
 import cn.cystal.app.base.VIP_AGREEMENT
 import cn.cystal.app.bean.VertifyCodeBean

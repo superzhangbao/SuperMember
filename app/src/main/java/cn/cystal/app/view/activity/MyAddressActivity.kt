@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.cystal.app.R
 import cn.cystal.app.adapter.MyAddressAdapter
 import cn.cystal.app.base.ADD_OR_MODIFY
 import cn.cystal.app.base.BaseActivity
@@ -18,7 +19,6 @@ import cn.cystal.app.network.NetClient
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.cystal.app.R
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.scwang.smartrefresh.layout.api.RefreshLayout

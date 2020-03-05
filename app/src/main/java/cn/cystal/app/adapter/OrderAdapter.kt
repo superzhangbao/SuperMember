@@ -6,7 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import cn.cystal.app.bean.OrderBean
 import cn.cystal.app.util.LogUtil
-import com.cystal.app.R
+import cn.cystal.app.R
 
 /**
  * author : zhangbao

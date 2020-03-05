@@ -9,13 +9,13 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager.widget.ViewPager
+import cn.cystal.app.R
 import cn.cystal.app.adapter.DetailOfMembershipAdapter
 import cn.cystal.app.adapter.FlashSaleAdapter
 import cn.cystal.app.base.BaseFragment
 import cn.cystal.app.bean.BannerBean
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.cystal.app.R
 import cn.cystal.app.base.App
 import cn.cystal.app.base.LIMITED_SECKILL
 import cn.cystal.app.bean.SaleBean

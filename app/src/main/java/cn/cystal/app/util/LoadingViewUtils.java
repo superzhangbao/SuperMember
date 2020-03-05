@@ -5,7 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cystal.app.R;
+import cn.cystal.app.R;
 
 
 public class LoadingViewUtils {

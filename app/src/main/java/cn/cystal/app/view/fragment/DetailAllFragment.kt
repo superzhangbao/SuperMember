@@ -4,10 +4,10 @@ import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.cystal.app.R
 import cn.cystal.app.adapter.DetailAllAdapter
 import cn.cystal.app.base.BaseFragment
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.cystal.app.R
 import cn.cystal.app.base.DETAIL_TYPE
 import cn.cystal.app.base.LIMIT
 import cn.cystal.app.bean.BalanceBean

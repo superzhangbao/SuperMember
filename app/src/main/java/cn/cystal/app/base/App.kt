@@ -1,8 +1,8 @@
 package cn.cystal.app.base
 
 import android.app.Application
+import cn.cystal.app.BuildConfig
 import cn.cystal.app.network.NetClient
-import com.cystal.app.BuildConfig
 import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.unit.Subunits
 

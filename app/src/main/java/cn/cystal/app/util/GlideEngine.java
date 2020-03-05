@@ -20,7 +20,7 @@ import com.luck.picture.lib.tools.MediaUtils;
 import com.luck.picture.lib.widget.longimage.ImageSource;
 import com.luck.picture.lib.widget.longimage.ImageViewState;
 import com.luck.picture.lib.widget.longimage.SubsamplingScaleImageView;
-import com.cystal.app.R;
+import cn.cystal.app.R;
 
 /**
  * author : zhangbao

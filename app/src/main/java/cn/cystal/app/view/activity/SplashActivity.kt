@@ -2,10 +2,10 @@ package cn.cystal.app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
-import com.cystal.app.R
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit

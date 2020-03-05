@@ -13,7 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.cystal.app.R
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.DEBUG_BASE_URL
 import cn.cystal.app.base.PHONE_NUMBER
@@ -25,7 +25,7 @@ import cn.cystal.app.network.IApiService
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
-import com.cystal.app.BuildConfig
+import cn.cystal.app.BuildConfig
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent

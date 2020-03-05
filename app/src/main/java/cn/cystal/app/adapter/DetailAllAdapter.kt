@@ -3,7 +3,7 @@ package cn.cystal.app.adapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import cn.cystal.app.bean.BalanceBean
-import com.cystal.app.R
+import cn.cystal.app.R
 
 /**
  *  author : zhangbao

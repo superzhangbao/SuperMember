@@ -1,7 +1,7 @@
 package cn.cystal.app.network;
 
 import cn.cystal.app.base.ConfigurationKt;
-import com.cystal.app.BuildConfig;
+import cn.cystal.app.BuildConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

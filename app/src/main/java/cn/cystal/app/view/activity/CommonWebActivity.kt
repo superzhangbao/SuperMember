@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.LinearLayout
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.JS_NAME
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.web.AndroidInterface
-import com.cystal.app.R
 import com.gyf.immersionbar.ImmersionBar
 import com.just.agentweb.AgentWeb
 import com.just.agentweb.AgentWebConfig

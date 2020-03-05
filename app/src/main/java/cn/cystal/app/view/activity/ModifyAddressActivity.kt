@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import cn.cystal.app.R
 import cn.cystal.app.base.ADD_OR_MODIFY
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.BaseModel
@@ -17,7 +18,6 @@ import cn.cystal.app.util.GetJsonDataUtil
 import cn.cystal.app.util.ToastUtils
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener
-import com.cystal.app.R
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent

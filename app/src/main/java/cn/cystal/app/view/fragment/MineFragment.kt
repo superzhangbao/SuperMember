@@ -3,6 +3,7 @@ package cn.cystal.app.view.fragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.View
+import cn.cystal.app.R
 import cn.cystal.app.base.*
 import cn.cystal.app.bean.UserInfoBean
 import cn.cystal.app.event.CloseCurrentPageEvent
@@ -14,7 +15,6 @@ import cn.cystal.app.network.NetClient
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.view.activity.*
-import com.cystal.app.R
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.android.schedulers.AndroidSchedulers

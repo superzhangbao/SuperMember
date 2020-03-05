@@ -12,14 +12,13 @@ import android.text.style.UnderlineSpan
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.BaseFragment
 import cn.cystal.app.base.VIP_AGREEMENT
 import cn.cystal.app.event.CloseCurrentPageEvent
 import cn.cystal.app.event.WebEvent
-import com.cystal.app.R
 import cn.cystal.app.storage.ConfigPreferences
-import cn.cystal.app.util.LogUtil
 import cn.cystal.app.view.fragment.MineFragment
 import cn.cystal.app.view.fragment.PrivilegeFragment
 import cn.cystal.app.view.fragment.SpecialsaleFragment
@@ -27,10 +26,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.gyf.immersionbar.ImmersionBar
 import com.just.agentweb.AgentWebConfig
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.trello.rxlifecycle2.android.ActivityEvent
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
-import io.reactivex.functions.Function
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import org.greenrobot.eventbus.EventBus
@@ -41,7 +36,6 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private var lastfragment = 0
     private var fragments: Array<BaseFragment>? = null
-    private var count = 0
 
     override fun setContentView(): Int {
         return R.layout.activity_main
@@ -51,29 +45,35 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         ImmersionBar.with(this).init()
         bottom_navigation.setOnNavigationItemSelectedListener(this)
         initFragment()
-        requestPermission()
+
+        AgentWebConfig.debug()
+        if (!ConfigPreferences.instance.getAgreementState()) {
+            val agreement = getString(R.string.agreement)
+            val finalAgreement = getClickableSpan(agreement)
+            showAgreementDialog(finalAgreement,
+                View.OnClickListener {
+                    mAgreementDialog?.dismiss()
+                    mAppManager?.finishAllActivity()
+                },
+                View.OnClickListener {
+                    mAgreementDialog?.dismiss()
+                    ConfigPreferences.instance.setAgreementState(true)
+                    requestPermission()
+                })
+        }else{
+            requestPermission()
+        }
     }
 
     private fun requestPermission() {
-        AgentWebConfig.debug()
-        val agreement = getString(R.string.agreement)
-        val finalAgreement = getClickableSpan(agreement)
-        showAgreementDialog(finalAgreement,
-            View.OnClickListener {
-                mAgreementDialog?.dismiss()
-                mAppManager?.finishAllActivity()
-            },
-            View.OnClickListener {
-                mAgreementDialog?.dismiss()
-                //申请权限
-                RxPermissions(this)
-                    .request(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                    .subscribe()
-            })
+        //申请权限
+        RxPermissions(this)
+            .request(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            .subscribe()
     }
 
     private fun initFragment() {

@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import cn.cystal.app.R
 import cn.cystal.app.adapter.DetailOfMembershipAdapter
 import cn.cystal.app.base.BaseActivity
-import com.cystal.app.R
 import cn.cystal.app.base.App
 import cn.cystal.app.base.DETAIL_TYPE
 import cn.cystal.app.util.UiUtils

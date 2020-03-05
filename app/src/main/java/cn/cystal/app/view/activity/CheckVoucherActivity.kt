@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.BaseModel
 import cn.cystal.app.bean.CheckVoucherBean
@@ -20,7 +21,6 @@ import cn.cystal.app.util.DialogUtils
 import cn.cystal.app.util.GlideEngine
 import cn.cystal.app.util.ToastUtils
 import com.bumptech.glide.Glide
-import com.cystal.app.R
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.luck.picture.lib.PictureSelector
