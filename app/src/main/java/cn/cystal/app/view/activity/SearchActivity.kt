@@ -3,7 +3,10 @@ package cn.cystal.app.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.AbsoluteSizeSpan
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -56,6 +59,9 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
         searchAdapter!!.onItemClickListener = this
         searchAdapter!!.bindToRecyclerView(recycler_view)
 
+        val searchHint = SpannableString("搜索特权")
+        searchHint.setSpan(AbsoluteSizeSpan(15, true), 0, searchHint.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        et_search.hint = searchHint
         et_search.addTextChangedListener(this)
         et_search.setOnEditorActionListener(this)
 

@@ -12,8 +12,7 @@
     <ImageView
             android:id="@+id/iv_goods_img"
             android:layout_width="95dp"
-            android:layout_height="95dp"
-            android:src="@color/color_F86024"/>
+            android:layout_height="95dp"/>
 
     <LinearLayout
             android:layout_width="wrap_content"
@@ -25,7 +24,7 @@
                 android:id="@+id/tv_original_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="¥3899.00"
+                android:text="¥00.00"
                 android:textSize="12sp"
                 android:textColor="@color/color_F86024"/>
 
@@ -33,7 +32,7 @@
                 android:id="@+id/tv_market_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="¥3899.00"
+                android:text="¥00.00"
                 android:textSize="10sp"
                 android:textColor="@color/color_CCCCCC"
                 android:layout_marginStart="2.5dp"/>

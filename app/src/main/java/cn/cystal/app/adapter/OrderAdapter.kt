@@ -122,7 +122,7 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                 5 -> {
                     setVisible(R.id.tv_fail_reason, true)
                     addOnClickListener(R.id.tv_fail_reason)
-                    if (listBean.processStatus != "cw" && orderType == 1) {
+                    if (listBean.processStatus != "cw" && orderType == 1 && listBean.payType == "bank") {
                         setVisible(R.id.tv_voucher, true)
                         setText(R.id.tv_voucher, "查看凭证")
                         addOnClickListener(R.id.tv_voucher)
@@ -138,27 +138,33 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                 }
                 3 -> {
                     if (orderType == 1) {
-                        setVisible(R.id.tv_voucher, true)
-                        addOnClickListener(R.id.tv_voucher)
                         if (listBean.processStatus == "cw") {
+                            setVisible(R.id.tv_voucher, true)
+                            addOnClickListener(R.id.tv_voucher)
                             setText(R.id.tv_voucher, "查看/修改凭证")
                         } else {
-                            setText(R.id.tv_voucher, "查看凭证")
+                            if (listBean.payType == "bank") {
+                                setVisible(R.id.tv_voucher, true)
+                                addOnClickListener(R.id.tv_voucher)
+                                setText(R.id.tv_voucher, "查看凭证")
+                            }else{
+                                setGone(R.id.tv_voucher, false)
+                            }
                         }
-                        setGone(R.id.tv_fail_reason, false)
                     } else {
                         setGone(R.id.tv_voucher, false)
-                        setGone(R.id.tv_fail_reason, false)
                     }
+                    setGone(R.id.tv_fail_reason, false)
                 }
                 99 -> {
-                    if (orderType == 1 && listBean.processStatus != "cw") {
+                    if (orderType == 1 && listBean.processStatus != "cw" && listBean.payType == "bank") {
                         setVisible(R.id.tv_voucher, true)
                         setText(R.id.tv_voucher, "查看凭证")
                         addOnClickListener(R.id.tv_voucher)
                     } else {
                         setGone(R.id.tv_voucher, false)
                     }
+                    setGone(R.id.tv_fail_reason, false)
                 }
                 else -> {
                     setGone(R.id.tv_voucher, false)

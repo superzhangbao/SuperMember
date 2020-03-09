@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -49,7 +50,7 @@ import java.util.concurrent.TimeUnit
  *  date : 2020-02-08 13:20
  *  description : 输入登录验证码页面
  */
-class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
+class LoginVerificationCodeActivity : BaseActivity(){
 
     private var et: Array<EditText>? = null
     private var flag = true
@@ -73,15 +74,26 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
      */
     @SuppressLint("SetTextI18n")
     private fun initTitle() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.setOnClickListener(this)
         tv_title.text = getString(R.string.login_title)
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
+
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+
         tv_send_message_to.text = getString(R.string.sended_message) + intent.getStringExtra(PHONE_NUMBER)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return true
     }
 
     /**
@@ -250,13 +262,5 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
             }
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe()
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.fl_back -> {
-                finish()
-            }
-        }
     }
 }

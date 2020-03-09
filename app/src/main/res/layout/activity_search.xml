@@ -27,6 +27,7 @@
                     android:layout_height="match_parent"
                     android:background="@null"
                     android:hint="搜索特权"
+                    android:textColorHint="@color/color_CCCCCC"
                     android:imeOptions="actionSearch"
                     android:singleLine="true"
                     android:maxLines="1"

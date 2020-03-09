@@ -2,6 +2,7 @@ package cn.cystal.app.view.activity
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -13,9 +14,7 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import cn.cystal.app.R
-import cn.cystal.app.base.BaseActivity
-import cn.cystal.app.base.BaseFragment
-import cn.cystal.app.base.VIP_AGREEMENT
+import cn.cystal.app.base.*
 import cn.cystal.app.event.CloseCurrentPageEvent
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
@@ -42,8 +41,8 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun init(savedInstanceState: Bundle?) {
-        ImmersionBar.with(this).init()
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+        initTitle()
         initFragment()
 
         AgentWebConfig.debug()
@@ -63,6 +62,14 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         }else{
             requestPermission()
         }
+    }
+
+    private fun initTitle() {
+        ImmersionBar.with(this).init()
+        v_state_bar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
+        tb_toolbar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
+        tv_title.text = getString(R.string.xishitong_vip)
+        tv_title.setTextColor(Color.WHITE)
     }
 
     private fun requestPermission() {
@@ -87,7 +94,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             .replace(R.id.fl_home, privilegeFragment)
             .show(privilegeFragment)
             .commit()
-        tv_title.text = getString(R.string.xishitong_vip)
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -165,14 +172,14 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
             it.setSpan(UnderlineSpan(), lastIndex, lastIndex2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT))
+                    EventBus.getDefault().postSticky(WebEvent(PRIVACY_POLICY))
                     val intent = Intent(this@MainActivity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }
             }, firstIndex, firstIndex2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    EventBus.getDefault().postSticky(WebEvent(VIP_AGREEMENT))
+                    EventBus.getDefault().postSticky(WebEvent(USER_AGREEMENT))
                     val intent = Intent(this@MainActivity, CommonWebActivity::class.java)
                     startActivity(intent)
                 }

@@ -2,6 +2,7 @@ package cn.cystal.app.view.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
@@ -21,7 +22,7 @@ import java.lang.reflect.Field
 /**
  * 会费明细activity
  */
-class DetailOfMembershipActivity : BaseActivity(), View.OnClickListener {
+class DetailOfMembershipActivity : BaseActivity() {
 
     private val fragments: ArrayList<Fragment> = ArrayList()
     override fun setContentView(): Int {
@@ -35,15 +36,23 @@ class DetailOfMembershipActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun initToolBar() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
         tv_title.text = getString(R.string.details_of_membership)
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return true
     }
 
     private fun initFragment(): Triple<DetailAllFragment, DetailAllFragment, DetailAllFragment> {
@@ -75,14 +84,6 @@ class DetailOfMembershipActivity : BaseActivity(), View.OnClickListener {
             DetailOfMembershipAdapter(supportFragmentManager, fragments)
         setTabLayoutIndicatorWidth(20.0f)
         tablayout.setupWithViewPager(view_pager)
-    }
-
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.fl_back->{
-                finish()
-            }
-        }
     }
 
     /**

@@ -3,6 +3,7 @@ package cn.cystal.app.view.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.cystal.app.R
@@ -57,17 +58,26 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
     }
 
     private fun initToolbar() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
         tv_title.text = getString(R.string.receiving_address)
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+
         add_address.setOnClickListener(this)
         from = intent.getStringExtra("from")
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return true
     }
 
     private fun initRecyclerView() {
@@ -87,9 +97,6 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
 
     override fun onClick(v: View?) {
         when(v?.id){
-            R.id.fl_back->{
-                finish()
-            }
             R.id.add_address->{
                 val intent = Intent(this, ModifyAddressActivity::class.java)
                 intent.putExtra(ADD_OR_MODIFY,0)

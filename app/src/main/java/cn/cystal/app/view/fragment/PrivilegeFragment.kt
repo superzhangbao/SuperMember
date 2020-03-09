@@ -76,19 +76,19 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
         val recommendFragment1 = RecommendFragment()
         val bundle1 = Bundle()
-        bundle1.putInt("type",1)
+        bundle1.putInt("type", 1)
         recommendFragment1.arguments = bundle1
         val recommendFragment2 = RecommendFragment()
         val bundle2 = Bundle()
-        bundle2.putInt("type",2)
+        bundle2.putInt("type", 2)
         recommendFragment2.arguments = bundle2
         val recommendFragment3 = RecommendFragment()
         val bundle3 = Bundle()
-        bundle3.putInt("type",3)
+        bundle3.putInt("type", 3)
         recommendFragment3.arguments = bundle3
         val recommendFragment4 = RecommendFragment()
         val bundle4 = Bundle()
-        bundle4.putInt("type",4)
+        bundle4.putInt("type", 4)
         recommendFragment4.arguments = bundle4
         fragments.add(recommendFragment1)
         fragments.add(recommendFragment2)
@@ -144,7 +144,8 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             .setIndicatorHeight(resources.getDimensionPixelOffset(R.dimen.dp_4))
             .setIndicatorSliderWidth(
                 UiUtils.dip2px(App.getInstance(), 4.0f),
-                UiUtils.dip2px(App.getInstance(), 10.0f))
+                UiUtils.dip2px(App.getInstance(), 10.0f)
+            )
             .setIndicatorSlideMode(IndicatorSlideMode.NORMAL)
             .setRoundCorner(UiUtils.dip2px(App.getInstance(), 7.0f))
             .setScrollDuration(500)
@@ -155,31 +156,11 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
     override fun onPageClick(position: Int) {
         //banner点击事件处理
-        val enName = bannerData[position].enName
-        val pName = bannerData[position].parentName
-        if (enName == "creditCard") {
-            EventBus.getDefault()
-                .postSticky(WebEvent("http://web.yunjuhe.vip/credit/list/v1.0/500696"))
+        bannerData[position].jumpUrl?.let { url ->
+            EventBus.getDefault().postSticky(WebEvent(url))
             val intent = Intent(activity, CommonWebActivity::class.java)
             startActivity(intent)
-            return
         }
-        if (enName == "temai") {
-            //跳转到特卖tab
-            (activity as MainActivity).selectNavigationItem(1)
-            return
-        }
-        if (enName == "chezhubang") {
-            EventBus.getDefault().postSticky(WebEvent("https://st.czb365.com/v3_prod/?pft=92656476"))
-            val intent = Intent(activity, CommonWebActivity::class.java)
-            startActivity(intent)
-            return
-        }
-        val url =
-            "http://www.seniornet.cn/js/sjh5test/pages/recharge/recharge2?pname=${pName}&enName=${enName}"
-        EventBus.getDefault().postSticky(WebEvent(url))
-        val intent = Intent(activity, CommonWebActivity::class.java)
-        startActivity(intent)
     }
 
     /**
@@ -223,7 +204,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
                     starTime = "${split1[0]} " + startTimeList[4]
                     endTime = "${split1[0]} " + endTimeList[4]
                 }
-                in 22 until 24->{
+                in 22 until 24 -> {
                     starTime = "${split1[0]} " + startTimeList[5]
                     endTime = "${split1[0]} " + endTimeList[5]
                 }
@@ -368,7 +349,6 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 class NetViewHolder : ViewHolder<BannerBean.DataBean> {
     private var imageView: ImageView? = null
     override fun getLayoutId(): Int {
-
         return R.layout.item_ad_banner
     }
 

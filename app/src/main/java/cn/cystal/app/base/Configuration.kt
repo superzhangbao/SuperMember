@@ -18,6 +18,10 @@ const val SPECIAL_SALE = "http://www.seniornet.cn/js/sjh5test/pages/temai/temai"
 const val PAY_MEMBERSHIP = "http://www.seniornet.cn/js/sjh5test/pages/equityrecharge/equityrecharge2"
 //禧世通协议
 const val VIP_AGREEMENT = "http://www.seniornet.cn/js/sjh5test/xstagreement/xstagreement"
+//隐私政策
+const val PRIVACY_POLICY = "http://www.seniornet.cn/js/sjh5test/pages/hidexieyi/hidexieyi"
+//用户协议
+const val USER_AGREEMENT = "http://www.seniornet.cn/js/sjh5test/pages/userxieyi/userxieyi"
 //我的-规则说明
 const val RULE = "http://www.seniornet.cn/js/sjh5test/pages/guize/guize"
 //限时秒杀
@@ -32,3 +36,5 @@ const val MINE = "mine"
 
 const val REQUEST_CODE_APPLYINVOICE = 100
 const val RESULT_CODE_MYADDRESS = 200
+const val REQUEST_CODE_EDIT = 300
+const val RESULT_CODE_EDIT = 400

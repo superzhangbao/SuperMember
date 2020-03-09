@@ -3,6 +3,7 @@ package cn.cystal.app.view.activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import cn.cystal.app.R
@@ -51,10 +52,12 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun initToolBar() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this).statusBarDarkFont(true).init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+
         addOrModify = intent.getIntExtra(ADD_OR_MODIFY, 0)
         if (addOrModify == 0) {
             tv_title.text = getString(R.string.add_address)
@@ -73,9 +76,17 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
             btn_delete.setOnClickListener(this)
         }
         tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
         et_home_addr.setOnClickListener(this)
         btn_submit.setOnClickListener(this)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return true
     }
 
     private fun initProvinceData() {
@@ -91,9 +102,6 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.fl_back -> {
-                finish()
-            }
             R.id.et_home_addr -> {
                 showPickerView()
             }

@@ -29,17 +29,18 @@ public class BannerBean extends BaseModel {
          * updateTime : null
          */
 
-        public Object addTime;
+        public String addTime;
         public String enName;
-        public Object endTime;
+        public String endTime;
         public Object id;
         public Object pages;
         public String parentName;
         public String photo;
         public Object remark;
-        public Object startTime;
+        public String startTime;
         public Object status;
-        public Object title;
-        public Object updateTime;
+        public String title;
+        public String updateTime;
+        public String jumpUrl;
     }
 }

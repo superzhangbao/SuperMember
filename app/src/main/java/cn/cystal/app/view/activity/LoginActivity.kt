@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
+import android.view.MenuItem
 import android.view.View
 import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
@@ -55,14 +56,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
      * 初始化状态栏
      */
     private fun initTitle() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.GONE
         tv_title.text = getString(R.string.login_title)
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
         btn_login.setOnClickListener(this)
     }
 

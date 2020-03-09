@@ -3,6 +3,7 @@ package cn.cystal.app.view.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +36,7 @@ import okhttp3.RequestBody
  * 会费充值activity
  */
 class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener,
-    BaseQuickAdapter.OnItemChildClickListener, OnRefreshListener, View.OnClickListener, OnLoadMoreListener {
+    BaseQuickAdapter.OnItemChildClickListener, OnRefreshListener, OnLoadMoreListener {
     private var rechargeDetailAdapter: RechargeDetailAdapter? = null
     private var emptyView: View? = null
     private var listData: MutableList<BalanceBean.DataBean.ListBean> = ArrayList()
@@ -46,17 +47,26 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
     }
 
     override fun init(savedInstanceState: Bundle?) {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
         tv_title.text = "申请开票"
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+
         initRecyclerView()
         initSmartRefresh()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+        }
+        return true
     }
 
     private fun initRecyclerView() {
@@ -159,13 +169,13 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
             .subscribe(object : BaseObserver<BalanceBean>() {
                 override fun onSuccess(t: BalanceBean?) {
                     t?.data?.list?.let { list ->
-                        val dataList = list.filter { listBean ->
-                            listBean.type == 1 && listBean.status != 99
-                        }
-                        if (dataList.size < LIMIT) {
+                        if (list.size < LIMIT) {
                             smart_refresh.finishLoadMoreWithNoMoreData()
                         } else {
                             smart_refresh.finishLoadMore()
+                        }
+                        val dataList = list.filter { listBean ->
+                            listBean.type == 1 && listBean.status != 99
                         }
                         listData.addAll(dataList)
                         rechargeDetailAdapter!!.setNewData(listData)
@@ -177,13 +187,5 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
                     ToastUtils.showToast(msg)
                 }
             })
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.fl_back -> {
-                finish()
-            }
-        }
     }
 }

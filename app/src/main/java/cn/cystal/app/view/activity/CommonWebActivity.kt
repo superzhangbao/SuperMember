@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.KeyEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.webkit.WebView
 import android.widget.LinearLayout
+import androidx.appcompat.widget.Toolbar
 import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.JS_NAME
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
+import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.web.AndroidInterface
 import com.gyf.immersionbar.ImmersionBar
 import com.just.agentweb.AgentWeb
@@ -28,7 +28,7 @@ import org.greenrobot.eventbus.ThreadMode
 /**
  * web页面
  */
-class CommonWebActivity : BaseActivity(), View.OnClickListener {
+class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
     private var mAgentWeb: AgentWeb? = null
     private var mMiddleWareWebChrome: MiddlewareWebChromeBase? = null
 
@@ -41,15 +41,31 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun initToolBar() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .keyboardEnable(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home->{
+                finish()
+            }
+            R.id.item_refresh->{
+                mAgentWeb?.urlLoader?.reload()
+            }
+        }
+        return true
     }
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
@@ -80,14 +96,6 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
             .ready()
             .go(url)
         mAgentWeb!!.jsInterfaceHolder.addJavaObject(JS_NAME, AndroidInterface(mAgentWeb!!, this))
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.fl_back -> {
-                finish()
-            }
-        }
     }
 
     private fun getMiddleWareWebChrome(): MiddlewareWebChromeBase {
@@ -128,5 +136,14 @@ class CommonWebActivity : BaseActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         mAgentWeb?.webLifeCycle?.onDestroy()
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.item_refresh->{
+                ToastUtils.showToast("刷新")
+            }
+        }
+        return true
     }
 }

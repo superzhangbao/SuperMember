@@ -8,6 +8,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import cn.cystal.app.bean.SaleBean
 import cn.cystal.app.R
+import cn.cystal.app.util.UtilsBigDecimal
+import java.math.BigDecimal
 
 /**
  * author : zhangbao
@@ -20,8 +22,8 @@ class FlashSaleAdapter(data: MutableList<SaleBean.DataBean.ListBean>?) :
         with(helper) {
             val textView = getView<TextView>(R.id.tv_market_amount)
             textView.paint.flags = Paint. STRIKE_THRU_TEXT_FLAG
-            setText(R.id.tv_original_amount,"¥${data[adapterPosition].originalAmount/100.0}")
-            setText(R.id.tv_market_amount,"¥${data[adapterPosition].marketAmount/100.0}")
+            setText(R.id.tv_original_amount,"¥${UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(data[adapterPosition].originalAmount.toDouble(),100.0)))}")
+            setText(R.id.tv_market_amount,"¥${UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(data[adapterPosition].marketAmount.toDouble(),100.0)))}")
 
             val imageView = getView(R.id.iv_goods_img) as ImageView
             Glide.with(mContext)

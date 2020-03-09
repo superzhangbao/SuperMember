@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -24,9 +25,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.trello.rxlifecycle2.android.ActivityEvent
 import cn.cystal.app.adapter.OrderAdapter
-import cn.cystal.app.base.BaseActivity
-import cn.cystal.app.base.BaseModel
-import cn.cystal.app.base.LIMIT
+import cn.cystal.app.base.*
 import cn.cystal.app.bean.OrderBean
 import cn.cystal.app.bean.UploadImgBean
 import cn.cystal.app.network.BaseObserver
@@ -39,6 +38,7 @@ import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_apply_invoice.*
 import kotlinx.android.synthetic.main.activity_processing_order.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -49,7 +49,7 @@ import java.io.File
 /**
  * 订单Activity
  */
-class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
+class OrderActivity : BaseActivity(), OnRefreshListener,
     BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemChildClickListener, OnLoadMoreListener {
 
     private var type = "0"
@@ -70,12 +70,9 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
     }
 
     private fun initToolbar() {
-        v_state_bar.setBackgroundColor(Color.WHITE)
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .init()
-        rl_toobar.setBackgroundColor(Color.WHITE)
-        fl_back.visibility = View.VISIBLE
         tv_title.text = when (type) {
             "100" -> {
                 getString(R.string.processing_order)
@@ -91,8 +88,19 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
             }
             else -> ""
         }
-        tv_title.setTextColor(resources.getColor(R.color.color_333333))
-        fl_back.setOnClickListener(this)
+        tb_toolbar.title = ""
+        setSupportActionBar(tb_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
+        supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                finish()
+            }
+        }
+        return true
     }
 
     private fun initRecyclerView() {
@@ -112,14 +120,6 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
         smart_refresh.setOnRefreshListener(this)
         smart_refresh.setOnLoadMoreListener(this)
         smart_refresh.autoRefresh()
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.fl_back -> {
-                finish()
-            }
-        }
     }
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
@@ -230,9 +230,9 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             }
                             val intent = Intent(this, CheckVoucherActivity::class.java)
                             intent.putExtra("id", "${listBean.id}")
-                            intent.putExtra("billId",listBean.billId)
+                            intent.putExtra("billId", listBean.billId)
                             intent.putExtra("type", type)
-                            startActivity(intent)
+                            startActivityForResult(intent, REQUEST_CODE_EDIT)
                         }
                     }
                 }
@@ -256,6 +256,22 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                     "${listBean.amount / 100.0}",
                     Gson().toJson(hashMap)
                 )
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data != null && resultCode == RESULT_CODE_EDIT) {
+            if (requestCode == REQUEST_CODE_EDIT) {
+                val orderNo = data.getStringExtra("orderNo")
+                //提示开票
+                showApplyInvoiceDialog(View.OnClickListener {
+                    val intent = Intent(this@OrderActivity, ApplyInvoiceActivity::class.java)
+                    intent.putExtra("orderNo", orderNo)
+                    startActivity(intent)
+                    mApplyInvoiceDialog?.dismiss()
+                })
             }
         }
     }
@@ -355,7 +371,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             sb = sb.append(it.webUrl).append(",")
                         }
                         val url = sb.toString().substring(0, sb.lastIndex)
-                        LogUtil.e(TAG,"url:$url")
+                        LogUtil.e(TAG, "url:$url")
                         hashMap["token"] = ConfigPreferences.instance.getToken()
                         hashMap["id"] = id
                         hashMap["url"] = url
@@ -370,7 +386,7 @@ class OrderActivity : BaseActivity(), View.OnClickListener, OnRefreshListener,
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                            .subscribe(object :BaseObserver<BaseModel>() {
+                            .subscribe(object : BaseObserver<BaseModel>() {
                                 override fun onSuccess(t: BaseModel?) {
                                     hideLoading()
                                     //刷新列表

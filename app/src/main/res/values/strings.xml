@@ -58,4 +58,5 @@
     <string name="agreement">欢迎使用“禧世通”！我们非常重视您的个人信息和隐私保护。在您使用“禧世通”服务之前，请仔细阅读《禧世通隐私政策》和《禧世通用户协议》，我们将严格按照经您同意的各项条款使用您的个人信息，以便为您提供更好的服务。\n\n如您同意此政策和协议，请点击"同意"并开始使用我们的产品和服务。我们尽力保护您的个人信息安全</string>
     <string name="agree">同意</string>
     <string name="disagree">不同意</string>
+    <string name="refresh">刷新</string>
 </resources>

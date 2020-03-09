@@ -85,4 +85,15 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <!--toolbar的右上角按钮文字颜色和字体大小-->
+    <!--<style name="toolbar_menutext_style" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--<item name="actionMenuTextColor">@color/colorAccent</item>-->
+        <!--<item name="android:textSize">15sp</item>-->
+        <!--&lt;!&ndash;<item name="android:paddingRight">15dp</item>【设置toolbar右边距】&ndash;&gt;-->
+        <!--<item name="toolbarNavigationButtonStyle">@style/MyToolbarNavigationButtonStyle</item>-->
+    <!--</style>-->
+    <!--<style name="MyToolbarNavigationButtonStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">-->
+        <!--<item name="android:minWidth">0dp</item>-->
+        <!--<item name="android:scaleType">center</item>-->
+    <!--</style>-->
 </resources>
