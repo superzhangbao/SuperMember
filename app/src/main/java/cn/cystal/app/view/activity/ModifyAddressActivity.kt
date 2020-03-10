@@ -52,7 +52,10 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun initToolBar() {
-        ImmersionBar.with(this).statusBarDarkFont(true).init()
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .keyboardEnable(true)
+            .init()
         tb_toolbar.title = ""
         setSupportActionBar(tb_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标

@@ -90,12 +90,13 @@
               android:layout_marginEnd="15dp"/>
         <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white">
             <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:text="@string/detail_address"
+                    android:gravity="center"
                     android:textColor="@color/color_999999"
                     android:layout_centerVertical="true"
                     android:textSize="15sp"
@@ -107,7 +108,8 @@
                     android:layout_centerVertical="true"
                     android:hint="@string/input_detail_address"
                     android:layout_marginStart="114.5dp"
-                    android:background="@null"/>
+                    android:background="@null"
+                    android:layout_marginEnd="16dp"/>
         </RelativeLayout>
 
         <Button

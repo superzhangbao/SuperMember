@@ -14,6 +14,7 @@ import com.just.agentweb.AgentWebConfig
 import cn.cystal.app.event.GoToDetailEvent
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
+import cn.cystal.app.util.LogUtil
 import cn.cystal.app.view.activity.CommonWebActivity
 import cn.cystal.app.web.AndroidInterface
 import cn.cystal.app.web.FragmentKeyDown
@@ -59,8 +60,16 @@ class SpecialsaleFragment: BaseFragment(), FragmentKeyDown {
 
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            mAgentWeb?.urlLoader?.reload()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGoToDetailEvent(goToDetailEvent: GoToDetailEvent) {
+        LogUtil.e(TAG,"url:${goToDetailEvent.url}")
         EventBus.getDefault().postSticky(WebEvent(goToDetailEvent.url))
         val intent = Intent(activity, CommonWebActivity::class.java)
         startActivity(intent)

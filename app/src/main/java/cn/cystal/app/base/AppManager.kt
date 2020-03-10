@@ -20,7 +20,11 @@ class AppManager private constructor() {
         if (activityStack == null) {
             activityStack = Stack()
         }
+        LogUtil.e(TAG,"add")
         activityStack?.add(activity)
+        for (ac in activityStack!!) {
+            LogUtil.e(TAG,ac.localClassName)
+        }
     }
 
     /**
@@ -42,6 +46,7 @@ class AppManager private constructor() {
      * 结束指定的Activity
      */
     fun finishActivity(activity: Activity?) {
+        LogUtil.e(TAG,"remove")
         activityStack?.remove(activity)
         activity?.finish()
     }
@@ -114,7 +119,7 @@ class AppManager private constructor() {
 //                }
 //                return instance as AppManager
 //            }
-
+        val TAG = this.javaClass.simpleName
         val SINGLETON by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
             AppManager()
         }

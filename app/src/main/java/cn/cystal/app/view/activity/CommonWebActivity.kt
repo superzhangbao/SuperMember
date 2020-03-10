@@ -1,19 +1,20 @@
 package cn.cystal.app.view.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.LinearLayout
-import androidx.appcompat.widget.Toolbar
 import cn.cystal.app.R
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.JS_NAME
+import cn.cystal.app.event.CloseCurrentPageEvent
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
-import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.web.AndroidInterface
 import com.gyf.immersionbar.ImmersionBar
 import com.just.agentweb.AgentWeb
@@ -23,12 +24,13 @@ import kotlinx.android.synthetic.main.activity_common_web.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.reflect.Method
 
 
 /**
  * web页面
  */
-class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
+class CommonWebActivity : BaseActivity() {
     private var mAgentWeb: AgentWeb? = null
     private var mMiddleWareWebChrome: MiddlewareWebChromeBase? = null
 
@@ -52,16 +54,16 @@ class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu,menu)
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
-            android.R.id.home->{
+        when (item?.itemId) {
+            android.R.id.home -> {
                 finish()
             }
-            R.id.item_refresh->{
+            R.id.item_refresh -> {
                 mAgentWeb?.urlLoader?.reload()
             }
         }
@@ -72,9 +74,17 @@ class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
     fun onWebEvent(webEvent: WebEvent) {
         val url =
             if (webEvent.url.contains("?")) {
-                "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                if (webEvent.url.contains("inType=app")) {
+                    "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&phone=${ConfigPreferences.instance.getPhone()}"
+                } else {
+                    "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                }
             } else {
-                "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                if (webEvent.url.contains("inType=app")) {
+                    "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&phone=${ConfigPreferences.instance.getPhone()}"
+                } else {
+                    "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                }
             }
         initAgentWeb(url)
     }
@@ -116,6 +126,28 @@ class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
         }
     }
 
+    //显示toolbar menu的图标（在图标是never的模式下）
+    override fun onMenuOpened(featureId: Int, menu: Menu?): Boolean {
+        if (menu != null) {
+            if (menu.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
+                try {
+                    val method: Method =
+                        menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", java.lang.Boolean.TYPE)
+                    method.isAccessible = true
+                    method.invoke(menu, true)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu)
+    }
+
+    //收到H5端关闭页面的消息
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCloseCurrentPageEvent(closeCurrentPageEvent: CloseCurrentPageEvent) {
+        finish()
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (mAgentWeb?.handleKeyEvent(keyCode, event)!!) {
@@ -136,14 +168,5 @@ class CommonWebActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
     override fun onDestroy() {
         super.onDestroy()
         mAgentWeb?.webLifeCycle?.onDestroy()
-    }
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        when(item?.itemId) {
-            R.id.item_refresh->{
-                ToastUtils.showToast("刷新")
-            }
-        }
-        return true
     }
 }

@@ -13,8 +13,8 @@ android {
         applicationId "cn.cystal.app"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 12
-        versionName "1.0.11"
+        versionCode 15
+        versionName "1.0.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -87,4 +87,9 @@ dependencies {
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
     //zxing
     implementation 'com.google.zxing:core:3.3.3'
+    // navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0-alpha03"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.0-alpha03"
+    //fastjson解析
+    implementation 'com.alibaba:fastjson:1.2.59'
 }

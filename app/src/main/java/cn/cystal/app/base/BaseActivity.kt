@@ -76,7 +76,7 @@ abstract class BaseActivity : RxAppCompatActivity() {
 
     abstract fun init(savedInstanceState: Bundle?)
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onLogoutEvent(logoutEvent: LogoutEvent) {
         ConfigPreferences.instance.setLoginState(false)
         ConfigPreferences.instance.setToken("")

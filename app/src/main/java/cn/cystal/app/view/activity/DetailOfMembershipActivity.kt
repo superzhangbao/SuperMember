@@ -1,6 +1,5 @@
 package cn.cystal.app.view.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -8,8 +7,8 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import cn.cystal.app.R
 import cn.cystal.app.adapter.DetailOfMembershipAdapter
-import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.App
+import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.DETAIL_TYPE
 import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.fragment.DetailAllFragment

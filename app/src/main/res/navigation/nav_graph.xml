@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_graph"
+            app:startDestination="@id/privilegeFragment">
+    <fragment
+            android:id="@+id/privilegeFragment"
+            android:name="cn.cystal.app.view.fragment.PrivilegeFragment"
+            android:label="Privilege"
+            tools:layout="@layout/fragment_privilege" >
+        <action android:id="@+id/action_privilege"
+                app:destination="@+id/specialsaleFragment"/>
+    </fragment>
+
+    <fragment
+            android:id="@+id/specialsaleFragment"
+            android:name="cn.cystal.app.view.fragment.SpecialsaleFragment"
+            android:label="Specialsale"
+            tools:layout="@layout/fragment_specialsale" />
+    <fragment
+            android:id="@+id/mineFragment"
+            android:name="cn.cystal.app.view.fragment.MineFragment"
+            android:label="Mine"
+            tools:layout="@layout/fragment_mine" />
+</navigation>

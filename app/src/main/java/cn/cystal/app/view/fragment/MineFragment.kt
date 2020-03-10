@@ -84,12 +84,14 @@ class MineFragment : BaseFragment(), View.OnClickListener {
             })
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
+    //重新登录后刷新数据
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onLoginEvent(loginEvent: LoginEvent) {
         initData()
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
+    //关闭其他页面，刷新数据mineFragment
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCloseCurrentPageEvent(closeCurrentPageEvent: CloseCurrentPageEvent){
         initData()
     }
@@ -174,6 +176,13 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 val mainActivity = activity as MainActivity
                 mainActivity.selectNavigationItem(0)
             }
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            initData()
         }
     }
 

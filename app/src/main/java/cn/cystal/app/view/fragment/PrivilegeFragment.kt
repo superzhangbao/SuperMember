@@ -12,12 +12,10 @@ import androidx.viewpager.widget.ViewPager
 import cn.cystal.app.R
 import cn.cystal.app.adapter.DetailOfMembershipAdapter
 import cn.cystal.app.adapter.FlashSaleAdapter
-import cn.cystal.app.base.BaseFragment
-import cn.cystal.app.bean.BannerBean
-import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.BaseQuickAdapter
 import cn.cystal.app.base.App
+import cn.cystal.app.base.BaseFragment
 import cn.cystal.app.base.LIMITED_SECKILL
+import cn.cystal.app.bean.BannerBean
 import cn.cystal.app.bean.SaleBean
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.network.BaseObserver
@@ -28,8 +26,9 @@ import cn.cystal.app.util.DateUtil
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.activity.CommonWebActivity
-import cn.cystal.app.view.activity.MainActivity
 import cn.cystal.app.view.activity.SearchActivity
+import com.bumptech.glide.Glide
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.zhpan.bannerview.BannerViewPager

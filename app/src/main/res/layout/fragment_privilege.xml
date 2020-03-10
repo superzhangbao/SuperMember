@@ -171,6 +171,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@color/color_F86024"
                                 android:layout_toStartOf="@+id/tv_end_time_min"/>
+
                         <TextView
                                 android:id="@+id/tv_end_time_min"
                                 android:layout_width="wrap_content"
@@ -179,6 +180,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@color/color_F86024"
                                 android:layout_toStartOf="@+id/tv_end_time_sec"/>
+
                         <TextView
                                 android:id="@+id/tv_end_time_sec"
                                 android:layout_width="wrap_content"
@@ -193,6 +195,7 @@
                     <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+
                         <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/recycler_view"
                                 android:layout_width="match_parent"
@@ -207,26 +210,27 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+        <LinearLayout
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="5dp"
-                app:cardUseCompatPadding="false"
+                android:gravity="center"
+                android:background="@drawable/search_bg_main"
                 android:layout_marginTop="11dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp">
 
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/search"/>
+
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:text="搜索特权"
-                    android:gravity="center"
-                    android:drawableStart="@mipmap/search"
-                    android:drawablePadding="4dp"/>
-        </androidx.cardview.widget.CardView>
+                    android:gravity="center"/>
+        </LinearLayout>
 
     </FrameLayout>
 </ScrollView>

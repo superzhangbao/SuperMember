@@ -7,6 +7,8 @@ import com.chad.library.adapter.base.BaseViewHolder
 import cn.cystal.app.bean.OrderBean
 import cn.cystal.app.util.LogUtil
 import cn.cystal.app.R
+import cn.cystal.app.util.UtilsBigDecimal
+import java.math.BigDecimal
 
 /**
  * author : zhangbao
@@ -89,7 +91,10 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             setText(R.id.tv_content2, "订单编号:${listBean.billId}")
             if (orderType == 1) {
                 //获赠积分
-                setText(R.id.tv_content3, "获赠积分:${listBean.productValue / 100.0}")
+                setText(
+                    R.id.tv_content3,
+                    "获赠积分:${UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(listBean.productValue.toDouble(),100.0)))}"
+                )
                 setVisible(R.id.tv_content3, true)
             } else {
                 if (listBean.deductAmount != 0) {
@@ -104,14 +109,23 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             //商品数量
             setText(R.id.tv_count, "x${listBean.buyNum}")
 
-            setText(R.id.tv_one_amount_left, "¥${(listBean.originalAmount / 100.0).toString().split(".")[0]}.")
-            setText(R.id.tv_one_amount_right, (listBean.originalAmount / 100.0).toString().split(".")[1])
+            val amount = UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(listBean.originalAmount.toDouble(),100.0)))
+            val amountSplit = amount?.split(".")
+            setText(R.id.tv_one_amount_left, "¥${amountSplit?.get(0) ?: 0}.")
+            setText(R.id.tv_one_amount_right, amountSplit?.get(1) ?: "00")
             setText(R.id.tv_all_goods_count, "共${listBean.buyNum}件商品,实付款:")
-            setText(
-                R.id.tv_all_amount_left,
-                "¥${(listBean.amount * listBean.buyNum / 100.0).toString().split(".")[0]}."
+
+            val allAmount = UtilsBigDecimal.formatToNumber(
+                BigDecimal(
+                    UtilsBigDecimal.div(
+                        (listBean.amount * listBean.buyNum).toDouble(),
+                        100.0
+                    )
+                )
             )
-            setText(R.id.tv_all_amount_right, (listBean.amount * listBean.buyNum / 100.0).toString().split(".")[1])
+            val allAmountSplit = allAmount?.split(".")
+            setText(R.id.tv_all_amount_left, "¥${allAmountSplit?.get(0) ?: 0}.")
+            setText(R.id.tv_all_amount_right, allAmountSplit?.get(1) ?: "00")
             val imageView = getView(R.id.iv_goods_img) as ImageView
             Glide.with(mContext)
                 .load(listBean.productImg)
@@ -147,7 +161,7 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
                                 setVisible(R.id.tv_voucher, true)
                                 addOnClickListener(R.id.tv_voucher)
                                 setText(R.id.tv_voucher, "查看凭证")
-                            }else{
+                            } else {
                                 setGone(R.id.tv_voucher, false)
                             }
                         }

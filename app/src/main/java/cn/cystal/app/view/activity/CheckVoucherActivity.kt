@@ -198,9 +198,7 @@ class CheckVoucherActivity : BaseActivity(), View.OnClickListener {
             .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
             .isDragFrame(true)// 是否可拖动裁剪框(固定)
             .forResult { result ->
-                //                        result?.forEachIndexed { index, localMedia ->
                 uploadImage(result)
-                //                        }
             }
     }
 

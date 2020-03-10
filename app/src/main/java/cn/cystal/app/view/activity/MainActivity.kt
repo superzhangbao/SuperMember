@@ -13,9 +13,12 @@ import android.text.style.UnderlineSpan
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
 import cn.cystal.app.R
-import cn.cystal.app.base.*
-import cn.cystal.app.event.CloseCurrentPageEvent
+import cn.cystal.app.base.BaseActivity
+import cn.cystal.app.base.BaseFragment
+import cn.cystal.app.base.PRIVACY_POLICY
+import cn.cystal.app.base.USER_AGREEMENT
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.view.fragment.MineFragment
@@ -28,8 +31,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -41,7 +42,6 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     override fun init(savedInstanceState: Bundle?) {
-        bottom_navigation.setOnNavigationItemSelectedListener(this)
         initTitle()
         initFragment()
 
@@ -59,15 +59,16 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     ConfigPreferences.instance.setAgreementState(true)
                     requestPermission()
                 })
-        }else{
+        } else {
             requestPermission()
         }
     }
 
     private fun initTitle() {
         ImmersionBar.with(this).init()
-        v_state_bar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
-        tb_toolbar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
+//        v_state_bar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
+        v_state_bar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
+        tb_toolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
         tv_title.text = getString(R.string.xishitong_vip)
         tv_title.setTextColor(Color.WHITE)
     }
@@ -84,6 +85,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
     }
 
     private fun initFragment() {
+        bottom_navigation.setOnNavigationItemSelectedListener(this)
         val privilegeFragment = PrivilegeFragment()
         val specialsaleFragment = SpecialsaleFragment()
         val mineFragment = MineFragment()
@@ -157,11 +159,6 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         return super.onKeyDown(keyCode, event)
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
-    fun onCloseCurrentPageEvent(closeCurrentPageEvent: CloseCurrentPageEvent) {
-        mAppManager?.finishActivity(CommonWebActivity::class.java)
-    }
-
     private fun getClickableSpan(text: String): SpannableStringBuilder {
         val firstIndex = text.indexOf("《")
         val firstIndex2 = text.indexOf('》') + 1
@@ -185,13 +182,13 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                 }
             }, lastIndex, lastIndex2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             it.setSpan(
-                ForegroundColorSpan(resources.getColor(R.color.color_6BB467)),
+                ForegroundColorSpan(ContextCompat.getColor(this,R.color.color_6BB467)),
                 firstIndex,
                 firstIndex2,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             it.setSpan(
-                ForegroundColorSpan(resources.getColor(R.color.color_6BB467)),
+                ForegroundColorSpan(ContextCompat.getColor(this,R.color.color_6BB467)),
                 lastIndex,
                 lastIndex2,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

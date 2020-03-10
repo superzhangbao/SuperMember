@@ -6,6 +6,7 @@ import com.just.agentweb.AgentWeb
 import cn.cystal.app.event.CloseCurrentPageEvent
 import cn.cystal.app.event.GoToDetailEvent
 import cn.cystal.app.event.LogoutEvent
+import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
 import org.greenrobot.eventbus.EventBus
 
@@ -15,6 +16,11 @@ import org.greenrobot.eventbus.EventBus
  * description :
  */
 class AndroidInterface(private val agent: AgentWeb, private val context: Context?) {
+
+    companion object{
+        const val TAG = "AndroidInterface"
+    }
+
     @JavascriptInterface
     fun logout(needToken: Boolean?) {
         ToastUtils.showToast("logout")
@@ -22,6 +28,7 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
 
     @JavascriptInterface
     fun goToDetail(url: String?) {
+        LogUtil.e(TAG,"goToDetail："+ Thread.currentThread().name)
         EventBus.getDefault().post(GoToDetailEvent(url))
     }
 
@@ -32,6 +39,7 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
 
     @JavascriptInterface
     fun closeCurrentPage(){
+        LogUtil.e(TAG,"closeCurrentPage："+ Thread.currentThread().name)
         EventBus.getDefault().post(CloseCurrentPageEvent())
     }
 }

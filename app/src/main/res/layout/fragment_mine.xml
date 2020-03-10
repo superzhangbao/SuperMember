@@ -95,7 +95,7 @@
                             android:textColor="@color/color_6BB467"
                             android:textSize="12sp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="17dp"
+                            android:layout_marginEnd="13dp"
                             android:padding="10dp"
                             tools:ignore="RelativeOverlap"/>
                 </RelativeLayout>
@@ -112,7 +112,7 @@
                     android:gravity="center"
                     android:layout_gravity="end"
                     android:layout_marginTop="30dp"
-            android:layout_marginEnd="8.5dp"/>
+            android:layout_marginEnd="7.5dp"/>
         </FrameLayout>
 
     </FrameLayout>
