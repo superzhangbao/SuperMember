@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.webkit.WebStorage
 import android.webkit.WebView
 import android.widget.LinearLayout
 import cn.cystal.app.R
@@ -64,6 +65,7 @@ class CommonWebActivity : BaseActivity() {
                 finish()
             }
             R.id.item_refresh -> {
+                WebStorage.getInstance().deleteAllData() //清空WebView的localStorage
                 mAgentWeb?.urlLoader?.reload()
             }
         }
@@ -72,18 +74,20 @@ class CommonWebActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
     fun onWebEvent(webEvent: WebEvent) {
+        val token = ConfigPreferences.instance.getToken()
+        val phone = ConfigPreferences.instance.getPhone()
         val url =
             if (webEvent.url.contains("?")) {
                 if (webEvent.url.contains("inType=app")) {
-                    "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&phone=${ConfigPreferences.instance.getPhone()}"
+                    "${webEvent.url}&token=$token&phone=$phone"
                 } else {
-                    "${webEvent.url}&token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                    "${webEvent.url}&token=$token&inType=app&phone=$phone"
                 }
             } else {
                 if (webEvent.url.contains("inType=app")) {
-                    "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&phone=${ConfigPreferences.instance.getPhone()}"
+                    "${webEvent.url}?token=$token&phone=$phone"
                 } else {
-                    "${webEvent.url}?token=${ConfigPreferences.instance.getToken()}&inType=app&phone=${ConfigPreferences.instance.getPhone()}"
+                    "${webEvent.url}?token=$token&inType=app&phone=$phone"
                 }
             }
         initAgentWeb(url)
@@ -92,6 +96,7 @@ class CommonWebActivity : BaseActivity() {
     private fun initAgentWeb(url: String) {
         AgentWebConfig.clearDiskCache(this)
         AgentWebConfig.removeAllCookies()
+        WebStorage.getInstance().deleteAllData() //清空WebView的localStorage
         mAgentWeb = AgentWeb.with(this)
             .setAgentWebParent(
                 container, LinearLayout.LayoutParams(

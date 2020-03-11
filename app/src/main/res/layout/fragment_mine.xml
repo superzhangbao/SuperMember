@@ -95,7 +95,7 @@
                             android:textColor="@color/color_6BB467"
                             android:textSize="12sp"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="13dp"
+                            android:layout_marginEnd="10dp"
                             android:padding="10dp"
                             tools:ignore="RelativeOverlap"/>
                 </RelativeLayout>
@@ -103,15 +103,17 @@
 
             <TextView
                     android:id="@+id/tv_vip_recharge"
-                    android:layout_width="63.5dp"
-                    android:layout_height="27.5dp"
+                    android:layout_width="63dp"
+                    android:layout_height="27dp"
                     android:background="@mipmap/recharge_bg"
                     android:text="@string/apply_for_membership"
                     android:textSize="12sp"
                     android:textColor="@color/white"
                     android:gravity="center"
+                    android:paddingStart="8dp"
                     android:layout_gravity="end"
                     android:layout_marginTop="30dp"
+                    android:includeFontPadding="false"
             android:layout_marginEnd="7.5dp"/>
         </FrameLayout>
 

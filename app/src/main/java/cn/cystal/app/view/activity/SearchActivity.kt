@@ -11,6 +11,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import cn.cystal.app.R
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.flexbox.FlexDirection
@@ -27,6 +28,7 @@ import cn.cystal.app.network.BaseObserver
 import cn.cystal.app.network.IApiService
 import cn.cystal.app.network.NetClient
 import cn.cystal.app.util.ToastUtils
+import com.google.android.flexbox.FlexWrap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
@@ -51,7 +53,8 @@ class SearchActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListener, Vie
         tv_close.setOnClickListener(this)
         val layoutManager = FlexboxLayoutManager(this)
         layoutManager.flexDirection = FlexDirection.ROW
-        layoutManager.justifyContent = JustifyContent.CENTER
+        layoutManager.flexWrap = FlexWrap.WRAP
+        layoutManager.justifyContent = JustifyContent.FLEX_START
         recycler_view.layoutManager = layoutManager
         searchAdapter = SearchAdapter(null)
         searchAdapter!!.openLoadAnimation(BaseQuickAdapter.SCALEIN)

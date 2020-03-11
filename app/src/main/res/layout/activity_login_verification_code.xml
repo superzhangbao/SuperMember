@@ -108,7 +108,8 @@
             android:text="@string/time"
             android:textSize="12sp"
             android:textColor="@color/color_262626"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="end"
-            android:layout_marginEnd="77.5dp"/>
+            android:layout_marginEnd="72.5dp"
+            android:padding="10dp"/>
 </LinearLayout>

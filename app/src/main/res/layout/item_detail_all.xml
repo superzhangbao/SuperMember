@@ -21,7 +21,8 @@
                 android:text="会费缴纳到账"
                 android:textSize="15sp"
                 android:textColor="@color/color_333333"
-                android:layout_marginTop="22dp"/>
+                android:layout_marginTop="22dp"
+                android:includeFontPadding="false"/>
 
         <TextView
                 android:id="@+id/tv_time"
@@ -30,17 +31,19 @@
                 android:text="时间：2019.11.25 14:13:54"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
-                android:layout_marginTop="14.5dp"/>
+                android:layout_marginTop="12dp"
+                android:includeFontPadding="false"/>
 
         <TextView
                 android:id="@+id/tv_order_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="订单编号：CN13558633377"
+                android:text="订单编号：CN13558677"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
                 android:layout_marginTop="12.5dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="20dp"
+                android:includeFontPadding="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -60,7 +63,8 @@
                 android:text=""
                 android:textSize="14sp"
                 android:textColor="@color/color_333333"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="21dp"
+                android:includeFontPadding="false"/>
 
 
         <TextView
@@ -70,7 +74,8 @@
                 android:text="（缴纳金额：¥）"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
-                android:layout_marginTop="6dp"/>
+                android:layout_marginTop="9.5dp"
+                android:includeFontPadding="false"/>
 
         <TextView
                 android:id="@+id/tv_all"
@@ -80,12 +85,12 @@
                 android:textSize="13sp"
                 android:textColor="@color/color_6BB467"
                 android:background="@drawable/apply_invoice_bg"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:paddingStart="11dp"
                 android:paddingEnd="11dp"
                 android:paddingTop="6.5dp"
                 android:paddingBottom="6.5dp"
                 android:clickable="true"
-                android:layout_marginBottom="8dp"/>
+                android:includeFontPadding="false"/>
     </LinearLayout>
 </RelativeLayout>

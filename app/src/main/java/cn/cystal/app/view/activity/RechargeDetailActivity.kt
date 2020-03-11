@@ -131,14 +131,14 @@ class RechargeDetailActivity : BaseActivity(), BaseQuickAdapter.OnItemClickListe
             .subscribe(object : BaseObserver<BalanceBean>() {
                 override fun onSuccess(t: BalanceBean?) {
                     t?.data?.list?.let { list ->
-                        val dataList = list.filter { listBean ->
-                            listBean.type == 1 && listBean.status != 99
-                        }
-                        if (dataList.size < LIMIT) {
+                        if (list.size < LIMIT) {
                             smart_refresh.finishRefreshWithNoMoreData()
                         } else {
                             smart_refresh.finishRefresh()
                             smart_refresh.setNoMoreData(false)
+                        }
+                        val dataList = list.filter { listBean ->
+                            listBean.type == 1 && listBean.status != 99
                         }
                         listData = dataList.toMutableList()
                         rechargeDetailAdapter!!.setNewData(listData)

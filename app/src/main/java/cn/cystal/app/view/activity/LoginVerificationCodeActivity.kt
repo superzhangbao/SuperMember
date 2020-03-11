@@ -27,6 +27,9 @@ import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.BuildConfig
+import cn.cystal.app.bean.VertifyCodeBean
+import cn.cystal.app.network.BaseObserver
+import cn.cystal.app.network.NetClient
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
@@ -50,7 +53,7 @@ import java.util.concurrent.TimeUnit
  *  date : 2020-02-08 13:20
  *  description : 输入登录验证码页面
  */
-class LoginVerificationCodeActivity : BaseActivity(){
+class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
 
     private var et: Array<EditText>? = null
     private var flag = true
@@ -85,6 +88,7 @@ class LoginVerificationCodeActivity : BaseActivity(){
         supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
 
         tv_send_message_to.text = getString(R.string.sended_message) + intent.getStringExtra(PHONE_NUMBER)
+        tv_time.setOnClickListener(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -114,7 +118,6 @@ class LoginVerificationCodeActivity : BaseActivity(){
         inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
         et!!.forEachIndexed { index, _ ->
             val x = index
-            LogUtil.e(TAG, "addTextChangedListener:$index")
             et!![index].addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -255,12 +258,43 @@ class LoginVerificationCodeActivity : BaseActivity(){
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 tv_time.text = "重新发送${it}s"
-                LogUtil.e(it.toString())
             }
             .doOnComplete {
-                tv_time.text = "重新发送0s"
+                tv_time.text = "重新发送"
             }
             .compose(bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe()
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.tv_time->{
+                if (tv_time.text == "重新发送") {
+                    showLoading()
+                    tv_send_message_to.text = ""
+                    val hashMapOf = hashMapOf("phone" to phone)
+                    NetClient.getInstance()
+                        .create(IApiService::class.java)
+                        .getVertifyCode(RequestBody.Companion.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMapOf)))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                        .subscribe(object : BaseObserver<VertifyCodeBean>(){
+                            @SuppressLint("SetTextI18n")
+                            override fun onSuccess(t: VertifyCodeBean?) {
+                                hideLoading()
+                                //网络请求
+                                tv_send_message_to.text = getString(R.string.sended_message) + intent.getStringExtra(PHONE_NUMBER)
+                                timeCountDown()
+                            }
+
+                            override fun onError(msg: String?) {
+                                hideLoading()
+                                ToastUtils.showToast(msg)
+                            }
+                        })
+                }
+            }
+        }
     }
 }

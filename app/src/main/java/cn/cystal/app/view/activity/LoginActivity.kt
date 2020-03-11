@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import cn.cystal.app.R
@@ -50,6 +51,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         tv_login_agreement.text = getClickableSpan()
         tv_login_agreement.movementMethod = LinkMovementMethod.getInstance()
         tv_login_agreement.highlightColor = Color.WHITE
+        et_login.textAlignment = View.TEXT_ALIGNMENT_CENTER
+        et_login.gravity = Gravity.CENTER
     }
 
     /**

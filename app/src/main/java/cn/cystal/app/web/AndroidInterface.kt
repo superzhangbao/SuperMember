@@ -28,7 +28,6 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
 
     @JavascriptInterface
     fun goToDetail(url: String?) {
-        LogUtil.e(TAG,"goToDetail："+ Thread.currentThread().name)
         EventBus.getDefault().post(GoToDetailEvent(url))
     }
 
@@ -39,7 +38,6 @@ class AndroidInterface(private val agent: AgentWeb, private val context: Context
 
     @JavascriptInterface
     fun closeCurrentPage(){
-        LogUtil.e(TAG,"closeCurrentPage："+ Thread.currentThread().name)
         EventBus.getDefault().post(CloseCurrentPageEvent())
     }
 }

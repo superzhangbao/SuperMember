@@ -43,12 +43,12 @@
                 android:id="@+id/tv_address"
                 android:layout_width="243dp"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="smdasmdmasmdm"
                 android:textSize="12sp"
                 android:textColor="@color/color_999999"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="7dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="19dp"/>
+                android:layout_marginBottom="15dp"/>
 
         <ImageView
 

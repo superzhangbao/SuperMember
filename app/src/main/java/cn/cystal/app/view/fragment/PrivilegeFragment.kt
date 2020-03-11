@@ -26,6 +26,7 @@ import cn.cystal.app.util.DateUtil
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.activity.CommonWebActivity
+import cn.cystal.app.view.activity.LoginActivity
 import cn.cystal.app.view.activity.SearchActivity
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -336,6 +337,11 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        //判断是否登陆
+        if (!ConfigPreferences.instance.getLoginState()) {
+            startActivity(Intent(activity, LoginActivity::class.java))
+            return
+        }
         val data = adapter?.data as MutableList<SaleBean.DataBean.ListBean>?
         val id = data?.get(position)?.id
         val url = "$LIMITED_SECKILL$id"
