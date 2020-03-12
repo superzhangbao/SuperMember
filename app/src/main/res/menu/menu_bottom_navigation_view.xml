@@ -16,6 +16,6 @@
             android:id="@+id/item_bottom_mine"
             android:enabled="true"
             android:icon="@drawable/bottom_mine_selector"
-            android:title="我的"
+            android:title="账户"
             app:showAsAction="ifRoom" />
 </menu>

@@ -1,10 +1,10 @@
 package cn.cystal.app.view.activity
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.cystal.app.R
 import cn.cystal.app.adapter.MyAddressAdapter
@@ -31,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_my_address.*
 import kotlinx.android.synthetic.main.common_toolbar.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+
 
 /**
  * 我的地址页面
@@ -67,7 +68,6 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
         supportActionBar?.setDisplayHomeAsUpEnabled(true)//左侧添加一个默认的返回图标
         supportActionBar?.setHomeButtonEnabled(true) //设置返回键可用
 
-        add_address.setOnClickListener(this)
         from = intent.getStringExtra("from")
     }
 
@@ -87,6 +87,11 @@ class MyAddressActivity : BaseActivity(), View.OnClickListener, BaseQuickAdapter
         myAddressAdapter!!.isFirstOnly(false)
         myAddressAdapter!!.onItemClickListener = this
         myAddressAdapter!!.onItemChildClickListener = this
+        //添加脚布局
+        val footView: View = layoutInflater.inflate(R.layout.addr_foot, recycler_view, false)
+        val foot = footView.findViewById<LinearLayout>(R.id.add_address)
+        foot.setOnClickListener(this)
+        myAddressAdapter!!.addFooterView(footView)
         myAddressAdapter?.bindToRecyclerView(recycler_view)
     }
 
