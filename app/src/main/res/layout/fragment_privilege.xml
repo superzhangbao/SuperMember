@@ -39,7 +39,7 @@
                             android:text="@string/recommend"
                             android:textSize="13sp"
                             android:textColor="@color/white"
-                            android:background="@drawable/btn_login_bg"
+                            android:background="@drawable/privilege_tab_bg"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
                             android:paddingTop="6dp"
@@ -228,8 +228,11 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/color_CCCCCC"
+                    android:includeFontPadding="false"
                     android:text="搜索特权"
-                    android:gravity="center"/>
+                    android:gravity="center"
+            android:layout_marginStart="8dp"/>
         </LinearLayout>
 
     </FrameLayout>

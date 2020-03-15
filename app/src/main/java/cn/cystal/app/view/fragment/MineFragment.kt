@@ -13,6 +13,7 @@ import cn.cystal.app.network.BaseObserver
 import cn.cystal.app.network.IApiService
 import cn.cystal.app.network.NetClient
 import cn.cystal.app.storage.ConfigPreferences
+import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.view.activity.*
 import com.google.gson.Gson
@@ -33,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class MineFragment : BaseFragment(), View.OnClickListener {
 
+    private var hidden = false
     override fun setContentView(): Int {
         return R.layout.fragment_mine
     }
@@ -83,6 +85,14 @@ class MineFragment : BaseFragment(), View.OnClickListener {
                 }
             })
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (hidden) return
+        LogUtil.e(TAG,"onResume")
+    }
+
+
 
     //重新登录后刷新数据
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -181,7 +191,9 @@ class MineFragment : BaseFragment(), View.OnClickListener {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        this.hidden = hidden
         if (!hidden) {
+            LogUtil.e(TAG,"onHiddenChanged")
             initData()
         }
     }

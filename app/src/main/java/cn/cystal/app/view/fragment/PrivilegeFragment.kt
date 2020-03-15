@@ -17,12 +17,14 @@ import cn.cystal.app.base.BaseFragment
 import cn.cystal.app.base.LIMITED_SECKILL
 import cn.cystal.app.bean.BannerBean
 import cn.cystal.app.bean.SaleBean
+import cn.cystal.app.event.RefreshDataEvent
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.network.BaseObserver
 import cn.cystal.app.network.IApiService
 import cn.cystal.app.network.NetClient
 import cn.cystal.app.storage.ConfigPreferences
 import cn.cystal.app.util.DateUtil
+import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
 import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.activity.CommonWebActivity
@@ -39,6 +41,7 @@ import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_privilege.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -52,7 +55,8 @@ import java.util.concurrent.TimeUnit
  *  date : 2020-02-07 17:59
  *  description :特权fragment
  */
-class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPageChangeListener,
+@SuppressLint("SetTextI18n")
+class PrivilegeFragment : BaseFragment(), View.OnClickListener,
     BaseQuickAdapter.OnItemClickListener, BannerViewPager.OnPageClickListener {
 
     private var mBannerViewPager: BannerViewPager<BannerBean.DataBean, NetViewHolder>? = null
@@ -60,6 +64,9 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     private val fragments: ArrayList<Fragment> = ArrayList()
     private var startTimeList = listOf("00:00:00", "10:00:00", "14:00:00", "18:00:00", "20:00:00", "22:00:00")
     private var endTimeList = listOf("09:59:59", "13:59:59", "17:59:59", "19:59:59", "21:59:59", "23:59:59")
+    private var flashSaleAdapter:FlashSaleAdapter? = null
+    private var countDownDisposable:Disposable? = null
+    private var hidden:Boolean = false
 
     override fun setContentView(): Int {
         return R.layout.fragment_privilege
@@ -67,13 +74,20 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
 
     override fun initView(view: View) {
         mBannerViewPager = view.findViewById(R.id.banner_view)
-
         search.setOnClickListener(this)
         tab1.setOnClickListener(this)
         tab2.setOnClickListener(this)
         tab3.setOnClickListener(this)
         tab4.setOnClickListener(this)
+    }
 
+    override fun initData() {
+        initViewPager()
+        initAdBanner()
+        initFlashSale()
+    }
+
+    private fun initViewPager() {
         val recommendFragment1 = RecommendFragment()
         val bundle1 = Bundle()
         bundle1.putInt("type", 1)
@@ -95,44 +109,33 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         fragments.add(recommendFragment3)
         fragments.add(recommendFragment4)
 
-        view_pager.adapter = DetailOfMembershipAdapter(
-            activity?.supportFragmentManager,
-            fragments
-        )
-        view_pager.addOnPageChangeListener(this)
+        view_pager.adapter = DetailOfMembershipAdapter(activity?.supportFragmentManager, fragments)
     }
 
-    override fun initData() {
+    override fun onResume() {
+        super.onResume()
+        if (hidden) return
+        LogUtil.e(TAG,"onResume")
         getAdBannerData()
-        initFlashSale()
+        getFlashSaleData()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        this.hidden = hidden
+        if (!hidden) {
+            //刷新banner数据
+            LogUtil.e(TAG,"onHiddenChanged")
+            EventBus.getDefault().post(RefreshDataEvent())
+            getAdBannerData()
+            getFlashSaleData()
+        }
     }
 
     /**
      * 初始化广告banner
      */
-    private fun getAdBannerData() {
-        val hashMapOf = hashMapOf(Pair("status", "1"))
-        NetClient.getInstance()
-            .create(IApiService::class.java)
-            .getBanner(RequestBody.Companion.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMapOf)))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .compose(bindUntilEvent(FragmentEvent.DESTROY))
-            .subscribe(object : BaseObserver<BannerBean>() {
-                override fun onSuccess(t: BannerBean?) {
-                    t?.data?.let { data ->
-                        bannerData = data
-                        initAdBanner(data)
-                    }
-                }
-
-                override fun onError(msg: String?) {
-                    ToastUtils.showToast(msg)
-                }
-            })
-    }
-
-    private fun initAdBanner(data: MutableList<BannerBean.DataBean>) {
+    private fun initAdBanner() {
         mBannerViewPager!!.setIndicatorVisibility(View.VISIBLE)
             .setIndicatorSliderColor(Color.GRAY, Color.WHITE)
             .setIndicatorStyle(IndicatorStyle.ROUND_RECT)
@@ -151,9 +154,34 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             .setScrollDuration(500)
             .setOnPageClickListener(this)
             .setHolderCreator { NetViewHolder() }
-            .create(data)
     }
 
+    /**
+     * 设置banner数据
+     */
+    private fun getAdBannerData() {
+        val hashMapOf = hashMapOf(Pair("status", "1"))
+        NetClient.getInstance()
+            .create(IApiService::class.java)
+            .getBanner(RequestBody.Companion.create("application/json".toMediaTypeOrNull(), Gson().toJson(hashMapOf)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindUntilEvent(FragmentEvent.DESTROY))
+            .subscribe(object : BaseObserver<BannerBean>() {
+                override fun onSuccess(t: BannerBean?) {
+                    t?.data?.let { data ->
+                        bannerData = data
+                        mBannerViewPager?.create(data)
+                    }
+                }
+
+                override fun onError(msg: String?) {
+                    ToastUtils.showToast(msg)
+                }
+            })
+    }
+
+    //banner点击事件
     override fun onPageClick(position: Int) {
         //banner点击事件处理
         bannerData[position].jumpUrl?.let { url ->
@@ -164,17 +192,19 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
     }
 
     /**
-     * 初始化秒杀数据
+     * 初始化秒杀控件和数据适配器
      */
-    @SuppressLint("SetTextI18n")
     private fun initFlashSale() {
         recycler_view.layoutManager = GridLayoutManager(activity, 3)
-        val flashSaleAdapter = FlashSaleAdapter(null)
-        flashSaleAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN)
-        flashSaleAdapter.isFirstOnly(false)
-        flashSaleAdapter.onItemClickListener = this
-        flashSaleAdapter.bindToRecyclerView(recycler_view)
+        flashSaleAdapter = FlashSaleAdapter(null)
+        flashSaleAdapter?.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
+        flashSaleAdapter?.isFirstOnly(false)
+        flashSaleAdapter?.onItemClickListener = this
+        flashSaleAdapter?.bindToRecyclerView(recycler_view)
+    }
 
+
+    private fun getFlashSaleData() {
         //计算参数
         val nowTime = DateUtil.getYearTime(System.currentTimeMillis())
         val split1 = nowTime.split(" ")
@@ -229,19 +259,22 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
             .subscribe(object : BaseObserver<SaleBean>() {
                 override fun onSuccess(t: SaleBean?) {
                     t?.data?.let {
-                        flashSaleAdapter.setNewData(it.list)
+                        flashSaleAdapter?.setNewData(it.list)
                     }
                 }
 
                 override fun onError(msg: String?) {
-                    flashSaleAdapter.setNewData(null)
+                    flashSaleAdapter?.setNewData(null)
                 }
             })
         //开始倒计时
         try {
             val endTimeStamp = DateUtil.dateToStamp(endTime)
             val currentTimeMillis = System.currentTimeMillis()
-            Observable.interval(0, 1, TimeUnit.SECONDS)
+            if (countDownDisposable!= null && !countDownDisposable!!.isDisposed) {
+                countDownDisposable!!.dispose()
+            }
+            countDownDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .take(endTimeStamp.minus(currentTimeMillis).div(1000))
                 .map { (endTimeStamp.minus(currentTimeMillis).div(1000).minus(it).minus(1)) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -274,68 +307,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.search -> {
-                startActivity(Intent(activity, SearchActivity::class.java))
-            }
-            R.id.tab1 -> {
-                tv_tab1.background = resources.getDrawable(R.drawable.btn_login_bg)
-                tv_tab1.setTextColor(resources.getColor(R.color.white))
-                tv_tab2.background = null
-                tv_tab3.background = null
-                tv_tab4.background = null
-                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
-                view_pager.setCurrentItem(0, true)
-            }
-            R.id.tab2 -> {
-                tv_tab2.background = resources.getDrawable(R.drawable.btn_login_bg)
-                tv_tab2.setTextColor(resources.getColor(R.color.white))
-                tv_tab1.background = null
-                tv_tab3.background = null
-                tv_tab4.background = null
-                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
-                view_pager.setCurrentItem(1, true)
-            }
-            R.id.tab3 -> {
-                tv_tab3.background = resources.getDrawable(R.drawable.btn_login_bg)
-                tv_tab3.setTextColor(resources.getColor(R.color.white))
-                tv_tab1.background = null
-                tv_tab2.background = null
-                tv_tab4.background = null
-                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
-                view_pager.setCurrentItem(2, true)
-            }
-            R.id.tab4 -> {
-                tv_tab4.background = resources.getDrawable(R.drawable.btn_login_bg)
-                tv_tab4.setTextColor(resources.getColor(R.color.white))
-                tv_tab1.background = null
-                tv_tab2.background = null
-                tv_tab3.background = null
-                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
-                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
-                view_pager.setCurrentItem(3, true)
-            }
-        }
-    }
-
-    override fun onPageScrollStateChanged(p0: Int) {
-
-    }
-
-    override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
-    }
-
-    override fun onPageSelected(p0: Int) {
-    }
-
+    //秒杀点击事件
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         //判断是否登陆
         if (!ConfigPreferences.instance.getLoginState()) {
@@ -348,6 +320,58 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener, ViewPager.OnPage
         EventBus.getDefault().postSticky(WebEvent(url))
         val intent = Intent(activity, CommonWebActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.search -> {
+                startActivity(Intent(activity, SearchActivity::class.java))
+            }
+            R.id.tab1 -> {
+                tv_tab1.background = resources.getDrawable(R.drawable.privilege_tab_bg)
+                tv_tab1.setTextColor(resources.getColor(R.color.white))
+                tv_tab2.background = null
+                tv_tab3.background = null
+                tv_tab4.background = null
+                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
+                view_pager.setCurrentItem(0, true)
+            }
+            R.id.tab2 -> {
+                tv_tab2.background = resources.getDrawable(R.drawable.privilege_tab_bg)
+                tv_tab2.setTextColor(resources.getColor(R.color.white))
+                tv_tab1.background = null
+                tv_tab3.background = null
+                tv_tab4.background = null
+                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
+                view_pager.setCurrentItem(1, true)
+            }
+            R.id.tab3 -> {
+                tv_tab3.background = resources.getDrawable(R.drawable.privilege_tab_bg)
+                tv_tab3.setTextColor(resources.getColor(R.color.white))
+                tv_tab1.background = null
+                tv_tab2.background = null
+                tv_tab4.background = null
+                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab4.setTextColor(resources.getColor(R.color.color_333333))
+                view_pager.setCurrentItem(2, true)
+            }
+            R.id.tab4 -> {
+                tv_tab4.background = resources.getDrawable(R.drawable.privilege_tab_bg)
+                tv_tab4.setTextColor(resources.getColor(R.color.white))
+                tv_tab1.background = null
+                tv_tab2.background = null
+                tv_tab3.background = null
+                tv_tab1.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab2.setTextColor(resources.getColor(R.color.color_333333))
+                tv_tab3.setTextColor(resources.getColor(R.color.color_333333))
+                view_pager.setCurrentItem(3, true)
+            }
+        }
     }
 }
 

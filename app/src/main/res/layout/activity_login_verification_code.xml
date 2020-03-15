@@ -3,113 +3,114 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
     <include layout="@layout/common_toolbar"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
             android:text="@string/input_verification_code"
-            android:textSize="25sp"
             android:textColor="@color/color_262626"
-            android:layout_marginTop="60dp"/>
+            android:textSize="25sp"/>
 
     <TextView
             android:id="@+id/tv_send_message_to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sended_message"
-            android:textSize="12sp"
-            android:textColor="@color/color_333333"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="23.5dp"/>
+            android:layout_marginTop="23.5dp"
+            android:text="@string/sended_message"
+            android:textColor="@color/color_333333"
+            android:textSize="12sp"/>
 
     <TextView
             android:id="@+id/tv_vertification_code_error"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/vertification_code_error"
-            android:textSize="12sp"
-            android:textColor="@color/color_FF2020"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="11.5dp"
+            android:text="@string/vertification_code_error"
+            android:textColor="@color/color_FF2020"
+            android:textSize="12sp"
             android:visibility="invisible"/>
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="16.5dp"
             android:layout_marginStart="79dp"
-            android:layout_marginEnd="79dp">
+            android:layout_marginTop="16.5dp"
+            android:layout_marginEnd="79dp"
+            android:gravity="center">
         <EditText
                 android:id="@+id/et_one"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="1"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:layout_marginEnd="7dp"/>
+                android:textCursorDrawable="@drawable/color_cursor"/>
         <EditText
                 android:id="@+id/et_two"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
                 android:inputType="number"
                 android:maxLength="1"
-                android:gravity="center_horizontal"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:layout_marginEnd="7dp"/>
+                android:textCursorDrawable="@drawable/color_cursor"/>
         <EditText
                 android:id="@+id/et_three"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
                 android:inputType="number"
                 android:maxLength="1"
-                android:gravity="center_horizontal"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:layout_marginEnd="7dp"/>
+                android:textCursorDrawable="@drawable/color_cursor"/>
         <EditText
                 android:id="@+id/et_four"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
                 android:inputType="number"
                 android:maxLength="1"
-                android:gravity="center_horizontal"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:layout_marginEnd="7dp"/>
+                android:textCursorDrawable="@drawable/color_cursor"/>
         <EditText
                 android:id="@+id/et_five"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:inputType="number"
                 android:maxLength="1"
-                android:gravity="center"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:layout_marginEnd="7dp"/>
+                android:textCursorDrawable="@drawable/color_cursor"/>
         <EditText
                 android:id="@+id/et_six"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:maxLength="1"/>
+                android:inputType="number"
+                android:maxLength="1"
+                android:textCursorDrawable="@drawable/color_cursor"/>
     </LinearLayout>
     <TextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time"
-            android:textSize="12sp"
-            android:textColor="@color/color_262626"
-            android:layout_marginTop="10dp"
             android:layout_gravity="end"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="72.5dp"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:text="@string/time"
+            android:textColor="@color/color_262626"
+            android:textSize="12sp"/>
 </LinearLayout>

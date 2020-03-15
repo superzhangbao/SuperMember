@@ -10,6 +10,7 @@ import android.text.Spanned
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +22,7 @@ import cn.cystal.app.base.PRIVACY_POLICY
 import cn.cystal.app.base.USER_AGREEMENT
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
+import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.fragment.MineFragment
 import cn.cystal.app.view.fragment.PrivilegeFragment
 import cn.cystal.app.view.fragment.SpecialsaleFragment
@@ -70,6 +72,13 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
         v_state_bar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
         tb_toolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
         tv_title.text = getString(R.string.xishitong_vip)
+        setTitleStyle()
+    }
+
+    private fun setTitleStyle() {
+        val tp = tv_title.paint
+        tp.isFakeBoldText = true
+        tv_title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18.0f)
         tv_title.setTextColor(Color.WHITE)
     }
 
@@ -106,6 +115,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     switchFragment(0)
                     lastfragment = 0
                     tv_title.text = getString(R.string.xishitong_vip)
+                    setTitleStyle()
                 }
                 return true
             }
@@ -114,6 +124,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     switchFragment(1)
                     lastfragment = 1
                     tv_title.text = getString(R.string.specialsale)
+                    setTitleStyle()
                 }
                 return true
             }
@@ -127,6 +138,7 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
                     switchFragment(2)
                     lastfragment = 2
                     tv_title.text = getString(R.string.mine)
+                    setTitleStyle()
                 }
                 return true
             }

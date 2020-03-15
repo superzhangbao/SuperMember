@@ -3,6 +3,9 @@ package cn.cystal.app.view.activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.AbsoluteSizeSpan
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -42,6 +45,11 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     private val options3Items: MutableList<MutableList<MutableList<String>>> = ArrayList()
     private var addOrModify: Int = 0
     private var id = ""
+
+    companion object {
+        var textSize = AbsoluteSizeSpan(15, true)
+    }
+
     override fun setContentView(): Int {
         return R.layout.activity_modify
     }
@@ -49,6 +57,23 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     override fun init(savedInstanceState: Bundle?) {
         initToolBar()
         initProvinceData()
+        initEditHint()
+    }
+
+    private fun initEditHint() {
+        val hint1 = SpannableString(getString(R.string.input_receiver_name))
+        hint1.setSpan(textSize, 0, hint1.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val hint2 = SpannableString(getString(R.string.input_receiver_phone))
+        hint2.setSpan(textSize, 0, hint2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val hint3 = SpannableString(getString(R.string.location))
+        hint3.setSpan(textSize, 0, hint3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val hint4 = SpannableString(getString(R.string.input_detail_address))
+        hint4.setSpan(textSize, 0, hint4.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        et_addr_receiver_name.hint = hint1
+        et_addr_receiver_phone.hint = hint2
+        et_home_addr.hint = hint3
+        et_addr_detail.hint = hint4
     }
 
     private fun initToolBar() {
@@ -84,8 +109,8 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
-            android.R.id.home->{
+        when (item?.itemId) {
+            android.R.id.home -> {
                 finish()
             }
         }
@@ -108,7 +133,7 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
             R.id.et_home_addr -> {
                 showPickerView()
             }
-            R.id.btn_submit,R.id.btn_delete -> {
+            R.id.btn_submit, R.id.btn_delete -> {
                 val name = et_addr_receiver_name.text.toString().trim()
                 if (name.isEmpty()) {
                     ToastUtils.showToast("请输入收件人姓名")
@@ -131,13 +156,13 @@ class ModifyAddressActivity : BaseActivity(), View.OnClickListener {
                 }
                 if (v.id == R.id.btn_submit) {
                     //提交
-                    if(addOrModify == 0) {
+                    if (addOrModify == 0) {
                         submitNewAddr(name, phone, location, detailAddr)
-                    }else{
-                        modifyOrDeleteAddr(name,phone,location,detailAddr,1)//修改
+                    } else {
+                        modifyOrDeleteAddr(name, phone, location, detailAddr, 1)//修改
                     }
-                }else{
-                    modifyOrDeleteAddr(name,phone,location,detailAddr,0)//删除
+                } else {
+                    modifyOrDeleteAddr(name, phone, location, detailAddr, 0)//删除
                 }
 
             }

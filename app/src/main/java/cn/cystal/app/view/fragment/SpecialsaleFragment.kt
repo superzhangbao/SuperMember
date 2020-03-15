@@ -33,6 +33,8 @@ import org.greenrobot.eventbus.ThreadMode
 class SpecialsaleFragment : BaseFragment(), FragmentKeyDown {
 
     private var mAgentWeb: AgentWeb? = null
+    private var hidden = false
+
     override fun setContentView(): Int {
         return R.layout.fragment_specialsale
     }
@@ -47,14 +49,15 @@ class SpecialsaleFragment : BaseFragment(), FragmentKeyDown {
 
     override fun onResume() {
         super.onResume()
-        LogUtil.e(TAG,"onResume")
+        if (hidden) return
         AgentWebConfig.clearDiskCache(activity)
+        LogUtil.e(TAG, "onResume")
         AgentWebConfig.removeAllCookies()
         WebStorage.getInstance().deleteAllData() //清空WebView的localStorage
         if (mAgentWeb != null) {
             mAgentWeb!!.clearWebCache()
             mAgentWeb!!.urlLoader.loadUrl(getUrl())
-        }else{
+        } else {
             mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(
                     container,
@@ -71,11 +74,12 @@ class SpecialsaleFragment : BaseFragment(), FragmentKeyDown {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        this.hidden = hidden
         if (!hidden) {
+            LogUtil.e(TAG, "onHiddenChanged")
             WebStorage.getInstance().deleteAllData() //清空WebView的localStorage
             AgentWebConfig.clearDiskCache(activity)
             AgentWebConfig.removeAllCookies()
-            LogUtil.e(TAG,"onHiddenChanged")
             mAgentWeb?.clearWebCache()
             mAgentWeb?.urlLoader?.loadUrl(getUrl())
         }
@@ -85,13 +89,13 @@ class SpecialsaleFragment : BaseFragment(), FragmentKeyDown {
         return if (SPECIAL_SALE.contains("?")) {
             if (ConfigPreferences.instance.getToken() == "") {
                 "${SPECIAL_SALE}&inType=app"
-            }else{
+            } else {
                 "${SPECIAL_SALE}&token=${ConfigPreferences.instance.getToken()}&inType=app"
             }
         } else {
             if (ConfigPreferences.instance.getToken() == "") {
                 "${SPECIAL_SALE}?inType=app"
-            }else{
+            } else {
                 "${SPECIAL_SALE}?token=${ConfigPreferences.instance.getToken()}&inType=app"
             }
         }

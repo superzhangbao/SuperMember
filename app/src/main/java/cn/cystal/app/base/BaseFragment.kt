@@ -6,20 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import com.trello.rxlifecycle2.components.support.RxFragment
 
+
 /**
  *  author : zhangbao
  *  date : 2020-02-07 17:59
  *  description :
  */
-abstract class BaseFragment:RxFragment() {
-    companion object{
+abstract class BaseFragment : RxFragment() {
+    companion object {
         val TAG: String = this.javaClass.simpleName
     }
+
     private var rootView: View? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (rootView == null) {
-            rootView = View.inflate(activity, setContentView(), null)
+        if (rootView != null) {
+            val parent = view!!.parent as ViewGroup
+            parent.removeView(view)
+            return rootView
         }
+        rootView = View.inflate(activity, setContentView(), null)
         return rootView
     }
 

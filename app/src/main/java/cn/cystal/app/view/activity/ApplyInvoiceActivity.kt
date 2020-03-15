@@ -40,7 +40,7 @@ class ApplyInvoiceActivity : BaseActivity(), View.OnClickListener, AdapterView.O
     private var addressInfo: MyAddressBean.DataBean.ListBean? = null
 
     companion object {
-        var textSize = AbsoluteSizeSpan(16, true)
+        var textSize = AbsoluteSizeSpan(15, true)
     }
 
     override fun setContentView(): Int {
