@@ -17,7 +17,7 @@ public class NetClient {
     private static int WRITE_TIMEOUT = 5;
     private static int READ_TIMEOUT = 5;
     private static boolean RETRY_ONCONNECTION_FAILURE = false;
-    private static String BASE_URL = ConfigurationKt.RELEASE_BASE_URL;
+    private static String BASE_URL = ConfigurationKt.BASE_URL;
     private Retrofit mRetrofit;
 
 

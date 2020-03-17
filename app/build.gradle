@@ -13,8 +13,10 @@ android {
         applicationId "cn.cystal.app"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 16
-        versionName "1.0.15"
+//        versionCode 17
+//        versionName "1.0.16"
+        versionCode 1
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -23,8 +25,14 @@ android {
         targetCompatibility = '1.8'
     }
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -75,14 +83,14 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0'
     //bannerview
-    implementation 'com.github.zhpanvip:BannerViewPager:2.7.0'
+    implementation 'com.github.zhpanvip:BannerViewPager:2.7.1'
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     //选择器
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
-    //
-    implementation 'com.google.android:flexbox:1.0.0'
+    //flexbox
+    implementation 'com.google.android:flexbox:2.0.1'
     //PictureSelector
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
     //zxing

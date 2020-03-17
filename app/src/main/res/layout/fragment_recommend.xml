@@ -11,6 +11,13 @@
             android:layout_weight="1">
 
     </com.zhpan.bannerview.BannerViewPager>
+    <!--<androidx.viewpager.widget.ViewPager-->
+            <!--android:id="@+id/viewpager"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1">-->
+
+    <!--</androidx.viewpager.widget.ViewPager>-->
     <com.zhpan.indicator.IndicatorView
             android:id="@+id/oval_indicator"
             android:layout_width="match_parent"

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,21 +14,18 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cn.cystal.app.R
+import cn.cystal.app.base.BASE_URL
 import cn.cystal.app.base.BaseActivity
-import cn.cystal.app.base.DEBUG_BASE_URL
 import cn.cystal.app.base.PHONE_NUMBER
-import cn.cystal.app.base.RELEASE_BASE_URL
 import cn.cystal.app.bean.LoginBean
 import cn.cystal.app.bean.LoginErrorBean
-import cn.cystal.app.event.LoginEvent
-import cn.cystal.app.network.IApiService
-import cn.cystal.app.storage.ConfigPreferences
-import cn.cystal.app.util.LogUtil
-import cn.cystal.app.util.ToastUtils
-import cn.cystal.app.BuildConfig
 import cn.cystal.app.bean.VertifyCodeBean
+import cn.cystal.app.event.LoginEvent
 import cn.cystal.app.network.BaseObserver
+import cn.cystal.app.network.IApiService
 import cn.cystal.app.network.NetClient
+import cn.cystal.app.storage.ConfigPreferences
+import cn.cystal.app.util.ToastUtils
 import com.google.gson.Gson
 import com.gyf.immersionbar.ImmersionBar
 import com.trello.rxlifecycle2.android.ActivityEvent
@@ -195,7 +191,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
 
         val builder = Retrofit.Builder()
         val retrofit = builder
-            .baseUrl(if (BuildConfig.DEBUG) DEBUG_BASE_URL else RELEASE_BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

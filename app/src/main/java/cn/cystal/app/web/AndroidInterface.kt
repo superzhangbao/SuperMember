@@ -2,12 +2,11 @@ package cn.cystal.app.web
 
 import android.content.Context
 import android.webkit.JavascriptInterface
-import com.just.agentweb.AgentWeb
 import cn.cystal.app.event.CloseCurrentPageEvent
 import cn.cystal.app.event.GoToDetailEvent
 import cn.cystal.app.event.LogoutEvent
-import cn.cystal.app.util.LogUtil
 import cn.cystal.app.util.ToastUtils
+import com.just.agentweb.AgentWeb
 import org.greenrobot.eventbus.EventBus
 
 /**

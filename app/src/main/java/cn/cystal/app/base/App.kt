@@ -16,17 +16,17 @@ class App : Application() {
 
     companion object {
         private var instance: App? = null
-        fun getInstance(): App = App.Companion.instance!!
+        fun getInstance(): App = instance!!
     }
 
     override fun onCreate() {
         super.onCreate()
-        App.Companion.instance = this
+        instance = this
         //对单位的自定义配置, 请在 App 启动时完成
         configUnits()
         //初始化设置网络库的配置
         NetClient.getInstance()
-            .baseUrl(if (BuildConfig.DEBUG) DEBUG_BASE_URL else RELEASE_BASE_URL)
+            .baseUrl(BASE_URL)
             .connectTimeOut(10)
             .writeTimeOut(60)
             .readTimeOut(60)
