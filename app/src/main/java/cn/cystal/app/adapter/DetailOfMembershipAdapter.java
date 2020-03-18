@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -15,13 +16,15 @@ import java.util.List;
  * description :会费明细页面viewpager适配器
  */
 public class DetailOfMembershipAdapter extends FragmentPagerAdapter {
-    private static final String[] TITLE_LIST = {"全部","会费充值","会费消费"};
+    private static final String[] TITLE_LIST = {"全部", "会费充值", "会费消费"};
     private List<Fragment> fragments;
-    public DetailOfMembershipAdapter(FragmentManager fm,List<Fragment> fragments) {
+
+    public DetailOfMembershipAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         return fragments.get(position);
@@ -36,6 +39,22 @@ public class DetailOfMembershipAdapter extends FragmentPagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 //        super.destroyItem(container, position, object);
     }
+
+//    @Override
+//    public long getItemId(int position) {
+//        return fragments.get(position).hashCode();
+//    }
+//
+//    @Override
+//    public int getItemPosition(@NonNull Object object) {
+//        if (fragments.contains(object)) {
+//            // 如果当前 item 未被 remove，则返回 item 的真实 position
+//            return fragments.indexOf(object);
+//        } else {
+//            // 否则返回状态值 POSITION_NONE
+//            return POSITION_NONE;
+//        }
+//    }
 
     @Nullable
     @Override

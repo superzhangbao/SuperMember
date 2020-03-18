@@ -1,8 +1,10 @@
 package cn.cystal.app.view.fragment
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
@@ -25,12 +27,15 @@ import com.google.gson.Gson
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.holder.ViewHolder
+import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -42,11 +47,12 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class RecommendFragment : BaseFragment() {
 
-    private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
+        private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
     private var type = 1
     var data: MutableList<MutableList<BoutiqueSaleBean.DataBean>> = mutableListOf()
-//    private var firstResume = true
+    //    private var firstResume = true
 //    private var isVisibleToUser = false
+//    var myAdapter: MyAdapter? = null
 
     override fun setContentView(): Int {
         return R.layout.fragment_recommend
@@ -68,6 +74,7 @@ class RecommendFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.POSTING)
     fun onRefreshDataEvent(refreshDataEvent: RefreshDataEvent) {
         LogUtil.e(TAG, "在这里收到更新数据的通知")
+        initViewPagerData()
     }
 
     private fun initViewPager() {
@@ -88,7 +95,7 @@ class RecommendFragment : BaseFragment() {
             )
             .setHolderCreator { HomeViewHolder() }
 //        oval_indicator
-//            .setSliderColor(resources.getColor(R.color.color_6BB467), resources.getColor(R.color.white))
+//            .setSliderColor(resources.getColor(R.color.color_88F86024), resources.getColor(R.color.color_F86024))
 //            .setSliderWidth(
 //                UiUtils.dip2px(App.getInstance(), 4.0f).toFloat(),
 //                UiUtils.dip2px(App.getInstance(), 10.0f).toFloat()
@@ -128,10 +135,15 @@ class RecommendFragment : BaseFragment() {
                             }
                         }
                         mHomeViewPager?.create(data)
-//                        val myAdapter = MyAdapter(data)
-//                        viewpager.adapter = myAdapter
-//                        myAdapter.notifyDataSetChanged()
-
+//                        if (myAdapter == null) {
+//                            val myAdapter = MyAdapter(data, activity)
+//                            viewpager.adapter = myAdapter
+//                        } else {
+////                            myAdapter?.notifyData(data)
+////                            myAdapter?.notifyDataSetChanged()
+//                            myAdapter?.notifyData(data)
+//                        }
+//                        initViewPager()
                     }
                 }
 
@@ -149,7 +161,7 @@ class RecommendFragment : BaseFragment() {
 
 class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQuickAdapter.OnItemClickListener {
     private var recyclerView: RecyclerView? = null
-//    private var commonAdapter:CommonAdapter? = null
+    //    private var commonAdapter:CommonAdapter? = null
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         EventBus.getDefault()
             .postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
@@ -158,7 +170,6 @@ class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQ
     }
 
     override fun onBind(itemView: View?, data: MutableList<BoutiqueSaleBean.DataBean>?, position: Int, size: Int) {
-        LogUtil.e("HomeViewHolder", "onBind:${data?.size}")
         if (recyclerView == null) {
             recyclerView = itemView?.findViewById(R.id.recycler_view)
             recyclerView?.layoutManager = GridLayoutManager(itemView?.context, 5)
@@ -166,7 +177,6 @@ class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQ
             commonAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
             commonAdapter.isFirstOnly(true)
             commonAdapter.onItemClickListener = this
-            LogUtil.e("HomeViewHolder", "recyclerView == $recyclerView")
             commonAdapter.bindToRecyclerView(recyclerView)
         }
     }
@@ -176,42 +186,53 @@ class HomeViewHolder : ViewHolder<MutableList<BoutiqueSaleBean.DataBean>>, BaseQ
     }
 }
 
-class MyAdapter(var data: MutableList<MutableList<BoutiqueSaleBean.DataBean>>) : PagerAdapter(), BaseQuickAdapter.OnItemClickListener {
-
-    private var recyclerView: RecyclerView? = null
-
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view == `object`
-    }
-
-    override fun getCount(): Int {
-        return 3
-    }
-
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as View)
-    }
-
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val itemView = View.inflate(App.getInstance(), R.layout.fragment_common, null)
-        recyclerView = itemView.findViewById(R.id.recycler_view)
-        recyclerView?.layoutManager = GridLayoutManager(itemView?.context, 5)
-        val commonAdapter = CommonAdapter(data[position])
-        commonAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
-        commonAdapter.isFirstOnly(true)
-        commonAdapter.onItemClickListener = this
-        commonAdapter.bindToRecyclerView(recyclerView)
-        return itemView
-    }
-
-    override fun getItemPosition(`object`: Any): Int {
-        return super.getItemPosition(`object`)
-    }
-
-    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-        EventBus.getDefault()
-            .postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
-        val intent = Intent(view?.context, CommonWebActivity::class.java)
-        view?.context?.startActivity(intent)
-    }
-}
+//class MyAdapter(
+//    var data: MutableList<MutableList<BoutiqueSaleBean.DataBean>>,
+//    var context: FragmentActivity?
+//) : PagerAdapter(), BaseQuickAdapter.OnItemClickListener {
+//
+//    private var recyclerView: RecyclerView? = null
+//    private var commonAdapter:CommonAdapter? = null
+//
+//    override fun isViewFromObject(view: View, `object`: Any): Boolean {
+//        return view == `object`
+//    }
+//
+//    override fun getCount(): Int {
+//        return 3
+//    }
+//
+//    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+//        LogUtil.e("MyAdapter", "destroyItem")
+//        container.removeView(`object` as View)
+//    }
+//
+//    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+//        LogUtil.e("MyAdapter","instantiateItem")
+//        val itemView = View.inflate(App.getInstance(), R.layout.fragment_common, null)
+//        recyclerView = itemView.findViewById(R.id.recycler_view)
+//        recyclerView?.layoutManager = GridLayoutManager(itemView?.context, 5)
+//        commonAdapter = CommonAdapter(data[0])
+//        commonAdapter?.openLoadAnimation(BaseQuickAdapter.ALPHAIN)
+//        commonAdapter?.isFirstOnly(true)
+//        commonAdapter?.onItemClickListener = this
+//        commonAdapter?.bindToRecyclerView(recyclerView)
+//        container.addView(itemView)
+//        return itemView
+//    }
+//
+//    fun notifyData(data: MutableList<MutableList<BoutiqueSaleBean.DataBean>>) {
+//        commonAdapter?.setNewData(data[0])
+//    }
+//
+//    override fun getItemPosition(`object`: Any): Int {
+//        return super.getItemPosition(`object`)
+//    }
+//
+//    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+//        EventBus.getDefault()
+//            .postSticky(WebEvent((adapter?.data as MutableList<BoutiqueSaleBean.DataBean>)[position].url))
+//        val intent = Intent(context, CommonWebActivity::class.java)
+//        context?.startActivity(intent)
+//    }
+//}

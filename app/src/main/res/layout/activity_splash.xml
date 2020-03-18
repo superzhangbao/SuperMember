@@ -3,20 +3,20 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@mipmap/splash_bg">
-        <ImageView
-                android:layout_width="178dp"
-                android:layout_height="77dp"
-                android:background="@mipmap/splash_logo"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="255dp"/>
+        android:background="@mipmap/splash_bg"
+        android:orientation="vertical">
+    <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="178dp"
+            android:layout_height="77dp"
+            android:layout_gravity="center"
+            android:background="@mipmap/splash_logo"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="您身边的生活折扣专家"
-            android:textSize="16sp"
-            android:textColor="@color/color_302F2B"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="26dp"/>
+            android:layout_marginBottom="26dp"
+            android:text="有禧世，无难事"
+            android:textColor="@color/color_302F2B"
+            android:textSize="16sp"/>
 </FrameLayout>

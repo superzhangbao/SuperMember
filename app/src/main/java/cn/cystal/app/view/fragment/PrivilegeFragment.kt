@@ -109,6 +109,7 @@ class PrivilegeFragment : BaseFragment(), View.OnClickListener,
         fragments.add(recommendFragment3)
         fragments.add(recommendFragment4)
 
+        view_pager.offscreenPageLimit = 3
         view_pager.adapter = DetailOfMembershipAdapter(activity?.supportFragmentManager, fragments)
     }
 

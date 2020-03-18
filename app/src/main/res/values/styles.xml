@@ -27,10 +27,8 @@
     <!--</style>-->
 
     <style name="Splash" parent="AppTheme">
-        <item name="windowActionBar">false</item>//取消Actionbar
-        <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>//设置全屏
-        <!--<item name="android:windowBackground">@mipmap/splash_bg</item>//设置背景-->
+        <item name="android:windowBackground">@drawable/splash_bg_layer</item>//设置背景
     </style>
 
     <style name="MyBottomNavigationStyle" parent="Widget.Design.BottomNavigationView">

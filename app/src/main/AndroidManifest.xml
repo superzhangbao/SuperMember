@@ -24,7 +24,7 @@
             tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="cn.cystal.app.view.activity.SplashActivity"
                   android:screenOrientation="portrait"
-                android:theme="@style/Splash">
+        android:theme="@style/Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

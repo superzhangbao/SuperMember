@@ -34,6 +34,7 @@ class App : Application() {
             .init()
     }
 
+    //autosize的配置
     private fun configUnits() {
         //AndroidAutoSize 默认开启对 dp 的支持, 调用 UnitsManager.setSupportDP(false); 可以关闭对 dp 的支持
         //主单位 dp 和 副单位可以同时开启的原因是, 对于旧项目中已经使用了 dp 进行布局的页面的兼容
