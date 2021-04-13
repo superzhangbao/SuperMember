@@ -22,7 +22,6 @@ import cn.cystal.app.base.PRIVACY_POLICY
 import cn.cystal.app.base.USER_AGREEMENT
 import cn.cystal.app.event.WebEvent
 import cn.cystal.app.storage.ConfigPreferences
-import cn.cystal.app.util.UiUtils
 import cn.cystal.app.view.fragment.MineFragment
 import cn.cystal.app.view.fragment.PrivilegeFragment
 import cn.cystal.app.view.fragment.SpecialsaleFragment
@@ -68,7 +67,6 @@ class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelect
 
     private fun initTitle() {
         ImmersionBar.with(this).init()
-//        v_state_bar.setBackgroundColor(resources.getColor(R.color.color_6BB467))
         v_state_bar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
         tb_toolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_6BB467))
         tv_title.text = getString(R.string.xishitong_vip)

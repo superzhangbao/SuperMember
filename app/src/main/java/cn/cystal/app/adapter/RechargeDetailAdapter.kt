@@ -23,7 +23,7 @@ class RechargeDetailAdapter (data: List<BalanceBean.DataBean.ListBean>) :
                 if (type == 1) "+¥${data[adapterPosition].money / 100.00}个积分" else "-¥${data[adapterPosition].money / 100.00}个积分"
             setText(R.id.tv_integral, text)
             if (type == 1) {
-                setText(R.id.tv_money, "（缴纳金额：¥${data[adapterPosition].amount}）")
+//                setText(R.id.tv_money, "（缴纳金额：¥${data[adapterPosition].amount}）")
                 if (data[adapterPosition].status == 0) {
                     setVisible(R.id.tv_all, true)
                     setText(R.id.tv_all, "申请发票")
@@ -38,9 +38,10 @@ class RechargeDetailAdapter (data: List<BalanceBean.DataBean.ListBean>) :
                     setVisible(R.id.tv_all, false)
                 }
             } else {
-                setText(R.id.tv_money, "")
+//                setText(R.id.tv_money, "")
                 setVisible(R.id.tv_all, false)
             }
+            setVisible(R.id.tv_money,false)
         }
     }
 }

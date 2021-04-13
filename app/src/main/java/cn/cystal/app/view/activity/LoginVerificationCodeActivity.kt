@@ -14,9 +14,9 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import cn.cystal.app.R
-import cn.cystal.app.base.BASE_URL
 import cn.cystal.app.base.BaseActivity
 import cn.cystal.app.base.PHONE_NUMBER
+import cn.cystal.app.base.getBaseUrl
 import cn.cystal.app.bean.LoginBean
 import cn.cystal.app.bean.LoginErrorBean
 import cn.cystal.app.bean.VertifyCodeBean
@@ -191,7 +191,7 @@ class LoginVerificationCodeActivity : BaseActivity(), View.OnClickListener {
 
         val builder = Retrofit.Builder()
         val retrofit = builder
-            .baseUrl(BASE_URL)
+            .baseUrl(getBaseUrl())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

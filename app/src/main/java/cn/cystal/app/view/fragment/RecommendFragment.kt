@@ -47,10 +47,10 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class RecommendFragment : BaseFragment() {
 
-        private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
+    private var mHomeViewPager: BannerViewPager<MutableList<BoutiqueSaleBean.DataBean>, HomeViewHolder>? = null
     private var type = 1
     var data: MutableList<MutableList<BoutiqueSaleBean.DataBean>> = mutableListOf()
-    //    private var firstResume = true
+//    private var firstResume = true
 //    private var isVisibleToUser = false
 //    var myAdapter: MyAdapter? = null
 

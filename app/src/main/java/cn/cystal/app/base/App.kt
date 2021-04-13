@@ -1,8 +1,8 @@
 package cn.cystal.app.base
 
 import android.app.Application
-import cn.cystal.app.BuildConfig
 import cn.cystal.app.network.NetClient
+import cn.cystal.app.util.LogUtil
 import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.unit.Subunits
 
@@ -24,12 +24,14 @@ class App : Application() {
         instance = this
         //对单位的自定义配置, 请在 App 启动时完成
         configUnits()
+        //初始化BASE_URL
+        createBaseUrl()
         //初始化设置网络库的配置
         NetClient.getInstance()
-            .baseUrl(BASE_URL)
-            .connectTimeOut(10)
-            .writeTimeOut(60)
-            .readTimeOut(60)
+            .baseUrl(getBaseUrl())
+            .connectTimeOut(5)
+            .writeTimeOut(5)
+            .readTimeOut(5)
             .retryOnConnectionFailure(false)
             .init()
     }

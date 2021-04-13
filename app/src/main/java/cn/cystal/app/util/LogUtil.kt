@@ -1,6 +1,7 @@
 package cn.cystal.app.util
 
 import android.util.Log
+import cn.cystal.app.BuildConfig
 import java.util.*
 
 /**
@@ -25,7 +26,7 @@ object LogUtil {
     private val LEFT_BORDER = "║ "
     private val BOTTOM_BORDER = "╚═══════════════════════════════════════════════════════════════════════════════════════════════════"
     private val MAX_LEN = 1000
-    var open = true
+    var open = BuildConfig.DEBUG
 
     private fun processTagAndHead(): String {
         val elements = Thread.currentThread().stackTrace
@@ -148,6 +149,4 @@ object LogUtil {
     fun closeLog() {
         this.open = false
     }
-
-
 }

@@ -109,7 +109,8 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
             //商品数量
             setText(R.id.tv_count, "x${listBean.buyNum}")
 
-            val amount = UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(listBean.originalAmount.toDouble(),100.0)))
+//            val amount = UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(listBean.originalAmount.toDouble(),100.0)))
+            val amount = UtilsBigDecimal.formatToNumber(BigDecimal(UtilsBigDecimal.div(((listBean.amount/listBean.buyNum).toDouble()),100.0)))
             val amountSplit = amount?.split(".")
             setText(R.id.tv_one_amount_left, "¥${amountSplit?.get(0) ?: 0}.")
             setText(R.id.tv_one_amount_right, amountSplit?.get(1) ?: "00")
@@ -117,10 +118,11 @@ class OrderAdapter(data: MutableList<OrderBean.DataBean.ListBean>?) :
 
             val allAmount = UtilsBigDecimal.formatToNumber(
                 BigDecimal(
-                    UtilsBigDecimal.div(
-                        (listBean.amount * listBean.buyNum).toDouble(),
-                        100.0
-                    )
+//                    UtilsBigDecimal.div(
+//                        (listBean.amount * listBean.buyNum).toDouble(),
+//                        100.0
+//                    )
+                    UtilsBigDecimal.div((listBean.amount).toDouble(), 100.0)
                 )
             )
             val allAmountSplit = allAmount?.split(".")
